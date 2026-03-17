@@ -11,8 +11,8 @@ const taglines = [
   "Beyond Boundaries",
 ];
 
-// Fest date: April 18-19, 2026
-const FEST_DATE = new Date("2026-04-18T09:00:00");
+// Fest date: March 23-24, 2026
+const FEST_DATE = new Date("2026-03-23T09:00:00");
 
 function getCountdown() {
   const now = new Date();
@@ -91,7 +91,7 @@ export default function Hero() {
         <div className="inline-flex items-center gap-2 border border-[rgba(255,255,255,0.4)] rounded-full px-4 py-1.5 mb-6 text-xs font-rajdhani tracking-widest uppercase text-white shadow-[0_0_15px_rgba(255,255,255,0.2)] bg-black/40 backdrop-blur-sm"
         >
           <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-          GEC Madhubani Presents · April 18–19, 2026
+          GEC Madhubani Presents · March 23–24, 2026
         </div>
 
         {/* Main title */}

@@ -7,10 +7,10 @@ const CATEGORIES = ["all", "technical", "cultural", "gaming"];
 const TYPES = ["all", "solo", "team"];
 
 const CAT: Record<string, any> = {
-    technical: { color: "#00c8ff", border: "rgba(0,200,255,0.3)", bg: "rgba(0,200,255,0.06)", glow: "rgba(0,200,255,0.35)", icon: "⬡" },
-    cultural: { color: "#d28c3c", border: "rgba(210,140,60,0.3)", bg: "rgba(210,140,60,0.06)", glow: "rgba(210,140,60,0.35)", icon: "◈" },
-    gaming: { color: "#c06080", border: "rgba(180,60,120,0.3)", bg: "rgba(180,60,120,0.06)", glow: "rgba(180,60,120,0.35)", icon: "◉" },
-    other: { color: "#a0a0a0", border: "rgba(160,160,160,0.3)", bg: "rgba(160,160,160,0.06)", glow: "rgba(160,160,160,0.35)", icon: "◬" },
+  technical: { color: "#00c8ff", border: "rgba(0,200,255,0.3)", bg: "rgba(0,200,255,0.06)", glow: "rgba(0,200,255,0.35)", icon: "⬡" },
+  cultural: { color: "#d28c3c", border: "rgba(210,140,60,0.3)", bg: "rgba(210,140,60,0.06)", glow: "rgba(210,140,60,0.35)", icon: "◈" },
+  gaming: { color: "#c06080", border: "rgba(180,60,120,0.3)", bg: "rgba(180,60,120,0.06)", glow: "rgba(180,60,120,0.35)", icon: "◉" },
+  other: { color: "#a0a0a0", border: "rgba(160,160,160,0.3)", bg: "rgba(160,160,160,0.06)", glow: "rgba(160,160,160,0.35)", icon: "◬" },
 };
 
 const styles = `
@@ -480,199 +480,199 @@ const styles = `
 `;
 
 export default function EventsClient({ events }: { events: any[] }) {
-    const [visible, setVisible] = useState(false);
-    const [catFilter, setCatFilter] = useState("all");
-    const [typeFilter, setTypeFilter] = useState("all");
-    const [filledBars, setFilledBars] = useState(false);
-    const gridRef = useRef(null);
-    const router = useRouter();
+  const [visible, setVisible] = useState(false);
+  const [catFilter, setCatFilter] = useState("all");
+  const [typeFilter, setTypeFilter] = useState("all");
+  const [filledBars, setFilledBars] = useState(false);
+  const gridRef = useRef(null);
+  const router = useRouter();
 
-    useEffect(() => {
-        if (!document.getElementById("ev-styles")) {
-            const el = document.createElement("style");
-            el.id = "ev-styles";
-            el.textContent = styles;
-            document.head.appendChild(el);
-        }
-        setTimeout(() => setVisible(true), 80);
-        setTimeout(() => setFilledBars(true), 600);
-    }, []);
+  useEffect(() => {
+    if (!document.getElementById("ev-styles")) {
+      const el = document.createElement("style");
+      el.id = "ev-styles";
+      el.textContent = styles;
+      document.head.appendChild(el);
+    }
+    setTimeout(() => setVisible(true), 80);
+    setTimeout(() => setFilledBars(true), 600);
+  }, []);
 
-    const filtered = events.filter(ev => {
-        const evCat = (ev.category || "other").toLowerCase();
-        if (catFilter !== "all" && evCat !== catFilter) return false;
-        if (typeFilter !== "all" && ev.type !== typeFilter) return false;
-        return true;
-    });
+  const filtered = events.filter(ev => {
+    const evCat = (ev.category || "other").toLowerCase();
+    if (catFilter !== "all" && evCat !== catFilter) return false;
+    if (typeFilter !== "all" && ev.type !== typeFilter) return false;
+    return true;
+  });
 
-    const cx = (...a: any[]) => a.filter(Boolean).join(" ");
+  const cx = (...a: any[]) => a.filter(Boolean).join(" ");
 
-    // Derive stats
-    const totalRegs = events.reduce((s, e) => s + (e.participantsCount || 0), 0);
-    const maxReg = Math.max(1, ...events.map(e => e.participantsCount || 0));
+  // Derive stats
+  const totalRegs = events.reduce((s, e) => s + (e.participantsCount || 0), 0);
+  const maxReg = Math.max(1, ...events.map(e => e.participantsCount || 0));
 
-    return (
-        <div className="ev-root">
-            <div className="ev-glow-1" />
-            <div className="ev-glow-2" />
-            <div className="ev-scan" />
+  return (
+    <div className="ev-root">
+      <div className="ev-glow-1" />
+      <div className="ev-glow-2" />
+      <div className="ev-scan" />
 
-            <div className="ev-container">
+      <div className="ev-container">
 
-                {/* ── Hero ── */}
-                <div className={cx("ev-hero", visible && "ev-in")}>
-                    <div className="ev-hero-eyebrow">Techexotica 2026</div>
-                    <div className="ev-hero-title">
-                        All<br /><span>Events</span>
-                    </div>
-                    <div className="ev-hero-sub">GEC Madhuri · March 2026</div>
-                    <div className="ev-stats-row">
-                        <div className="ev-hero-stat">
-                            <span className="ev-hero-stat-num">{events.length}</span>
-                            <span className="ev-hero-stat-label">Events</span>
-                        </div>
-                        <div className="ev-hero-stat">
-                            <span className="ev-hero-stat-num">{totalRegs}</span>
-                            <span className="ev-hero-stat-label">Registered</span>
-                        </div>
-                    </div>
-                </div>
-
-                {/* ── Controls ── */}
-                <div className={cx("ev-controls", visible && "ev-in")}>
-                    <div className="ev-filter-group">
-                        {CATEGORIES.map(c => (
-                            <button
-                                key={c}
-                                onClick={() => setCatFilter(c)}
-                                className={cx(
-                                    "ev-filter-btn",
-                                    `cat-${c}`,
-                                    catFilter === c && "active"
-                                )}
-                            >
-                                {c === "all" ? "All" : `${CAT[c]?.icon || "◬"} ${c}`}
-                            </button>
-                        ))}
-                    </div>
-                    <div className="ev-divider-v" />
-                    <div className="ev-filter-group">
-                        {TYPES.map(t => (
-                            <button
-                                key={t}
-                                onClick={() => setTypeFilter(t)}
-                                className={cx("ev-filter-btn", typeFilter === t && "active")}
-                            >
-                                {t === "all" ? "All Types" : t}
-                            </button>
-                        ))}
-                    </div>
-                    <span className="ev-results-count">
-                        {String(filtered.length).padStart(2, "0")} / {String(events.length).padStart(2, "0")} events
-                    </span>
-                </div>
-
-                {/* ── Grid ── */}
-                <div className="ev-grid" ref={gridRef}>
-                    {filtered.length === 0 ? (
-                        <div className="ev-empty">
-                            <div className="ev-empty-icon">◈</div>
-                            <div className="ev-empty-txt">No events match your filters</div>
-                        </div>
-                    ) : (
-                        filtered.map((ev, i) => {
-                            const catString = (ev.category || "other").toLowerCase();
-                            const c = CAT[catString] || CAT.other;
-                            const fillPct = filledBars ? Math.min(100, Math.round(((ev.participantsCount || 0) / maxReg) * 100)) : 0;
-                            const date = ev.date ? new Date(ev.date).toLocaleDateString("en-IN", { day: "numeric", month: "short" }) : "TBA";
-
-                            return (
-                                <div
-                                    key={ev._id}
-                                    className={cx("ev-card", visible && "ev-in")}
-                                    style={{
-                                        "--c-color": c.color,
-                                        "--c-border": c.border,
-                                        "--c-bg": c.bg,
-                                        "--c-bg-h": c.bg.replace("0.06", "0.12"),
-                                        "--c-glow": c.glow,
-                                        transitionDelay: `${0.1 + i * 0.07}s`,
-                                    } as any}
-                                >
-                                    <div className="ev-card-corner" />
-                                    <div className="ev-card-bl" />
-                                    <div className="ev-card-shimmer" />
-                                    <div className="ev-card-bar" />
-
-                                    <div className="ev-card-body">
-                                        <div className="ev-card-header">
-                                            <div className="ev-card-icon">{c.icon}</div>
-                                            <div className="ev-card-badges">
-                                                <span className="ev-badge" style={{ color: c.color, borderColor: c.border, background: c.bg }}>
-                                                    {catString}
-                                                </span>
-                                                <span className="ev-badge" style={{
-                                                    color: ev.type === "team" ? "#d28c3c" : "rgba(255,255,255,0.35)",
-                                                    borderColor: ev.type === "team" ? "rgba(210,140,60,0.3)" : "rgba(255,255,255,0.1)",
-                                                    background: ev.type === "team" ? "rgba(210,140,60,0.06)" : "transparent",
-                                                }}>
-                                                    {ev.type}
-                                                </span>
-                                            </div>
-                                        </div>
-
-                                        <div className="ev-card-name">{ev.title || ev.name}</div>
-                                        <div className="ev-card-desc">{ev.description}</div>
-
-                                        <div className="ev-card-meta">
-                                            <div className="ev-meta-item">
-                                                <span className="ev-meta-key">Date</span>
-                                                <span className="ev-meta-val">◷ {date}</span>
-                                            </div>
-                                            <div className="ev-meta-item">
-                                                <span className="ev-meta-key">Venue</span>
-                                                <span className="ev-meta-val">◈ {ev.venue || "TBA"}</span>
-                                            </div>
-                                            <div className="ev-meta-item" style={{ gridColumn: "1/-1" }}>
-                                                <span className="ev-meta-key">Team Size</span>
-                                                <span className="ev-meta-val">
-                                                    {ev.type === "solo" ? "Solo" : `${ev.teamSize?.min || 1}–${ev.teamSize?.max || 4} Members`}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Registrations bar */}
-                                    <div className="ev-reg-bar-wrap">
-                                        <div className="ev-reg-label">
-                                            <span>Registrations</span>
-                                            <span>{ev.participantsCount || 0}</span>
-                                        </div>
-                                        <div className="ev-reg-track">
-                                            <div className="ev-reg-fill" style={{ width: `${fillPct}%` }} />
-                                        </div>
-                                    </div>
-
-                                    <div className="ev-card-footer">
-                                        <div className="ev-team-info">
-                                            <div className="ev-team-dot" />
-                                            {ev.type === "team"
-                                                ? `${ev.teamSize?.min || 1}–${ev.teamSize?.max || 4} members`
-                                                : "Individual event"}
-                                        </div>
-                                        <button
-                                            className="ev-btn"
-                                            onClick={() => router.push(`/events/${ev._id}`)}
-                                        >
-                                            <span>DETAILS →</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            );
-                        })
-                    )}
-                </div>
+        {/* ── Hero ── */}
+        <div className={cx("ev-hero", visible && "ev-in")}>
+          <div className="ev-hero-eyebrow">Techexotica 2026</div>
+          <div className="ev-hero-title">
+            All<br /><span>Events</span>
+          </div>
+          <div className="ev-hero-sub">GEC Madhubani · March 2026</div>
+          <div className="ev-stats-row">
+            <div className="ev-hero-stat">
+              <span className="ev-hero-stat-num">{events.length}</span>
+              <span className="ev-hero-stat-label">Events</span>
             </div>
+            <div className="ev-hero-stat">
+              <span className="ev-hero-stat-num">{totalRegs}</span>
+              <span className="ev-hero-stat-label">Registered</span>
+            </div>
+          </div>
         </div>
-    );
+
+        {/* ── Controls ── */}
+        <div className={cx("ev-controls", visible && "ev-in")}>
+          <div className="ev-filter-group">
+            {CATEGORIES.map(c => (
+              <button
+                key={c}
+                onClick={() => setCatFilter(c)}
+                className={cx(
+                  "ev-filter-btn",
+                  `cat-${c}`,
+                  catFilter === c && "active"
+                )}
+              >
+                {c === "all" ? "All" : `${CAT[c]?.icon || "◬"} ${c}`}
+              </button>
+            ))}
+          </div>
+          <div className="ev-divider-v" />
+          <div className="ev-filter-group">
+            {TYPES.map(t => (
+              <button
+                key={t}
+                onClick={() => setTypeFilter(t)}
+                className={cx("ev-filter-btn", typeFilter === t && "active")}
+              >
+                {t === "all" ? "All Types" : t}
+              </button>
+            ))}
+          </div>
+          <span className="ev-results-count">
+            {String(filtered.length).padStart(2, "0")} / {String(events.length).padStart(2, "0")} events
+          </span>
+        </div>
+
+        {/* ── Grid ── */}
+        <div className="ev-grid" ref={gridRef}>
+          {filtered.length === 0 ? (
+            <div className="ev-empty">
+              <div className="ev-empty-icon">◈</div>
+              <div className="ev-empty-txt">No events match your filters</div>
+            </div>
+          ) : (
+            filtered.map((ev, i) => {
+              const catString = (ev.category || "other").toLowerCase();
+              const c = CAT[catString] || CAT.other;
+              const fillPct = filledBars ? Math.min(100, Math.round(((ev.participantsCount || 0) / maxReg) * 100)) : 0;
+              const date = ev.date ? new Date(ev.date).toLocaleDateString("en-IN", { day: "numeric", month: "short" }) : "TBA";
+
+              return (
+                <div
+                  key={ev._id}
+                  className={cx("ev-card", visible && "ev-in")}
+                  style={{
+                    "--c-color": c.color,
+                    "--c-border": c.border,
+                    "--c-bg": c.bg,
+                    "--c-bg-h": c.bg.replace("0.06", "0.12"),
+                    "--c-glow": c.glow,
+                    transitionDelay: `${0.1 + i * 0.07}s`,
+                  } as any}
+                >
+                  <div className="ev-card-corner" />
+                  <div className="ev-card-bl" />
+                  <div className="ev-card-shimmer" />
+                  <div className="ev-card-bar" />
+
+                  <div className="ev-card-body">
+                    <div className="ev-card-header">
+                      <div className="ev-card-icon">{c.icon}</div>
+                      <div className="ev-card-badges">
+                        <span className="ev-badge" style={{ color: c.color, borderColor: c.border, background: c.bg }}>
+                          {catString}
+                        </span>
+                        <span className="ev-badge" style={{
+                          color: ev.type === "team" ? "#d28c3c" : "rgba(255,255,255,0.35)",
+                          borderColor: ev.type === "team" ? "rgba(210,140,60,0.3)" : "rgba(255,255,255,0.1)",
+                          background: ev.type === "team" ? "rgba(210,140,60,0.06)" : "transparent",
+                        }}>
+                          {ev.type}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="ev-card-name">{ev.title || ev.name}</div>
+                    <div className="ev-card-desc">{ev.description}</div>
+
+                    <div className="ev-card-meta">
+                      <div className="ev-meta-item">
+                        <span className="ev-meta-key">Date</span>
+                        <span className="ev-meta-val">◷ {date}</span>
+                      </div>
+                      <div className="ev-meta-item">
+                        <span className="ev-meta-key">Venue</span>
+                        <span className="ev-meta-val">◈ {ev.venue || "TBA"}</span>
+                      </div>
+                      <div className="ev-meta-item" style={{ gridColumn: "1/-1" }}>
+                        <span className="ev-meta-key">Team Size</span>
+                        <span className="ev-meta-val">
+                          {ev.type === "solo" ? "Solo" : `${ev.teamSize?.min || 1}–${ev.teamSize?.max || 4} Members`}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Registrations bar */}
+                  <div className="ev-reg-bar-wrap">
+                    <div className="ev-reg-label">
+                      <span>Registrations</span>
+                      <span>{ev.participantsCount || 0}</span>
+                    </div>
+                    <div className="ev-reg-track">
+                      <div className="ev-reg-fill" style={{ width: `${fillPct}%` }} />
+                    </div>
+                  </div>
+
+                  <div className="ev-card-footer">
+                    <div className="ev-team-info">
+                      <div className="ev-team-dot" />
+                      {ev.type === "team"
+                        ? `${ev.teamSize?.min || 1}–${ev.teamSize?.max || 4} members`
+                        : "Individual event"}
+                    </div>
+                    <button
+                      className="ev-btn"
+                      onClick={() => router.push(`/events/${ev._id}`)}
+                    >
+                      <span>DETAILS →</span>
+                    </button>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }

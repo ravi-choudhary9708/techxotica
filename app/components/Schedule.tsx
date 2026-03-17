@@ -3,7 +3,7 @@
 const schedule = [
   {
     day: "Day 1",
-    date: "April 18, 2026",
+    date: "March 23, 2026",
     color: "#00f5ff",
     events: [
       { time: "08:00 AM", title: "Registration & Check-in", type: "General" },
@@ -20,7 +20,7 @@ const schedule = [
   },
   {
     day: "Day 2",
-    date: "April 19, 2026",
+    date: "March 24, 2026",
     color: "#a855f7",
     events: [
       { time: "08:00 AM", title: "Hackathon Continues (Overnight)", type: "Hackathon" },
@@ -51,7 +51,7 @@ export default function Schedule() {
     <section id="schedule" className="story-section">
       {/* Background glow */}
       <div className="story-bg-base bg-gradient-to-t from-[#00f5ff]/10 to-transparent" />
-      
+
       <div className="story-container">
         {/* Heading */}
         <div className="text-center mb-16 reveal">

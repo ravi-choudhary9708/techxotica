@@ -44,7 +44,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={cn(orbitron.variable, inter.variable, rajdhani.variable, "font-sans", geist.variable)}>
+    <html lang="en" className={cn(orbitron.variable, inter.variable, rajdhani.variable, "font-sans", geist.variable)} suppressHydrationWarning>
       <body className="antialiased">
         <Navbar />
         {children}

@@ -121,7 +121,9 @@ export default async function DashboardPage() {
                                                 <Calendar className="w-4 h-4 text-slate-500 group-hover:text-amber-400 transition-colors" />
                                             </div>
                                             <h4 className="font-orbitron font-bold text-lg mb-2">{reg.eventId.title || reg.eventId.name}</h4>
-                                            <p className="font-mono text-slate-400 text-sm">{reg.eventId.date}</p>
+                                            <p className="font-mono text-slate-400 text-sm">
+                                                {reg.eventId.date ? new Date(reg.eventId.date).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "TBA"}
+                                            </p>
                                             <p className="font-mono text-slate-500 text-xs mt-1">{reg.eventId.venue}</p>
                                         </div>
                                     );

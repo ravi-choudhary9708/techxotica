@@ -475,7 +475,7 @@ export default function MadhubaniSection() {
           {/* Title */}
           <div className="mh-title">
             <div className="mh-title-1">MADHUBANI</div>
-            
+
           </div>
 
           {/* Ornament */}
@@ -495,7 +495,7 @@ export default function MadhubaniSection() {
           </div>
 
           {/* Subtext */}
-          <p className="mh-subtext">GEC Madhuri · March 2026 · The Sacred Hall</p>
+          <p className="mh-subtext">GEC Madhubani · March 2026 · The Sacred Hall</p>
 
           {/* Buttons */}
           <div className="mh-buttons">

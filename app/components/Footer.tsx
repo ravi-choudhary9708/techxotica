@@ -55,7 +55,7 @@ export default function Footer() {
             <div className="mt-4 inline-flex items-center gap-2 font-rajdhani text-xs text-[#00f5ff] px-3 py-1.5 rounded-full"
               style={{ border: "1px solid rgba(0,245,255,0.2)", background: "rgba(0,245,255,0.05)" }}>
               <span className="w-2 h-2 rounded-full bg-[#00f5ff] animate-pulse" />
-              April 18–19, 2026
+              March 23–24, 2026
             </div>
           </div>
         </div>
