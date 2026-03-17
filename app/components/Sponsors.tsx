@@ -33,12 +33,11 @@ const tiers = [
 
 export default function Sponsors() {
   return (
-    <section
-      id="sponsors"
-      className="py-24 px-4 relative overflow-hidden"
-      style={{ background: "radial-gradient(ellipse at 80% 20%, rgba(255,215,0,0.04) 0%, transparent 55%)" }}
-    >
-      <div className="max-w-5xl mx-auto">
+    <section id="sponsors" className="story-section">
+      {/* Background glow */}
+      <div className="story-bg-base bg-gradient-to-tr from-[#ffd700]/10 to-transparent" />
+      
+      <div className="story-container">
         {/* Heading */}
         <div className="text-center mb-16 reveal">
           <p className="font-rajdhani text-xs tracking-[0.4em] uppercase text-[#ffd700] mb-2">Our Partners</p>

@@ -22,7 +22,16 @@ const faqs = [
 ];
 
 export default function Contact() {
-  const [form, setForm] = useState({ name: "", college: "", email: "", phone: "", event: "", message: "" });
+  const [form, setForm] = useState({ 
+    name: "", 
+    college: "", 
+    email: "", 
+    phone: "", 
+    event: "", 
+    year: "",
+    dept: "",
+    message: "" 
+  });
   const [submitted, setSubmitted] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
@@ -36,26 +45,26 @@ export default function Contact() {
   };
 
   const inputStyle = {
-    background: "rgba(255,255,255,0.03)",
-    border: "1px solid rgba(0,245,255,0.15)",
-    color: "#e2e8f0",
-    borderRadius: "8px",
-    padding: "12px 16px",
+    background: "rgba(2, 4, 13, 0.6)",
+    border: "1px solid rgba(0,245,255,0.2)",
+    color: "#fff",
+    borderRadius: "12px",
+    padding: "14px 18px",
     width: "100%",
     outline: "none",
     fontFamily: "'Rajdhani', sans-serif",
     fontSize: "1rem",
     letterSpacing: "0.05em",
-    transition: "border-color 0.2s",
+    transition: "all 0.3s ease",
+    backdropFilter: "blur(10px)",
   };
 
   return (
-    <section
-      id="contact"
-      className="py-24 px-4 relative overflow-hidden"
-      style={{ background: "radial-gradient(ellipse at 20% 80%, rgba(0,245,255,0.05) 0%, transparent 55%)" }}
-    >
-      <div className="max-w-6xl mx-auto">
+    <section id="contact" className="story-section">
+      {/* Background glow */}
+      <div className="story-bg-base bg-gradient-to-bl from-[#00f5ff]/10 to-transparent" />
+      
+      <div className="story-container">
         {/* Heading */}
         <div className="text-center mb-16 reveal">
           <p className="font-rajdhani text-xs tracking-[0.4em] uppercase text-[#00f5ff] mb-2">Join The Festival</p>
@@ -83,37 +92,59 @@ export default function Contact() {
               <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                 <h3 className="font-orbitron text-lg text-white mb-2">Registration Form</h3>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="font-rajdhani text-xs tracking-widest uppercase text-slate-500 mb-1 block">Full Name *</label>
+                    <label className="font-rajdhani text-xs tracking-widest uppercase text-[#00f5ff]/60 mb-1.5 block ml-1">Full Name *</label>
                     <input
                       required name="name" value={form.name} onChange={handleChange}
                       placeholder="Your Name"
                       style={inputStyle}
-                      onFocus={(e) => (e.target.style.borderColor = "rgba(0,245,255,0.5)")}
-                      onBlur={(e) => (e.target.style.borderColor = "rgba(0,245,255,0.15)")}
+                      className="focus:border-[#00f5ff] focus:shadow-[0_0_15px_rgba(0,245,255,0.2)]"
                     />
                   </div>
                   <div>
-                    <label className="font-rajdhani text-xs tracking-widest uppercase text-slate-500 mb-1 block">Phone *</label>
+                    <label className="font-rajdhani text-xs tracking-widest uppercase text-[#00f5ff]/60 mb-1.5 block ml-1">Phone *</label>
                     <input
                       required name="phone" value={form.phone} onChange={handleChange}
                       placeholder="+91 XXXXXXXXXX" type="tel"
                       style={inputStyle}
-                      onFocus={(e) => (e.target.style.borderColor = "rgba(0,245,255,0.5)")}
-                      onBlur={(e) => (e.target.style.borderColor = "rgba(0,245,255,0.15)")}
+                      className="focus:border-[#00f5ff] focus:shadow-[0_0_15px_rgba(0,245,255,0.2)]"
                     />
                   </div>
                 </div>
 
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="font-rajdhani text-xs tracking-widest uppercase text-[#00f5ff]/60 mb-1.5 block ml-1">Department *</label>
+                    <input
+                      required name="dept" value={form.dept} onChange={handleChange}
+                      placeholder="Ex: CSE, ECE, ME"
+                      style={inputStyle}
+                      className="focus:border-[#00f5ff] focus:shadow-[0_0_15px_rgba(0,245,255,0.2)]"
+                    />
+                  </div>
+                  <div>
+                    <label className="font-rajdhani text-xs tracking-widest uppercase text-[#00f5ff]/60 mb-1.5 block ml-1">Year of Study *</label>
+                    <select
+                      required name="year" value={form.year} onChange={handleChange}
+                      style={{ ...inputStyle, appearance: "none" as const }}
+                      className="focus:border-[#00f5ff] focus:shadow-[0_0_15px_rgba(0,245,255,0.2)]"
+                    >
+                      <option value="" style={{ background: "#02040d" }}>Select Year</option>
+                      {["1st Year", "2nd Year", "3rd Year", "4th Year"].map(y => (
+                        <option key={y} value={y} style={{ background: "#02040d" }}>{y}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
                 <div>
-                  <label className="font-rajdhani text-xs tracking-widest uppercase text-slate-500 mb-1 block">Email *</label>
+                  <label className="font-rajdhani text-xs tracking-widest uppercase text-[#00f5ff]/60 mb-1.5 block ml-1">Email *</label>
                   <input
                     required name="email" value={form.email} onChange={handleChange}
                     placeholder="you@college.ac.in" type="email"
                     style={inputStyle}
-                    onFocus={(e) => (e.target.style.borderColor = "rgba(0,245,255,0.5)")}
-                    onBlur={(e) => (e.target.style.borderColor = "rgba(0,245,255,0.15)")}
+                    className="focus:border-[#00f5ff] focus:shadow-[0_0_15px_rgba(0,245,255,0.2)]"
                   />
                 </div>
 
@@ -129,12 +160,11 @@ export default function Contact() {
                 </div>
 
                 <div>
-                  <label className="font-rajdhani text-xs tracking-widest uppercase text-slate-500 mb-1 block">Interested Event</label>
+                  <label className="font-rajdhani text-xs tracking-widest uppercase text-[#00f5ff]/60 mb-1.5 block ml-1">Interested Event</label>
                   <select
                     name="event" value={form.event} onChange={handleChange}
                     style={{ ...inputStyle, appearance: "none" as const }}
-                    onFocus={(e) => (e.target.style.borderColor = "rgba(0,245,255,0.5)")}
-                    onBlur={(e) => (e.target.style.borderColor = "rgba(0,245,255,0.15)")}
+                    className="focus:border-[#00f5ff] focus:shadow-[0_0_15px_rgba(0,245,255,0.2)]"
                   >
                     <option value="" style={{ background: "#02040d" }}>Select an Event</option>
                     {["Hackathon", "Robo Race", "Code Wars", "Circuit Quest", "Idea Forge", "TechQuiz Arena", "Paper Presentation", "CAD Challenge", "Workshop — AI/ML", "Workshop — Ethical Hacking", "Workshop — Robotics"].map(ev => (

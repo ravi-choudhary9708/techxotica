@@ -48,12 +48,11 @@ const typeColors: Record<string, string> = {
 
 export default function Schedule() {
   return (
-    <section
-      id="schedule"
-      className="py-24 px-4 relative overflow-hidden"
-      style={{ background: "radial-gradient(ellipse at 50% 80%, rgba(0,245,255,0.04) 0%, transparent 60%)" }}
-    >
-      <div className="max-w-6xl mx-auto">
+    <section id="schedule" className="story-section">
+      {/* Background glow */}
+      <div className="story-bg-base bg-gradient-to-t from-[#00f5ff]/10 to-transparent" />
+      
+      <div className="story-container">
         {/* Heading */}
         <div className="text-center mb-16 reveal">
           <p className="font-rajdhani text-xs tracking-[0.4em] uppercase text-[#00f5ff] mb-2">Plan Your Visit</p>

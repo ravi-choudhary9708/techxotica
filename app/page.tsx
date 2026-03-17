@@ -3,12 +3,9 @@
 import { useEffect } from "react";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
-import About from "./components/About";
+import AboutMadhubani from "./components/AboutMadhubani";
 import Events from "./components/Events";
-import Hackathon from "./components/Hackathon";
-import Workshops from "./components/Workshops";
-import Schedule from "./components/Schedule";
-import Sponsors from "./components/Sponsors";
+import ESports from "./components/ESports";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 
@@ -54,12 +51,9 @@ export default function Home() {
       <div className="relative z-10">
         <Navbar />
         <Hero />
-        <About />
+        <AboutMadhubani />
         <Events />
-        <Hackathon />
-        <Workshops />
-        <Schedule />
-        <Sponsors />
+        <ESports />
         <Contact />
         <Footer />
       </div>

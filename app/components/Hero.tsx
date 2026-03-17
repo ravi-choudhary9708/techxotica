@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import InteractiveStarfieldShader from "@/components/ui/light-up-shader";
+
 
 const taglines = [
   "Ignite Innovation",
@@ -24,83 +26,11 @@ function getCountdown() {
 }
 
 export default function Hero() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [taglineIdx, setTaglineIdx] = useState(0);
   const [typedText, setTypedText] = useState("");
   const [countdown, setCountdown] = useState(getCountdown());
   const [isDeleting, setIsDeleting] = useState(false);
   const typingRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  // Particle canvas
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    let animId: number;
-    const particles: { x: number; y: number; vx: number; vy: number; r: number; alpha: number; color: string }[] = [];
-    const COLORS = ["#00f5ff", "#a855f7", "#ec4899", "#ffd700"];
-
-    const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-    resize();
-    window.addEventListener("resize", resize);
-
-    for (let i = 0; i < 100; i++) {
-      particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
-        r: Math.random() * 2 + 0.5,
-        alpha: Math.random() * 0.6 + 0.2,
-        color: COLORS[Math.floor(Math.random() * COLORS.length)],
-      });
-    }
-
-    const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach((p) => {
-        p.x += p.vx;
-        p.y += p.vy;
-        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = p.color;
-        ctx.globalAlpha = p.alpha;
-        ctx.fill();
-      });
-
-      // Draw connecting lines between nearby particles
-      ctx.globalAlpha = 1;
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 120) {
-            ctx.beginPath();
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.strokeStyle = `rgba(0,245,255,${0.12 * (1 - dist / 120)})`;
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
-          }
-        }
-      }
-      animId = requestAnimationFrame(draw);
-    };
-    draw();
-
-    return () => {
-      cancelAnimationFrame(animId);
-      window.removeEventListener("resize", resize);
-    };
-  }, []);
 
   // Typing effect
   useEffect(() => {
@@ -142,13 +72,11 @@ export default function Hero() {
     <section
       id="hero"
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
-      style={{
-        background:
-          "radial-gradient(ellipse at 50% 40%, rgba(0,245,255,0.06) 0%, rgba(168,85,247,0.04) 40%, #02040d 75%)",
-      }}
     >
-      {/* Particle canvas */}
-      <canvas ref={canvasRef} id="particle-canvas" />
+      <div className="absolute inset-0 z-0">
+        <InteractiveStarfieldShader />
+      </div>
+
 
       {/* Grid lines */}
       <div
@@ -163,25 +91,25 @@ export default function Hero() {
       {/* Content */}
       <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
         {/* Badge */}
-        <div className="inline-flex items-center gap-2 border border-[rgba(0,245,255,0.3)] rounded-full px-4 py-1.5 mb-6 text-xs font-rajdhani tracking-widest uppercase text-[#00f5ff]"
-          style={{ background: "rgba(0,245,255,0.05)" }}>
-          <span className="w-2 h-2 rounded-full bg-[#00f5ff] animate-pulse" />
+        <div className="inline-flex items-center gap-2 border border-[rgba(255,255,255,0.4)] rounded-full px-4 py-1.5 mb-6 text-xs font-rajdhani tracking-widest uppercase text-white shadow-[0_0_15px_rgba(255,255,255,0.2)] bg-black/40 backdrop-blur-sm"
+          >
+          <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
           GEC Madhubani Presents · April 18–19, 2026
         </div>
 
         {/* Main title */}
-        <h1 className="font-orbitron font-black text-white mb-4 leading-none" style={{ fontSize: "clamp(3rem, 10vw, 7rem)", letterSpacing: "0.05em" }}>
+        <h1 className="font-orbitron font-black text-white mb-4 leading-none" style={{ fontSize: "clamp(3rem, 10vw, 7rem)", letterSpacing: "0.05em", textShadow: "0 0 40px rgba(0,0,0,0.8)" }}>
           TECH
-          <span className="neon-text-cyan">EXOTICA</span>
+          <span className="text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.8)]">EXOTICA</span>
         </h1>
-        <p className="font-orbitron text-[rgba(0,245,255,0.7)] text-sm tracking-[0.4em] uppercase mb-6">
+        <p className="font-orbitron text-white text-sm tracking-[0.4em] uppercase mb-6 font-bold shadow-black drop-shadow-lg">
           Annual Technical Festival · 2026
         </p>
 
         {/* Typed tagline */}
-        <div className="font-rajdhani text-2xl md:text-3xl text-slate-300 mb-10 h-10 flex items-center justify-center">
+        <div className="font-rajdhani text-2xl md:text-3xl font-semibold text-white mb-10 h-10 flex items-center justify-center drop-shadow-md">
           <span>{typedText}</span>
-          <span className="typed-cursor" />
+          <span className="typed-cursor bg-white shadow-[0_0_10px_white]" />
         </div>
 
         {/* Countdown */}

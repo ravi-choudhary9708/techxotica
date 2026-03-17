@@ -1,0 +1,242 @@
+"use client";
+
+import React, { useEffect, useRef, useState } from 'react';
+import * as THREE from 'three';
+
+const InteractiveStarfieldShader = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const materialRef = useRef<THREE.ShaderMaterial | null>(null);
+
+  // React state to control shader uniforms
+  const [hasActive, setHasActive] = useState(false);
+  const [hasUpcoming, setHasUpcoming] = useState(false);
+  const [dimmingDisabled, setDimmingDisabled] = useState(false);
+
+  // Update shader uniforms when state changes
+  useEffect(() => {
+    if (materialRef.current) {
+      materialRef.current.uniforms.hasActiveReminders.value = hasActive;
+    }
+  }, [hasActive]);
+
+  useEffect(() => {
+    if (materialRef.current) {
+      materialRef.current.uniforms.hasUpcomingReminders.value = hasUpcoming;
+    }
+  }, [hasUpcoming]);
+
+  useEffect(() => {
+    if (materialRef.current) {
+      materialRef.current.uniforms.disableCenterDimming.value = dimmingDisabled;
+    }
+  }, [dimmingDisabled]);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    // 1) Renderer + Scene + Camera + Clock
+    let renderer: THREE.WebGLRenderer;
+    try {
+      // Use alpha:false for a standard opaque background
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+      renderer.setPixelRatio(window.devicePixelRatio);
+      container.appendChild(renderer.domElement);
+    } catch (err) {
+      console.error('WebGL not supported', err);
+      container.innerHTML = '<p style="color:white;text-align:center;">Sorry, WebGL isn’t available.</p>';
+      return;
+    }
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    const clock = new THREE.Clock();
+
+    // 2) Shaders
+    const vertexShader = `
+      // We pass the UV coordinates of the plane to the fragment shader
+      varying vec2 vTextureCoord;
+      void main() {
+        vTextureCoord = uv;
+        gl_Position = vec4(position, 1.0);
+      }
+    `;
+
+    const fragmentShader = `
+      precision mediump float;
+      uniform vec2 iResolution;
+      uniform float iTime;
+      uniform bool hasActiveReminders;
+      uniform bool hasUpcomingReminders;
+      uniform bool disableCenterDimming;
+      varying vec2 vTextureCoord;
+
+      void mainImage(out vec4 O, in vec2 fragCoord) {
+        O = vec4(0.0, 0.0, 0.0, 1.0);
+        vec2 b = vec2(0.0, 0.2);
+        vec2 p;
+        mat2 R = mat2(1.0, 0.0, 0.0, 1.0); // Initial identity matrix
+        
+        // Calculate distance from center for dimming the center
+        vec2 center = iResolution.xy * 0.5;
+        float dist = distance(fragCoord, center);
+        float radius = min(iResolution.x, iResolution.y) * 0.5;
+        
+        // Create a dimming factor for the center area (30% of the radius)
+        float centerDim = disableCenterDimming ? 1.0 : smoothstep(radius * 0.3, radius * 0.5, dist);
+        
+        // Using a proper GLSL loop structure
+        for(int i = 0; i < 20; i++) {
+          float fi = float(i) + 1.0; // Starting from 1.0
+          
+          // Create rotation matrix for this iteration
+          float angle = fi + 0.0;
+          float c = cos(angle);
+          float s = sin(angle);
+          R = mat2(c, -s, s, c);
+          
+          // Second rotation for effect
+          float angle2 = fi + 33.0;
+          float c2 = cos(angle2);
+          float s2 = sin(angle2);
+          mat2 R2 = mat2(c2, -s2, s2, c2);
+          
+          // Calculate position
+          vec2 coord = fragCoord / iResolution.y * fi * 0.1 + iTime * b;
+          vec2 frac_coord = fract(coord * R2) - 0.5;
+          p = R * frac_coord;
+          vec2 clamped_p = clamp(p, -b, b);
+          
+          // Calculate intensity and color
+          float len = length(clamped_p - p);
+          if (len > 0.0) {
+            vec4 star = 1e-3 / len * (cos(p.y / 0.1 + vec4(0.0, 1.0, 2.0, 3.0)) + 1.0);
+            O += star;
+          }
+        }
+        
+        // Adjust colors based on reminder state
+        if (hasActiveReminders) {
+          // Blue for active reminders
+          O.rgb = mix(O.rgb, vec3(0.2, 0.4, 1.0), 0.3);
+        } else if (hasUpcomingReminders) {
+          // Green for upcoming reminders
+          O.rgb = mix(O.rgb, vec3(0.2, 1.0, 0.4), 0.3);
+        }
+        
+        // Apply center dimming only if not disabled
+        if (!disableCenterDimming) {
+          O.rgb = mix(O.rgb * 0.3, O.rgb, centerDim);
+        }
+      }
+
+      void main() {
+        // Remove the circular mask to make the shader full screen
+        vec4 color;
+        mainImage(color, vTextureCoord * iResolution);
+        gl_FragColor = color;
+      }
+    `;
+
+    // 3) Material, Geometry, Mesh
+    const uniforms = {
+      iTime:       { value: 0 },
+      iResolution: { value: new THREE.Vector2() },
+      hasActiveReminders: { value: hasActive },
+      hasUpcomingReminders: { value: hasUpcoming },
+      disableCenterDimming: { value: dimmingDisabled }
+    };
+    const material = new THREE.ShaderMaterial({ vertexShader, fragmentShader, uniforms });
+    materialRef.current = material; // Store material in ref
+    const geometry = new THREE.PlaneGeometry(2, 2);
+    const mesh     = new THREE.Mesh(geometry, material);
+    scene.add(mesh);
+
+    // 4) Resize Handler
+    const onResize = () => {
+      const w = container.clientWidth;
+      const h = container.clientHeight;
+      renderer.setSize(w, h);
+      uniforms.iResolution.value.set(w, h);
+    };
+
+    window.addEventListener('resize', onResize);
+    onResize();
+
+    // 5) Animation Loop
+    renderer.setAnimationLoop(() => {
+      uniforms.iTime.value = clock.getElapsedTime();
+      renderer.render(scene, camera);
+    });
+
+    // 6) Cleanup
+    return () => {
+      window.removeEventListener('resize', onResize);
+      renderer.setAnimationLoop(null);
+      const canvas = renderer.domElement;
+      if (canvas && canvas.parentNode) {
+        canvas.parentNode.removeChild(canvas);
+      }
+      material.dispose();
+      geometry.dispose();
+      renderer.dispose();
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const buttonStyle: React.CSSProperties = {
+    padding: '10px 15px',
+    margin: '5px',
+    fontSize: '14px',
+    cursor: 'pointer',
+    borderRadius: '8px',
+    border: '1px solid #555',
+    backgroundColor: '#333',
+    color: 'white',
+    boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
+  };
+
+  return (
+    <>
+      <div
+        ref={containerRef}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          zIndex: -1,
+          backgroundColor: '#000'
+        }}
+        aria-label="Interactive starfield animation"
+      />
+      {/* 
+      <div style={{
+        position: 'absolute',
+        bottom: '20px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        zIndex: 10,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        padding: '10px',
+        borderRadius: '12px',
+        display: 'flex',
+        gap: '10px'
+      }}>
+        <button style={{...buttonStyle, backgroundColor: hasActive ? '#007bff' : '#333'}} onClick={() => setHasActive(!hasActive)}>
+          Active Reminders
+        </button>
+        <button style={{...buttonStyle, backgroundColor: hasUpcoming ? '#28a745' : '#333'}} onClick={() => setHasUpcoming(!hasUpcoming)}>
+          Upcoming Reminders
+        </button>
+        <button style={{...buttonStyle, backgroundColor: dimmingDisabled ? '#dc3545' : '#333'}} onClick={() => setDimmingDisabled(!dimmingDisabled)}>
+          Disable Dimming
+        </button>
+      </div>
+      */}
+    </>
+  );
+};
+
+export default InteractiveStarfieldShader;

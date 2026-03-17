@@ -4,6 +4,31 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@theme {
+  --animate-pulse-slow: pulse-slow 3s ease-in-out infinite;
+
+  @keyframes pulse-slow {
+    0%, 100% {
+      transform: translateX(-100%);
+    }
+    50% {
+      transform: translateX(100%);
+    }
+  }
+}
+
+@keyframes shine {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
 :root {
   --neon-cyan: #00f5ff;
   --neon-purple: #a855f7;
@@ -160,6 +185,19 @@ body {
 .btn-neon-solid:hover {
   box-shadow: 0 0 20px rgba(168, 85, 247, 0.6), 0 0 40px rgba(0, 245, 255, 0.3);
   transform: scale(1.04);
+}
+
+/* ── Storytelling Layout ── */
+.story-section {
+  @apply relative min-h-screen flex items-center justify-center overflow-hidden py-24;
+}
+
+.story-container {
+  @apply relative z-10 w-full max-w-7xl mx-auto px-4 md:px-8 transition-all duration-700;
+}
+
+.story-bg-base {
+  @apply absolute inset-0 z-0 pointer-events-none opacity-20;
 }
 
 /* ── Section headings ── */

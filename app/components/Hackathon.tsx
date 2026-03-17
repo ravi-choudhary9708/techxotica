@@ -22,15 +22,11 @@ export default function Hackathon() {
     document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" });
 
   return (
-    <section
-      id="hackathon"
-      className="py-24 px-4 relative overflow-hidden"
-    >
-      {/* BG Glow */}
-      <div className="absolute inset-0 pointer-events-none"
-        style={{ background: "radial-gradient(ellipse at 50% 50%, rgba(168,85,247,0.07) 0%, transparent 65%)" }} />
-
-      <div className="max-w-6xl mx-auto">
+    <section id="hackathon" className="story-section">
+      {/* Background glow */}
+      <div className="story-bg-base bg-gradient-to-br from-[#a855f7]/20 to-transparent" />
+      
+      <div className="story-container">
         {/* Heading */}
         <div className="text-center mb-16 reveal">
           <p className="font-rajdhani text-xs tracking-[0.4em] uppercase text-[#a855f7] mb-2">Flagship Event</p>

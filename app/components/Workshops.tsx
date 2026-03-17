@@ -72,12 +72,11 @@ const levelColors: Record<string, string> = {
 
 export default function Workshops() {
   return (
-    <section
-      id="workshops"
-      className="py-24 px-4 relative overflow-hidden"
-      style={{ background: "radial-gradient(ellipse at 80% 30%, rgba(0,255,136,0.04) 0%, transparent 55%)" }}
-    >
-      <div className="max-w-7xl mx-auto">
+    <section id="workshops" className="story-section">
+      {/* Background glow */}
+      <div className="story-bg-base bg-gradient-to-tr from-[#00ff88]/10 to-transparent" />
+      
+      <div className="story-container">
         {/* Heading */}
         <div className="text-center mb-16 reveal">
           <p className="font-rajdhani text-xs tracking-[0.4em] uppercase text-[#00ff88] mb-2">Learn By Doing</p>
