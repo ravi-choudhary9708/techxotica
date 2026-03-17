@@ -3,9 +3,9 @@ import { Orbitron, Inter, Rajdhani, Geist } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
-const orbitron = Orbitron({ 
+const orbitron = Orbitron({
   subsets: ["latin"],
   variable: "--font-orbitron",
   weight: ["400", "500", "600", "700", "800", "900"],
@@ -13,7 +13,7 @@ const orbitron = Orbitron({
 
 const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-inter", 
+  variable: "--font-inter",
   weight: ["300", "400", "500", "600", "700"],
 });
 
@@ -36,6 +36,8 @@ export const metadata: Metadata = {
   },
 };
 
+import Navbar from "@/app/components/Navbar";
+
 export default function RootLayout({
   children,
 }: {
@@ -44,6 +46,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={cn(orbitron.variable, inter.variable, rajdhani.variable, "font-sans", geist.variable)}>
       <body className="antialiased">
+        <Navbar />
         {children}
       </body>
     </html>

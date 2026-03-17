@@ -64,9 +64,6 @@ export default function Hero() {
   const scrollToEvents = () => {
     document.querySelector("#events")?.scrollIntoView({ behavior: "smooth" });
   };
-  const scrollToContact = () => {
-    document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" });
-  };
 
   return (
     <section
@@ -92,7 +89,7 @@ export default function Hero() {
       <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
         {/* Badge */}
         <div className="inline-flex items-center gap-2 border border-[rgba(255,255,255,0.4)] rounded-full px-4 py-1.5 mb-6 text-xs font-rajdhani tracking-widest uppercase text-white shadow-[0_0_15px_rgba(255,255,255,0.2)] bg-black/40 backdrop-blur-sm"
-          >
+        >
           <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
           GEC Madhubani Presents · April 18–19, 2026
         </div>
@@ -129,7 +126,7 @@ export default function Hero() {
 
         {/* CTAs */}
         <div className="flex flex-wrap gap-4 justify-center">
-          <button onClick={scrollToContact} className="btn-neon-solid text-sm px-8 py-3">
+          <button onClick={() => window.location.href = '/register'} className="btn-neon-solid text-sm px-8 py-3">
             Register Now
           </button>
           <button onClick={scrollToEvents} className="btn-neon text-sm px-8 py-3">

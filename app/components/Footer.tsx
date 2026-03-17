@@ -30,7 +30,7 @@ export default function Footer() {
           <div>
             <p className="font-orbitron text-xs tracking-widest uppercase text-slate-400 mb-4">Quick Links</p>
             <div className="flex flex-col gap-2">
-              {["About", "Events", "Hackathon", "Workshops", "Schedule", "Contact"].map((l) => (
+              {["About", "Events", "Hackathon", "Workshops", "Schedule"].map((l) => (
                 <button
                   key={l}
                   onClick={() => document.querySelector(`#${l.toLowerCase()}`)?.scrollIntoView({ behavior: "smooth" })}

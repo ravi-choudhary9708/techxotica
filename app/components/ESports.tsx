@@ -19,7 +19,7 @@ const ScanLine = () => (
 const FloatingParticle = ({ delay = 0 }) => (
   <motion.div
     initial={{ y: 0, opacity: 0 }}
-    animate={{ 
+    animate={{
       y: [-20, 20, -20],
       opacity: [0, 0.3, 0],
       scale: [0.8, 1.2, 0.8]
@@ -42,7 +42,7 @@ const ESports = () => {
   }, []);
 
   return (
-    <section 
+    <section
       id="esports"
       ref={sectionRef}
       className="relative min-h-screen bg-[#0a0a0a] overflow-hidden py-24 px-6 md:px-12 flex flex-col items-center justify-center font-['Rajdhani']"
@@ -61,7 +61,7 @@ const ESports = () => {
         }}
       />
       <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none noise-bg" />
-      
+
       {/* Ambient Lights */}
       <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-sky-500/10 blur-[120px] rounded-full" />
       <div className="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] bg-white/5 blur-[100px] rounded-full" />
@@ -84,22 +84,22 @@ const ESports = () => {
             className="flex flex-col"
           >
             <div className="relative inline-block">
-              <motion.h2 
+              <motion.h2
                 className="text-6xl md:text-8xl font-black text-[#f0f0f0] tracking-tighter uppercase italic"
                 style={{ fontFamily: 'Orbitron, sans-serif' }}
               >
                 ESports <span className="text-[#4af0ff]">Arena</span>
               </motion.h2>
-              
+
               {/* Slash Animation Underline */}
-              <motion.div 
+              <motion.div
                 initial={{ width: 0 }}
                 whileInView={{ width: "100%" }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.5, duration: 0.6 }}
                 className="h-1 bg-gradient-to-r from-[#4af0ff] via-transparent to-transparent mt-2"
               />
-              <motion.div 
+              <motion.div
                 initial={{ width: 0 }}
                 whileInView={{ width: "60%" }}
                 viewport={{ once: true }}
@@ -107,8 +107,8 @@ const ESports = () => {
                 className="h-[1px] bg-white/30 mt-1 ml-4"
               />
             </div>
-            
-            <motion.p 
+
+            <motion.p
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -160,13 +160,14 @@ const ESports = () => {
                 <Swords className="text-[#4af0ff]" /> THE ULTIMATE SHOWDOWN
               </h3>
               <p className="text-[#c0c0c0] leading-relaxed text-lg">
-                Step into the high-stakes arena where skill meets strategy. From the tactical precision of Valorant 
-                to the raw battle royale chaos of BGMI, only the strongest survive. Are you ready to etch 
+                Step into the high-stakes arena where skill meets strategy. From the tactical precision of Valorant
+                to the raw battle royale chaos of BGMI, only the strongest survive. Are you ready to etch
                 your name in the hall of champions?
               </p>
               <motion.button
                 whileHover={{ scale: 1.05, letterSpacing: "2px" }}
                 whileTap={{ scale: 0.95 }}
+                onClick={() => window.location.href = '/events'}
                 className="mt-8 px-10 py-4 bg-[#f0f0f0] text-[#0a0a0a] font-bold uppercase tracking-wider skew-x-[-12deg] hover:bg-[#4af0ff] transition-all relative group overflow-hidden"
               >
                 <span className="relative z-10">Register Now</span>
@@ -176,7 +177,7 @@ const ESports = () => {
           </div>
 
           {/* Right Side: Ninja Character Frame */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 40 }}
             whileInView={{ opacity: 1, scale: 1, y: 0 }}
             viewport={{ once: true }}
@@ -186,10 +187,10 @@ const ESports = () => {
             {/* Decorative Frames */}
             <div className="absolute inset-0 border-[1px] border-white/10 -m-4 skew-y-3" />
             <div className="absolute inset-0 border-[1px] border-[#4af0ff]/20 m-2 -skew-y-3" />
-            
+
             <div className="relative group">
               <div className="absolute -inset-1 bg-gradient-to-r from-[#4af0ff]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity blur-2xl" />
-              
+
               <motion.div
                 animate={{ y: [0, -20, 0] }}
                 transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
@@ -204,8 +205,8 @@ const ESports = () => {
 
                 {/* The Warrior Image */}
                 <div className="relative aspect-[4/5] bg-neutral-900 group-hover:scale-105 transition-transform duration-700">
-                  <img 
-                    src={NINJA_IMG} 
+                  <img
+                    src={NINJA_IMG}
                     alt="Cyberpunk Ninja"
                     className="w-full h-full object-cover grayscale-[0.2] contrast-[1.2] hover:grayscale-0 transition-all"
                   />

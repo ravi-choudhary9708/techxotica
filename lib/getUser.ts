@@ -1,0 +1,14 @@
+import { cookies } from "next/headers";
+import { verifyToken } from "./auth";
+
+export async function getUser() {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("tx_token")?.value;
+
+    if (!token) {
+        return null;
+    }
+
+    const decoded = verifyToken(token);
+    return decoded ? decoded : null;
+}

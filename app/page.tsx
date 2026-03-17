@@ -6,7 +6,6 @@ import Hero from "./components/Hero";
 import AboutMadhubani from "./components/AboutMadhubani";
 import Events from "./components/Events";
 import ESports from "./components/ESports";
-import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 
 export default function Home() {
@@ -36,14 +35,14 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-[#02040d] text-slate-200 selection:bg-[#00f5ff] selection:text-[#02040d]">
       {/* Global scanline overlay */}
-      <div className="fixed inset-0 pointer-events-none z-[9999]" 
+      <div className="fixed inset-0 pointer-events-none z-[9999]"
         style={{
           background: "linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03))",
           backgroundSize: "100% 3px, 3px 100%",
           mixBlendMode: "overlay"
         }}
       />
-      
+
       {/* Dynamic starfield background */}
       <div className="fixed inset-0 min-h-screen pointer-events-none z-0 star-bg opacity-30 mix-blend-screen" />
 
@@ -54,7 +53,6 @@ export default function Home() {
         <AboutMadhubani />
         <Events />
         <ESports />
-        <Contact />
         <Footer />
       </div>
     </main>

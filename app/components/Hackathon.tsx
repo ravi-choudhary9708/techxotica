@@ -18,14 +18,12 @@ const tracks = [
 ];
 
 export default function Hackathon() {
-  const scrollToContact = () =>
-    document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" });
 
   return (
     <section id="hackathon" className="story-section">
       {/* Background glow */}
       <div className="story-bg-base bg-gradient-to-br from-[#a855f7]/20 to-transparent" />
-      
+
       <div className="story-container">
         {/* Heading */}
         <div className="text-center mb-16 reveal">
@@ -76,7 +74,7 @@ export default function Hackathon() {
                   ))}
                 </div>
 
-                <button onClick={scrollToContact} className="btn-neon-solid w-full justify-center py-3"
+                <button onClick={() => window.location.href = '/register'} className="btn-neon-solid w-full justify-center py-3"
                   style={{ background: "linear-gradient(135deg, #a855f7, #ec4899)" }}>
                   Register Team
                 </button>
