@@ -707,7 +707,7 @@ export default function EventRegistrationClient({ event, user, isRegistered, reg
 
                     {/* ── Edit Team panel (shown when registered leader clicks Edit Team) ── */}
                     {isRegistered && ev.type === "team" && isLeader && editMode && (
-                        <div className="ed-card" style={{ transitionDelay: ".05s" }}>
+                        <div className="ed-card ed-in" style={{ transitionDelay: "0s" }}>
                             <div className="ed-card-top-bar" style={{ background: "linear-gradient(to right, rgba(210,140,60,0.6), transparent)" }} />
                             <div className="ed-card-pad">
                                 <div className="ed-sec-title">Edit Team — <span style={{ color: "#d28c3c", fontFamily: "Share Tech Mono, monospace", fontSize: 12 }}>{registration?.teamName}</span></div>
