@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-const ANIME_IMG = "/anime.jpg";
+const ANIME_IMG = "/plogin_image.jpg";
 
 const BRANCHES = ["CSE", "IOT", "CE", "EE", "MECH"];
 const BATCHES = ["2022", "2023", "2024", "2025"];
