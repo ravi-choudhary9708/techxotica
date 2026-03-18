@@ -449,6 +449,42 @@ interface Splatter {
   del: string;
 }
 
+// ── Field must be defined OUTSIDE RegisterPage so React doesn't
+// remount it on every render (which kills input focus mid-typing)
+interface FieldProps {
+  id: string;
+  label: string;
+  icon: string;
+  type?: string;
+  placeholder: string;
+  field: string;
+  error?: string;
+  value: string;
+  onChange: (field: string, val: string) => void;
+}
+
+function Field({ id, label, icon, type = "text", placeholder, field, error, value, onChange }: FieldProps) {
+  return (
+    <div className="rg-field">
+      <label className="rg-label" htmlFor={id}>{label}</label>
+      <div className="rg-input-wrap">
+        <span className="rg-input-icon">{icon}</span>
+        <input
+          id={id}
+          type={type}
+          className="rg-input"
+          placeholder={placeholder}
+          value={value}
+          onChange={e => onChange(field, e.target.value)}
+          autoComplete="off"
+        />
+        <div className="rg-input-line" />
+      </div>
+      {error && <div className="rg-error show">{error}</div>}
+    </div>
+  );
+}
+
 export default function RegisterPage() {
   const router = useRouter();
   const [visible, setVisible] = useState(false);
@@ -532,26 +568,6 @@ export default function RegisterPage() {
 
   const cx = (...a: any[]) => a.filter(Boolean).join(" ");
 
-  const Field = ({ id, label, icon, type = "text", placeholder, field, error }: any) => (
-    <div className="rg-field">
-      <label className="rg-label" htmlFor={id}>{label}</label>
-      <div className="rg-input-wrap">
-        <span className="rg-input-icon">{icon}</span>
-        <input
-          id={id}
-          type={type}
-          className="rg-input"
-          placeholder={placeholder}
-          value={(form as any)[field]}
-          onChange={e => handleChange(field, e.target.value)}
-          autoComplete="off"
-        />
-        <div className="rg-input-line" />
-      </div>
-      {error && <div className={cx("rg-error", "show")}>{error}</div>}
-    </div>
-  );
-
   return (
     <div className="rg-root">
       <div className="rg-scan" />
@@ -633,16 +649,19 @@ export default function RegisterPage() {
                 id="rg-name" label="Full Name" icon="◈"
                 placeholder="Rahul Kumar"
                 field="name" error={errors.name}
+                value={form.name} onChange={handleChange}
               />
               <Field
                 id="rg-reg" label="Registration Number" icon="⬡"
                 placeholder="22CSE001"
                 field="regNo" error={errors.regNo}
+                value={form.regNo} onChange={handleChange}
               />
               <Field
                 id="rg-phone" label="Phone Number" icon="◷"
                 type="tel" placeholder="9876543210"
                 field="phone" error={errors.phone}
+                value={form.phone} onChange={handleChange}
               />
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
@@ -689,6 +708,7 @@ export default function RegisterPage() {
                 id="rg-pw" label="Password" icon="◆"
                 type="password" placeholder="Min 6 characters"
                 field="password" error={errors.password}
+                value={form.password} onChange={handleChange}
               />
 
               {/* TechID preview */}
