@@ -415,8 +415,8 @@ export const eventItems: EventData[] = [
         ],
     },
     {
-        id: "poster-talk",
-        title: "Poster Talk",
+        id: "poster-presentation",
+        title: "Poster presentation",
         category: "Cultural",
         description: "Present complex technical info through visual storytelling. One poster, one talk, ultimate impact.",
         image: "https://images.unsplash.com/photo-1544531585-9847b68c8c86?q=80&w=1000&auto=format&fit=crop",
