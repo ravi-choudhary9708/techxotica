@@ -45,7 +45,7 @@ const ESports = () => {
     <section
       id="esports"
       ref={sectionRef}
-      className="relative min-h-screen bg-[#0a0a0a] overflow-hidden py-24 px-6 md:px-12 flex flex-col items-center justify-center font-['Rajdhani']"
+      className="relative min-h-screen bg-[#0a0a0a] overflow-hidden py-48 px-6 md:px-12 flex flex-col items-center justify-center font-['Rajdhani']"
     >
       {/* Background Texture & Grain */}
       <div className="absolute inset-0 z-0 opacity-20 pointer-events-none"

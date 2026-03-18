@@ -39,7 +39,7 @@ export function AnimeNavBar({ items, className, defaultActive = "Home" }: NavBar
   }, [])
 
   // Close mascot when clicking away could be added, but for now let's keep it simple
-  
+
   const handleNavClick = (e: React.MouseEvent, item: NavItem) => {
     if (item.url.startsWith("#")) {
       e.preventDefault();
@@ -54,10 +54,10 @@ export function AnimeNavBar({ items, className, defaultActive = "Home" }: NavBar
   if (!mounted) return null
 
   return (
-    <div className={cn("fixed top-32 left-0 right-0 z-[9999]", className)}>
+    <div className={cn("fixed top-16 left-0 right-0 z-[9999]", className)}>
       <div className="flex justify-center pt-6">
-        <motion.div 
-          className="flex items-center gap-2 md:gap-4 bg-black/60 border border-white/20 backdrop-blur-2xl py-3 px-4 rounded-full shadow-[0_0_30px_rgba(0,0,0,0.5)] relative"
+        <motion.div
+          className="flex items-center gap-10 md:gap-16 bg-black/60 border border-white/20 backdrop-blur-3xl py-8 px-20 rounded-full shadow-[0_0_60px_rgba(0,0,0,0.7)] relative"
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{
@@ -79,7 +79,7 @@ export function AnimeNavBar({ items, className, defaultActive = "Home" }: NavBar
                 onMouseEnter={() => setHoveredTab(item.name)}
                 onMouseLeave={() => setHoveredTab(null)}
                 className={cn(
-                  "relative cursor-pointer text-sm font-orbitron font-semibold px-5 md:px-8 py-3 md:py-4 rounded-full transition-all duration-300",
+                  "relative cursor-pointer text-sm font-orbitron font-semibold px-12 md:px-24 py-6 md:py-9 rounded-full transition-all duration-300",
                   "text-white/60 hover:text-white",
                   isActive && "bg-white/10 text-white"
                 )}
@@ -88,7 +88,7 @@ export function AnimeNavBar({ items, className, defaultActive = "Home" }: NavBar
                   <motion.div
                     className="absolute inset-0 rounded-full -z-10 overflow-hidden"
                     initial={{ opacity: 0 }}
-                    animate={{ 
+                    animate={{
                       opacity: [0.2, 0.4, 0.2],
                       scale: [1, 1.02, 1]
                     }}
@@ -99,9 +99,9 @@ export function AnimeNavBar({ items, className, defaultActive = "Home" }: NavBar
                     }}
                   >
                     <div className="absolute inset-0 bg-[#00f5ff]/20 rounded-full blur-md" />
-                    <div className="absolute inset-[-4px] bg-[#a855f7]/15 rounded-full blur-xl" />
-                    
-                    <div 
+                    <div className="absolute inset-[-4px] bg-[#00f5ff]/15 rounded-full blur-xl" />
+
+                    <div
                       className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
                       style={{
                         animation: "shine 4s ease-in-out infinite"
@@ -115,14 +115,14 @@ export function AnimeNavBar({ items, className, defaultActive = "Home" }: NavBar
                 >
                   {item.name}
                 </motion.span>
-                <motion.span 
+                <motion.span
                   className="md:hidden relative z-10"
                   whileHover={{ scale: 1.2 }}
                   whileTap={{ scale: 0.9 }}
                 >
                   <Icon size={18} strokeWidth={2.5} />
                 </motion.span>
-          
+
                 <AnimatePresence>
                   {isHovered && !isActive && (
                     <motion.div
@@ -146,7 +146,7 @@ export function AnimeNavBar({ items, className, defaultActive = "Home" }: NavBar
                     }}
                   >
                     <div className="relative w-16 h-16">
-                      <motion.div 
+                      <motion.div
                         className="absolute w-14 h-14 bg-white rounded-full left-1/2 -translate-x-1/2 shadow-[0_0_25px_rgba(255,255,255,0.5)]"
                         animate={
                           hoveredTab ? {
@@ -167,7 +167,7 @@ export function AnimeNavBar({ items, className, defaultActive = "Home" }: NavBar
                         }
                       >
                         {/* Eyes */}
-                        <motion.div 
+                        <motion.div
                           className="absolute w-1.5 h-1.5 bg-black rounded-full"
                           animate={
                             hoveredTab ? {
@@ -180,7 +180,7 @@ export function AnimeNavBar({ items, className, defaultActive = "Home" }: NavBar
                           }
                           style={{ left: '30%', top: '40%' }}
                         />
-                        <motion.div 
+                        <motion.div
                           className="absolute w-1.5 h-1.5 bg-black rounded-full"
                           animate={
                             hoveredTab ? {
@@ -194,17 +194,17 @@ export function AnimeNavBar({ items, className, defaultActive = "Home" }: NavBar
                           style={{ right: '30%', top: '40%' }}
                         />
                         {/* Blush */}
-                        <motion.div 
+                        <motion.div
                           className="absolute w-2 h-1 bg-pink-300/60 rounded-full"
                           style={{ left: '20%', top: '55%' }}
                         />
-                        <motion.div 
+                        <motion.div
                           className="absolute w-2 h-1 bg-pink-300/60 rounded-full"
                           style={{ right: '20%', top: '55%' }}
                         />
-                        
+
                         {/* Mouth */}
-                        <motion.div 
+                        <motion.div
                           className="absolute w-3 h-1.5 border-b-2 border-black rounded-full"
                           animate={
                             hoveredTab ? {

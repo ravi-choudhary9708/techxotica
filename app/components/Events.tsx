@@ -43,7 +43,7 @@ const majorEvents: CardStackItem[] = [
 
 export default function Events() {
   return (
-    <section id="events" className="story-section pb-32">
+    <section id="events" className="story-section pb-48">
       {/* Background glow */}
       <div className="story-bg-base bg-gradient-to-bl from-[#00f5ff]/10 to-transparent" />
 

@@ -28,7 +28,8 @@ function getCountdown() {
 export default function Hero() {
   const [taglineIdx, setTaglineIdx] = useState(0);
   const [typedText, setTypedText] = useState("");
-  const [countdown, setCountdown] = useState(getCountdown());
+  const [mounted, setMounted] = useState(false);
+  const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [isDeleting, setIsDeleting] = useState(false);
   const typingRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -55,8 +56,10 @@ export default function Hero() {
     return () => { if (typingRef.current) clearTimeout(typingRef.current); };
   }, [typedText, isDeleting, taglineIdx]);
 
-  // Countdown
+  // Countdown & Hydration
   useEffect(() => {
+    setMounted(true);
+    setCountdown(getCountdown());
     const id = setInterval(() => setCountdown(getCountdown()), 1000);
     return () => clearInterval(id);
   }, []);
@@ -80,8 +83,8 @@ export default function Hero() {
         className="absolute inset-0 pointer-events-none"
         style={{
           backgroundImage:
-            "linear-gradient(rgba(0,245,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,245,255,0.04) 1px, transparent 1px)",
-          backgroundSize: "50px 50px",
+            "linear-gradient(rgba(251,191,36,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(251,191,36,0.06) 1px, transparent 1px)",
+          backgroundSize: "60px 60px",
         }}
       />
 
@@ -95,30 +98,29 @@ export default function Hero() {
         </div>
 
         {/* Main title */}
-        <h1 className="font-orbitron font-black text-white mb-4 leading-none" style={{ fontSize: "clamp(3rem, 10vw, 7rem)", letterSpacing: "0.05em", textShadow: "0 0 40px rgba(0,0,0,0.8)" }}>
+        <h1 className="font-orbitron font-black text-white mb-12 leading-none" style={{ fontSize: "clamp(3rem, 10vw, 7rem)", letterSpacing: "0.05em", textShadow: "0 0 40px rgba(0,0,0,0.8)" }}>
           TECH
-          <span className="text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.8)]">EXOTICA</span>
+          <span className="text-white drop-shadow-[0_0_20px_rgba(251,191,36,0.8)]">EXOTICA</span>
         </h1>
-        <p className="font-orbitron text-white text-sm tracking-[0.4em] uppercase mb-6 font-bold shadow-black drop-shadow-lg">
-          Annual Technical Festival · 2026
-        </p>
 
         {/* Typed tagline */}
-        <div className="font-rajdhani text-2xl md:text-3xl font-semibold text-white mb-10 h-10 flex items-center justify-center drop-shadow-md">
+        <div className="font-rajdhani text-2xl md:text-3xl font-semibold text-white mb-16 h-10 flex items-center justify-center drop-shadow-md">
           <span>{typedText}</span>
-          <span className="typed-cursor bg-white shadow-[0_0_10px_white]" />
+          <span className="typed-cursor bg-[#fbbf24] shadow-[0_0_10px_#fbbf24]" />
         </div>
 
         {/* Countdown */}
-        <div className="flex items-center justify-center gap-3 mb-10">
+        <div className="flex items-center justify-center gap-3 mb-16">
           {[
             { value: countdown.days, label: "Days" },
             { value: countdown.hours, label: "Hours" },
             { value: countdown.minutes, label: "Mins" },
             { value: countdown.seconds, label: "Secs" },
           ].map(({ value, label }) => (
-            <div key={label} className="countdown-box">
-              <span className="countdown-number">{String(value).padStart(2, "0")}</span>
+            <div key={label} className="countdown-box-yellow">
+              <span className="countdown-number-yellow">
+                {mounted ? String(value).padStart(2, "0") : "00"}
+              </span>
               <span className="countdown-label">{label}</span>
             </div>
           ))}
@@ -126,35 +128,21 @@ export default function Hero() {
 
         {/* CTAs */}
         <div className="flex flex-wrap gap-4 justify-center">
-          <button onClick={() => window.location.href = '/register'} className="btn-neon-solid text-sm px-8 py-3">
+          <button onClick={() => window.location.href = '/register'} className="btn-neon-yellow-solid text-sm px-8 py-3">
             Register Now
           </button>
-          <button onClick={scrollToEvents} className="btn-neon text-sm px-8 py-3">
+          <button onClick={scrollToEvents} className="btn-neon-yellow text-sm px-8 py-3">
             Explore Events
           </button>
         </div>
 
-        {/* Stats bar */}
-        <div className="flex flex-wrap justify-center gap-8 mt-16 text-center">
-          {[
-            { value: "20+", label: "Events" },
-            { value: "₹1L+", label: "Prize Pool" },
-            { value: "1000+", label: "Participants" },
-            { value: "2", label: "Epic Days" },
-          ].map(({ value, label }) => (
-            <div key={label}>
-              <div className="font-orbitron font-bold text-2xl neon-text-cyan">{value}</div>
-              <div className="font-rajdhani text-xs tracking-widest uppercase text-slate-500 mt-1">{label}</div>
-            </div>
-          ))}
-        </div>
       </div>
 
       {/* Scroll hint */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-slate-500">
         <span className="font-rajdhani text-xs tracking-widest uppercase">Scroll</span>
-        <div className="w-px h-10 bg-gradient-to-b from-[#00f5ff] to-transparent animate-bounce" />
+        <div className="w-px h-10 bg-gradient-to-b from-[#fbbf24] to-transparent animate-bounce" />
       </div>
-    </section>
+    </section >
   );
 }

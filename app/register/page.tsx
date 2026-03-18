@@ -437,276 +437,287 @@ const styles = `
   }
 `;
 
-// Splatter particles config
-const SPLATTERS = Array.from({ length: 12 }, (_, i) => ({
-    id: i,
-    top: `${20 + Math.random() * 65}%`,
-    left: `${5 + Math.random() * 80}%`,
-    size: `${3 + Math.random() * 8}px`,
-    tx: `${(Math.random() - 0.5) * 60}px`,
-    ty: `${(Math.random() - 0.5) * 60}px`,
-    dur: `${4 + Math.random() * 6}s`,
-    del: `${Math.random() * 8}s`,
-}));
+// Splatter particles config type
+interface Splatter {
+  id: number;
+  top: string;
+  left: string;
+  size: string;
+  tx: string;
+  ty: string;
+  dur: string;
+  del: string;
+}
 
 export default function RegisterPage() {
-    const router = useRouter();
-    const [visible, setVisible] = useState(false);
-    const [form, setForm] = useState({ name: "", regNo: "", phone: "", batch: "", branch: "", password: "" });
-    const [errors, setErrors] = useState<{ [key: string]: string }>({});
-    const [submitted, setSubmitted] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [apiError, setApiError] = useState("");
+  const router = useRouter();
+  const [visible, setVisible] = useState(false);
+  const [form, setForm] = useState({ name: "", regNo: "", phone: "", batch: "", branch: "", password: "" });
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [apiError, setApiError] = useState("");
+  const [splatters, setSplatters] = useState<Splatter[]>([]);
 
-    useEffect(() => {
-        if (!document.getElementById("rg-styles")) {
-            const el = document.createElement("style");
-            el.id = "rg-styles";
-            el.textContent = styles;
-            document.head.appendChild(el);
-        }
-        setTimeout(() => setVisible(true), 80);
-    }, []);
+  useEffect(() => {
+    if (!document.getElementById("rg-styles")) {
+      const el = document.createElement("style");
+      el.id = "rg-styles";
+      el.textContent = styles;
+      document.head.appendChild(el);
+    }
+    setSplatters(Array.from({ length: 12 }, (_, i) => ({
+      id: i,
+      top: `${20 + Math.random() * 65}%`,
+      left: `${5 + Math.random() * 80}%`,
+      size: `${3 + Math.random() * 8}px`,
+      tx: `${(Math.random() - 0.5) * 60}px`,
+      ty: `${(Math.random() - 0.5) * 60}px`,
+      dur: `${4 + Math.random() * 6}s`,
+      del: `${Math.random() * 8}s`,
+    })));
+    setTimeout(() => setVisible(true), 80);
+  }, []);
 
-    const techId = form.phone.length >= 5 && form.batch
-        ? `TX-${form.phone.slice(0, 5)}-${form.batch}`
-        : null;
+  const techId = form.phone.length >= 5 && form.batch
+    ? `TX-${form.phone.slice(0, 5)}-${form.batch}`
+    : null;
 
-    const validate = () => {
-        const e: { [key: string]: string } = {};
-        if (!form.name.trim()) e.name = "Name is required";
-        if (!form.regNo.trim()) e.regNo = "Registration number required";
-        if (!/^[0-9]{10}$/.test(form.phone)) e.phone = "Enter valid 10-digit number";
-        if (!form.batch) e.batch = "Select your batch";
-        if (!form.branch) e.branch = "Select your branch";
-        if (form.password.length < 6) e.password = "Min 6 characters";
-        return e;
-    };
+  const validate = () => {
+    const e: { [key: string]: string } = {};
+    if (!form.name.trim()) e.name = "Name is required";
+    if (!form.regNo.trim()) e.regNo = "Registration number required";
+    if (!/^[0-9]{10}$/.test(form.phone)) e.phone = "Enter valid 10-digit number";
+    if (!form.batch) e.batch = "Select your batch";
+    if (!form.branch) e.branch = "Select your branch";
+    if (form.password.length < 6) e.password = "Min 6 characters";
+    return e;
+  };
 
-    const handleChange = (field: string, val: string) => {
-        setForm(f => ({ ...f, [field]: val }));
-        if (errors[field]) setErrors(e => { const n = { ...e }; delete n[field]; return n; });
-        if (apiError) setApiError("");
-    };
+  const handleChange = (field: string, val: string) => {
+    setForm(f => ({ ...f, [field]: val }));
+    if (errors[field]) setErrors(e => { const n = { ...e }; delete n[field]; return n; });
+    if (apiError) setApiError("");
+  };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        const errs = validate();
-        if (Object.keys(errs).length) { setErrors(errs); return; }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const errs = validate();
+    if (Object.keys(errs).length) { setErrors(errs); return; }
 
-        setLoading(true);
-        setApiError("");
+    setLoading(true);
+    setApiError("");
 
-        try {
-            const res = await fetch("/api/auth/register", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(form)
-            });
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form)
+      });
 
-            const data = await res.json();
+      const data = await res.json();
 
-            if (res.ok) {
-                setSubmitted(true);
-                setTimeout(() => router.push("/dashboard"), 3000);
-            } else {
-                setApiError(data.message || "Registration failed. Try again.");
-            }
-        } catch (err) {
-            setApiError("A network error occurred. Please try again.");
-        } finally {
-            setLoading(false);
-        }
-    };
+      if (res.ok) {
+        setSubmitted(true);
+        setTimeout(() => router.push("/dashboard"), 3000);
+      } else {
+        setApiError(data.message || "Registration failed. Try again.");
+      }
+    } catch (err) {
+      setApiError("A network error occurred. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const cx = (...a: any[]) => a.filter(Boolean).join(" ");
+  const cx = (...a: any[]) => a.filter(Boolean).join(" ");
 
-    const Field = ({ id, label, icon, type = "text", placeholder, field, error }: any) => (
-        <div className="rg-field">
-            <label className="rg-label" htmlFor={id}>{label}</label>
-            <div className="rg-input-wrap">
-                <span className="rg-input-icon">{icon}</span>
-                <input
-                    id={id}
-                    type={type}
-                    className="rg-input"
-                    placeholder={placeholder}
-                    value={(form as any)[field]}
-                    onChange={e => handleChange(field, e.target.value)}
-                    autoComplete="off"
-                />
-                <div className="rg-input-line" />
-            </div>
-            {error && <div className={cx("rg-error", "show")}>{error}</div>}
+  const Field = ({ id, label, icon, type = "text", placeholder, field, error }: any) => (
+    <div className="rg-field">
+      <label className="rg-label" htmlFor={id}>{label}</label>
+      <div className="rg-input-wrap">
+        <span className="rg-input-icon">{icon}</span>
+        <input
+          id={id}
+          type={type}
+          className="rg-input"
+          placeholder={placeholder}
+          value={(form as any)[field]}
+          onChange={e => handleChange(field, e.target.value)}
+          autoComplete="off"
+        />
+        <div className="rg-input-line" />
+      </div>
+      {error && <div className={cx("rg-error", "show")}>{error}</div>}
+    </div>
+  );
+
+  return (
+    <div className="rg-root">
+      <div className="rg-scan" />
+
+      {/* ═══ LEFT — ANIME ═══ */}
+      <div className="rg-left">
+        <div className="rg-left-bg" />
+
+        {/* The image */}
+        <img
+          src={ANIME_IMG}
+          alt="Techexotica warrior"
+          className={cx("rg-anime-img", visible && "rg-in")}
+          draggable={false}
+        />
+
+        {/* Red eye glow */}
+        <div className="rg-eye-glow" />
+
+        {/* Blood splatter particles */}
+        {splatters.map(s => (
+          <div key={s.id} className="rg-splatter" style={{
+            top: s.top, left: s.left,
+            width: s.size, height: s.size,
+            "--tx": s.tx, "--ty": s.ty,
+            animationDuration: s.dur,
+            animationDelay: s.del,
+          } as any} />
+        ))}
+
+        {/* Vignettes */}
+        <div className="rg-left-fade" />
+        <div className="rg-left-fade-b" />
+
+        {/* Text overlay */}
+        <div className={cx("rg-left-text", visible && "rg-in")}>
+          <div className="rg-left-tag">Techexotica 2026</div>
+          <div className="rg-left-title">
+            Enter The<br /><span>Arena</span>
+          </div>
+          <div className="rg-left-sub">GEC Madhubani · March 2026</div>
         </div>
-    );
+      </div>
 
-    return (
-        <div className="rg-root">
-            <div className="rg-scan" />
+      {/* ═══ RIGHT — FORM Panel ═══ */}
+      <div className="rg-right">
+        <div className={cx("rg-form-wrap", visible && "rg-in")}>
 
-            {/* ═══ LEFT — ANIME ═══ */}
-            <div className="rg-left">
-                <div className="rg-left-bg" />
-
-                {/* The image */}
-                <img
-                    src={ANIME_IMG}
-                    alt="Techexotica warrior"
-                    className={cx("rg-anime-img", visible && "rg-in")}
-                    draggable={false}
-                />
-
-                {/* Red eye glow */}
-                <div className="rg-eye-glow" />
-
-                {/* Blood splatter particles */}
-                {SPLATTERS.map(s => (
-                    <div key={s.id} className="rg-splatter" style={{
-                        top: s.top, left: s.left,
-                        width: s.size, height: s.size,
-                        "--tx": s.tx, "--ty": s.ty,
-                        animationDuration: s.dur,
-                        animationDelay: s.del,
-                    } as any} />
-                ))}
-
-                {/* Vignettes */}
-                <div className="rg-left-fade" />
-                <div className="rg-left-fade-b" />
-
-                {/* Text overlay */}
-                <div className={cx("rg-left-text", visible && "rg-in")}>
-                    <div className="rg-left-tag">Techexotica 2026</div>
-                    <div className="rg-left-title">
-                        Enter The<br /><span>Arena</span>
-                    </div>
-                    <div className="rg-left-sub">GEC Madhubani · March 2026</div>
-                </div>
+          {/* Form header */}
+          <div className="rg-form-header">
+            <div className="rg-form-eyebrow">Create Account</div>
+            <div className="rg-form-title">Register</div>
+            <div className="rg-form-sub">
+              Already have an account?{" "}
+              <Link href="/login"><span style={{ color: '#ff4040', cursor: 'pointer' }}>Sign in →</span></Link>
             </div>
+          </div>
 
-            {/* ═══ RIGHT — FORM Panel ═══ */}
-            <div className="rg-right">
-                <div className={cx("rg-form-wrap", visible && "rg-in")}>
+          {/* ── Success screen ── */}
+          <div className={cx("rg-success", submitted && "show")}>
+            <div className="rg-success-icon">⬡</div>
+            <div className="rg-success-title">You're In</div>
+            <div className="rg-success-sub">Your account has been created successfully</div>
+            {techId && <div className="rg-success-id">{techId}</div>}
+            <div className="rg-success-sub" style={{ marginTop: 8 }}>Your Techexotica ID</div>
+            <div className="rg-success-sub" style={{ marginTop: 24, opacity: 0.5 }}>Redirecting to dashboard...</div>
+          </div>
 
-                    {/* Form header */}
-                    <div className="rg-form-header">
-                        <div className="rg-form-eyebrow">Create Account</div>
-                        <div className="rg-form-title">Register</div>
-                        <div className="rg-form-sub">
-                            Already have an account?{" "}
-                            <Link href="/login"><span style={{ color: '#ff4040', cursor: 'pointer' }}>Sign in →</span></Link>
-                        </div>
-                    </div>
-
-                    {/* ── Success screen ── */}
-                    <div className={cx("rg-success", submitted && "show")}>
-                        <div className="rg-success-icon">⬡</div>
-                        <div className="rg-success-title">You're In</div>
-                        <div className="rg-success-sub">Your account has been created successfully</div>
-                        {techId && <div className="rg-success-id">{techId}</div>}
-                        <div className="rg-success-sub" style={{ marginTop: 8 }}>Your Techexotica ID</div>
-                        <div className="rg-success-sub" style={{ marginTop: 24, opacity: 0.5 }}>Redirecting to dashboard...</div>
-                    </div>
-
-                    {/* ── Form ── */}
-                    {!submitted && (
-                        <form onSubmit={handleSubmit} noValidate>
-                            {apiError && (
-                                <div className="bg-red-500/10 border border-red-500/30 p-4 rounded-xl mb-6 text-red-500 text-sm font-medium animate-in fade-in duration-300">
-                                    {apiError}
-                                </div>
-                            )}
-
-                            <Field
-                                id="rg-name" label="Full Name" icon="◈"
-                                placeholder="Rahul Kumar"
-                                field="name" error={errors.name}
-                            />
-                            <Field
-                                id="rg-reg" label="Registration Number" icon="⬡"
-                                placeholder="22CSE001"
-                                field="regNo" error={errors.regNo}
-                            />
-                            <Field
-                                id="rg-phone" label="Phone Number" icon="◷"
-                                type="tel" placeholder="9876543210"
-                                field="phone" error={errors.phone}
-                            />
-
-                            <div className="rg-row">
-                                {/* Batch */}
-                                <div className="rg-field">
-                                    <label className="rg-label" htmlFor="rg-batch">Batch</label>
-                                    <div className="rg-input-wrap">
-                                        <span className="rg-input-icon">◉</span>
-                                        <select
-                                            id="rg-batch"
-                                            className={cx("rg-input rg-select", form.batch && "has-value")}
-                                            value={form.batch}
-                                            onChange={e => handleChange("batch", e.target.value)}
-                                        >
-                                            <option value="">Select</option>
-                                            {BATCHES.map(b => <option key={b} value={b}>{b}</option>)}
-                                        </select>
-                                        <div className="rg-input-line" />
-                                    </div>
-                                    {errors.batch && <div className="rg-error show">{errors.batch}</div>}
-                                </div>
-
-                                {/* Branch */}
-                                <div className="rg-field">
-                                    <label className="rg-label" htmlFor="rg-branch">Branch</label>
-                                    <div className="rg-input-wrap">
-                                        <span className="rg-input-icon">◈</span>
-                                        <select
-                                            id="rg-branch"
-                                            className={cx("rg-input rg-select", form.branch && "has-value")}
-                                            value={form.branch}
-                                            onChange={e => handleChange("branch", e.target.value)}
-                                        >
-                                            <option value="">Select</option>
-                                            {BRANCHES.map(b => <option key={b} value={b}>{b}</option>)}
-                                        </select>
-                                        <div className="rg-input-line" />
-                                    </div>
-                                    {errors.branch && <div className="rg-error show">{errors.branch}</div>}
-                                </div>
-                            </div>
-
-                            <Field
-                                id="rg-pw" label="Password" icon="◆"
-                                type="password" placeholder="Min 6 characters"
-                                field="password" error={errors.password}
-                            />
-
-                            {/* TechID preview */}
-                            <div className={cx("rg-techid-preview", techId && "show")}>
-                                <span className="rg-techid-label">Your Techexotica ID</span>
-                                <span className="rg-techid-value">{techId || ""}</span>
-                            </div>
-
-                            <button
-                                type="submit"
-                                disabled={loading}
-                                className={cx("rg-submit", loading && "loading")}
-                                style={{ marginTop: 20 }}
-                            >
-                                <div className="rg-submit-inner">
-                                    {loading ? (
-                                        <span style={{ letterSpacing: 4 }}>Registering...</span>
-                                    ) : (
-                                        <>
-                                            <span>Enter The Arena</span>
-                                            <span className="rg-submit-arrow">→</span>
-                                        </>
-                                    )}
-                                </div>
-                            </button>
-                        </form>
-                    )}
+          {/* ── Form ── */}
+          {!submitted && (
+            <form onSubmit={handleSubmit} noValidate>
+              {apiError && (
+                <div className="bg-red-500/10 border border-red-500/30 p-4 rounded-xl mb-6 text-red-500 text-sm font-medium animate-in fade-in duration-300">
+                  {apiError}
                 </div>
-            </div>
+              )}
+
+              <Field
+                id="rg-name" label="Full Name" icon="◈"
+                placeholder="Rahul Kumar"
+                field="name" error={errors.name}
+              />
+              <Field
+                id="rg-reg" label="Registration Number" icon="⬡"
+                placeholder="22CSE001"
+                field="regNo" error={errors.regNo}
+              />
+              <Field
+                id="rg-phone" label="Phone Number" icon="◷"
+                type="tel" placeholder="9876543210"
+                field="phone" error={errors.phone}
+              />
+
+              <div className="rg-row">
+                {/* Batch */}
+                <div className="rg-field">
+                  <label className="rg-label" htmlFor="rg-batch">Batch</label>
+                  <div className="rg-input-wrap">
+                    <span className="rg-input-icon">◉</span>
+                    <select
+                      id="rg-batch"
+                      className={cx("rg-input rg-select", form.batch && "has-value")}
+                      value={form.batch}
+                      onChange={e => handleChange("batch", e.target.value)}
+                    >
+                      <option value="">Select</option>
+                      {BATCHES.map(b => <option key={b} value={b}>{b}</option>)}
+                    </select>
+                    <div className="rg-input-line" />
+                  </div>
+                  {errors.batch && <div className="rg-error show">{errors.batch}</div>}
+                </div>
+
+                {/* Branch */}
+                <div className="rg-field">
+                  <label className="rg-label" htmlFor="rg-branch">Branch</label>
+                  <div className="rg-input-wrap">
+                    <span className="rg-input-icon">◈</span>
+                    <select
+                      id="rg-branch"
+                      className={cx("rg-input rg-select", form.branch && "has-value")}
+                      value={form.branch}
+                      onChange={e => handleChange("branch", e.target.value)}
+                    >
+                      <option value="">Select</option>
+                      {BRANCHES.map(b => <option key={b} value={b}>{b}</option>)}
+                    </select>
+                    <div className="rg-input-line" />
+                  </div>
+                  {errors.branch && <div className="rg-error show">{errors.branch}</div>}
+                </div>
+              </div>
+
+              <Field
+                id="rg-pw" label="Password" icon="◆"
+                type="password" placeholder="Min 6 characters"
+                field="password" error={errors.password}
+              />
+
+              {/* TechID preview */}
+              <div className={cx("rg-techid-preview", techId && "show")}>
+                <span className="rg-techid-label">Your Techexotica ID</span>
+                <span className="rg-techid-value">{techId || ""}</span>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className={cx("rg-submit", loading && "loading")}
+                style={{ marginTop: 20 }}
+              >
+                <div className="rg-submit-inner">
+                  {loading ? (
+                    <span style={{ letterSpacing: 4 }}>Registering...</span>
+                  ) : (
+                    <>
+                      <span>Enter The Arena</span>
+                      <span className="rg-submit-arrow">→</span>
+                    </>
+                  )}
+                </div>
+              </button>
+            </form>
+          )}
         </div>
-    );
+      </div>
+    </div>
+  );
 }

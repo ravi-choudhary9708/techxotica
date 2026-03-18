@@ -499,8 +499,18 @@ export default function MadhubaniSection() {
 
           {/* Buttons */}
           <div className="mh-buttons">
-            <button className="mh-btn mh-btn-primary">Explore Events</button>
-            <button className="mh-btn mh-btn-secondary">Mithila Painting Registration</button>
+            <button
+              onClick={() => document.getElementById('events')?.scrollIntoView({ behavior: 'smooth' })}
+              className="mh-btn mh-btn-primary"
+            >
+              Explore Events
+            </button>
+            <button
+              onClick={() => window.location.href = '/register'}
+              className="mh-btn mh-btn-secondary"
+            >
+              Festival Registration
+            </button>
           </div>
         </div>
 

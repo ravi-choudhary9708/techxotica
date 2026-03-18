@@ -30,10 +30,10 @@ export default function Navbar() {
   const navItems = [
     { name: "Home", url: "/", icon: Home },
     { name: "Events", url: "/events", icon: Calendar },
+    { name: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   ];
 
   if (user) {
-    navItems.push({ name: "Dashboard", url: "/dashboard", icon: LayoutDashboard });
     navItems.push({ name: "Profile", url: "/profile", icon: User });
     navItems.push({ name: "Logout", url: "#logout", icon: LogOut });
   } else {
