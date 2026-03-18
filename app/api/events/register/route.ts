@@ -166,3 +166,106 @@ export async function POST(req: Request) {
         );
     }
 }
+
+export async function PATCH(req: Request) {
+    try {
+        const session = await getUser();
+        if (!session || !session.userId) {
+            return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
+        }
+
+        await connectDB();
+        const body = await req.json();
+        const { registrationId, addMemberTechIds = [], removeMemberTechIds = [] } = body;
+
+        if (!registrationId) {
+            return NextResponse.json({ success: false, message: "registrationId is required" }, { status: 400 });
+        }
+
+        const registration = await Registration.findById(registrationId).populate("eventId");
+        if (!registration) {
+            return NextResponse.json({ success: false, message: "Registration not found" }, { status: 404 });
+        }
+
+        // Only the team leader can edit
+        if (registration.leader?.toString() !== session.userId) {
+            return NextResponse.json({ success: false, message: "Only the team leader can edit the team" }, { status: 403 });
+        }
+
+        const event = registration.eventId as any;
+        const maxMembers = event.maxTeamSize; // total including leader
+        const minMembers = event.minTeamSize;
+
+        // Resolve users to remove
+        let membersToRemove: string[] = [];
+        if (removeMemberTechIds.length > 0) {
+            const removeUsers = await User.find({ techexoticaId: { $in: removeMemberTechIds } });
+            membersToRemove = removeUsers.map((u: any) => u._id.toString());
+        }
+
+        // Resolve users to add
+        let membersToAdd: any[] = [];
+        if (addMemberTechIds.length > 0) {
+            membersToAdd = await User.find({ techexoticaId: { $in: addMemberTechIds } });
+            if (membersToAdd.length !== addMemberTechIds.length) {
+                return NextResponse.json({ success: false, message: "One or more TX IDs not found" }, { status: 400 });
+            }
+        }
+
+        const leaderId = session.userId;
+        // Current non-leader members
+        const currentMembers: string[] = (registration.members as any[])
+            .map((m: any) => m.toString())
+            .filter((id: string) => id !== leaderId);
+
+        // Remove specified members
+        let newMembers = currentMembers.filter(id => !membersToRemove.includes(id));
+
+        // Add new members (skip duplicates and leader)
+        for (const u of membersToAdd) {
+            const uid = u._id.toString();
+            if (uid === leaderId) {
+                return NextResponse.json({ success: false, message: "Leader cannot be added as a member" }, { status: 400 });
+            }
+            if (!newMembers.includes(uid)) newMembers.push(uid);
+        }
+
+        // Validate team size (leader + members)
+        const totalSize = 1 + newMembers.length;
+        if (totalSize < minMembers) {
+            return NextResponse.json({ success: false, message: `Team must have at least ${minMembers} members total` }, { status: 400 });
+        }
+        if (totalSize > maxMembers) {
+            return NextResponse.json({ success: false, message: `Team cannot exceed ${maxMembers} members total` }, { status: 400 });
+        }
+
+        // Save — keep leader in members array
+        registration.members = [leaderId, ...newMembers] as any;
+        await registration.save();
+
+        // Sync registeredEvents for removed/added users
+        const eventId = event._id;
+        if (membersToRemove.length > 0) {
+            await User.updateMany(
+                { _id: { $in: membersToRemove } },
+                { $pull: { registeredEvents: { eventId } } }
+            );
+        }
+        if (membersToAdd.length > 0) {
+            await User.updateMany(
+                { _id: { $in: membersToAdd.map((u: any) => u._id) } },
+                { $addToSet: { registeredEvents: { eventId } } }
+            );
+        }
+
+        const updated = await Registration.findById(registrationId)
+            .populate("leader", "name techexoticaId")
+            .populate("members", "name techexoticaId");
+
+        return NextResponse.json({ success: true, registration: updated });
+
+    } catch (error: any) {
+        console.error("Edit Team Registration Error", error);
+        return NextResponse.json({ success: false, message: "Internal server error" }, { status: 500 });
+    }
+}

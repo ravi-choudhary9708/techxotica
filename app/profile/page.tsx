@@ -46,6 +46,7 @@ export default async function ProfilePage() {
         return {
             _id: reg._id.toString(),
             eventId: {
+                id: event._id.toString(),
                 name: event.title || event.name,
                 type: event.type,
                 date: event.date,

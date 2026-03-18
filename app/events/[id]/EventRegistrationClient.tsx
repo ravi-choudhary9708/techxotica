@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Trash2, Search, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import Link from "next/link";
 
 const NEON_IMG = "/download.jpg";
@@ -410,7 +410,7 @@ const PARTICLES = Array.from({ length: 14 }, (_, i) => ({
     del: `${Math.random() * 6}s`,
 }));
 
-export default function EventRegistrationClient({ event, user, isRegistered }: any) {
+export default function EventRegistrationClient({ event, user, isRegistered, registration }: any) {
     const router = useRouter();
     const [visible, setVisible] = useState(false);
     const [bodyIn, setBodyIn] = useState(false);
@@ -421,6 +421,16 @@ export default function EventRegistrationClient({ event, user, isRegistered }: a
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [lookingUp, setLookingUp] = useState(false);
+    // Edit mode state
+    const [editMode, setEditMode] = useState(false);
+    const [editMembers, setEditMembers] = useState<any[]>(registration?.members || []);
+    const [editTechId, setEditTechId] = useState("");
+    const [editLookingUp, setEditLookingUp] = useState(false);
+    const [editSaving, setEditSaving] = useState(false);
+    const [editError, setEditError] = useState("");
+    const [editSuccess, setEditSuccess] = useState("");
+
+    const isLeader = registration?.leader?.techexoticaId === user.techexoticaId;
 
     const ev = event;
     const c = CAT[ev.category] || CAT.technical;
@@ -485,6 +495,57 @@ export default function EventRegistrationClient({ event, user, isRegistered }: a
 
     const removeMember = (txId: string) => {
         setMembers(members.filter(m => m.techexoticaId !== txId));
+    };
+
+    // ── Edit-mode handlers ──
+    const handleAddMemberEdit = async () => {
+        if (!editTechId) return;
+        setEditError("");
+
+        if (editTechId === user.techexoticaId) { setEditError("You are the leader."); return; }
+        if (editMembers.some(m => m.techexoticaId === editTechId)) { setEditError("Already in team."); return; }
+        if (editMembers.length + 1 >= ev.maxTeamSize) { setEditError(`Max team size is ${ev.maxTeamSize}.`); return; }
+
+        try {
+            setEditLookingUp(true);
+            const res = await fetch(`/api/user/find-by-txid?txId=${editTechId}`);
+            const data = await res.json();
+            if (data.success) { setEditMembers([...editMembers, data.user]); setEditTechId(""); }
+            else setEditError(data.message || "User not found.");
+        } catch { setEditError("Lookup failed."); }
+        finally { setEditLookingUp(false); }
+    };
+
+    const handleRemoveMemberEdit = (txId: string) => {
+        setEditMembers(editMembers.filter(m => m.techexoticaId !== txId));
+    };
+
+    const handleSaveTeam = async () => {
+        setEditError(""); setEditSuccess(""); setEditSaving(true);
+        try {
+            const res = await fetch("/api/events/register", {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    registrationId: registration._id,
+                    addMemberTechIds: editMembers
+                        .filter(m => !registration.members.some((o: any) => o.techexoticaId === m.techexoticaId))
+                        .map((m: any) => m.techexoticaId),
+                    removeMemberTechIds: registration.members
+                        .filter((o: any) => !editMembers.some(m => m.techexoticaId === o.techexoticaId))
+                        .map((o: any) => o.techexoticaId),
+                }),
+            });
+            const data = await res.json();
+            if (data.success) {
+                setEditSuccess("Team updated successfully!");
+                setEditMode(false);
+                router.refresh();
+            } else {
+                setEditError(data.message || "Failed to update team.");
+            }
+        } catch { setEditError("Network error."); }
+        finally { setEditSaving(false); }
     };
 
     const handleRegister = async () => {
@@ -600,15 +661,29 @@ export default function EventRegistrationClient({ event, user, isRegistered }: a
 
                         {isRegistered ? (
                             <div className="ed-cta-row">
-                                <button className="ed-btn-primary" disabled>⬡ Already Registered</button>
-                                <button className="ed-btn-secondary" onClick={() => router.push("/profile")}>◈ View Profile</button>
+                                {ev.type === "team" && isLeader ? (
+                                    <>
+                                        <button
+                                            className="ed-btn-primary"
+                                            onClick={() => { setEditMode(m => !m); setEditError(""); setEditSuccess(""); }}
+                                        >
+                                            {editMode ? "✕ Cancel Edit" : "✎ Edit Team"}
+                                        </button>
+                                        <button className="ed-btn-secondary" onClick={() => router.push("/profile")}>◈ View Profile</button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <button className="ed-btn-primary" disabled>⬡ Already Registered</button>
+                                        <button className="ed-btn-secondary" onClick={() => router.push("/profile")}>◈ View Profile</button>
+                                    </>
+                                )}
                             </div>
                         ) : (
                             <div className="ed-cta-row">
                                 <button className="ed-btn-primary" onClick={handleRegister} disabled={loading}>
                                     {loading ? "⬡ Processing..." : "⬡ Confirm Registration"}
                                 </button>
-                                <button className="ed-btn-secondary">◈ Help & Support</button>
+                                <button className="ed-btn-secondary">◈ Help &amp; Support</button>
                             </div>
                         )}
 
@@ -629,6 +704,82 @@ export default function EventRegistrationClient({ event, user, isRegistered }: a
                             <div className="ed-desc">{ev.description}</div>
                         </div>
                     </div>
+
+                    {/* ── Edit Team panel (shown when registered leader clicks Edit Team) ── */}
+                    {isRegistered && ev.type === "team" && isLeader && editMode && (
+                        <div className="ed-card" style={{ transitionDelay: ".05s" }}>
+                            <div className="ed-card-top-bar" style={{ background: "linear-gradient(to right, rgba(210,140,60,0.6), transparent)" }} />
+                            <div className="ed-card-pad">
+                                <div className="ed-sec-title">Edit Team — <span style={{ color: "#d28c3c", fontFamily: "Share Tech Mono, monospace", fontSize: 12 }}>{registration?.teamName}</span></div>
+
+                                {editError && <div style={{ color: "#ff4040", fontSize: 12, marginBottom: 12, fontFamily: "Share Tech Mono" }}>{editError}</div>}
+                                {editSuccess && <div style={{ color: "#00ffc8", fontSize: 12, marginBottom: 12, fontFamily: "Share Tech Mono" }}>{editSuccess}</div>}
+
+                                <div className="ed-reg-form">
+                                    {/* Leader (immutable) */}
+                                    <div className="ed-input-group">
+                                        <label className="ed-label">Team Leader (You)</label>
+                                        <div className="ed-member-item">
+                                            <span className="ed-member-name">{user.name}</span>
+                                            <span className="ed-member-id">{user.techexoticaId}</span>
+                                        </div>
+                                    </div>
+
+                                    {/* Current members */}
+                                    <div className="ed-input-group">
+                                        <label className="ed-label">Members ({editMembers.length + 1}/{ev.maxTeamSize})</label>
+                                        <div className="ed-member-list">
+                                            {editMembers.map(m => (
+                                                <div key={m.techexoticaId} className="ed-member-item">
+                                                    <span className="ed-member-name">{m.name}</span>
+                                                    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                                                        <span className="ed-member-id">{m.techexoticaId}</span>
+                                                        <Trash2 size={14} style={{ cursor: "pointer", color: "#ff4040" }} onClick={() => handleRemoveMemberEdit(m.techexoticaId)} />
+                                                    </div>
+                                                </div>
+                                            ))}
+                                            {editMembers.length === 0 && (
+                                                <div style={{ color: "rgba(255,255,255,0.3)", fontSize: 13, padding: "8px 0" }}>No additional members yet.</div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* Add member input */}
+                                    {editMembers.length + 1 < ev.maxTeamSize && (
+                                        <div className="ed-input-group">
+                                            <div style={{ display: "flex", gap: 8 }}>
+                                                <input
+                                                    className="ed-input"
+                                                    style={{ flex: 1 }}
+                                                    placeholder="Enter Member TechID (e.g. TX-XXXXX-2022)"
+                                                    value={editTechId}
+                                                    onChange={e => setEditTechId(e.target.value.toUpperCase())}
+                                                />
+                                                <button
+                                                    className="ed-btn-secondary"
+                                                    style={{ padding: "0 20px" }}
+                                                    onClick={handleAddMemberEdit}
+                                                    disabled={editLookingUp || !editTechId}
+                                                >
+                                                    {editLookingUp ? "..." : "Add"}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Save button */}
+                                    <button
+                                        className="ed-btn-primary"
+                                        style={{ width: "100%", justifyContent: "center" }}
+                                        onClick={handleSaveTeam}
+                                        disabled={editSaving}
+                                    >
+                                        {editSaving ? "Saving..." : "⬡ Save Changes"}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
                     {!isRegistered && ev.type === "team" && (
                         <div className="ed-card" style={{ transitionDelay: ".1s" }}>

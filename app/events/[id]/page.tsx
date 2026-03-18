@@ -53,7 +53,10 @@ export default async function EventDetailPage({ params }: PageProps) {
             { leader: userId },
             { members: userId }
         ]
-    }).lean();
+    })
+    .populate("leader", "name techexoticaId")
+    .populate("members", "name techexoticaId")
+    .lean();
 
     // Serialize data for client component
     const serializedEvent = {
@@ -75,12 +78,25 @@ export default async function EventDetailPage({ params }: PageProps) {
         techexoticaId: session.techexoticaId
     };
 
+    const serializedRegistration = existingRegistration ? {
+        _id: (existingRegistration as any)._id.toString(),
+        type: (existingRegistration as any).type,
+        teamName: (existingRegistration as any).teamName || "",
+        leader: (existingRegistration as any).leader
+            ? { name: (existingRegistration as any).leader.name, techexoticaId: (existingRegistration as any).leader.techexoticaId }
+            : null,
+        members: ((existingRegistration as any).members || [])
+            .filter((m: any) => m && m.techexoticaId !== session.techexoticaId)
+            .map((m: any) => ({ name: m.name, techexoticaId: m.techexoticaId })),
+    } : null;
+
     return (
         <div className="min-h-screen bg-[#050508] pt-20">
             <EventRegistrationClient
                 event={serializedEvent}
                 user={serializedUser}
                 isRegistered={!!existingRegistration}
+                registration={serializedRegistration}
             />
         </div>
     );

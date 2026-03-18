@@ -384,7 +384,7 @@ const styles = `
     border: 1px solid rgba(255,255,255,0.07);
     position: relative;
     overflow: hidden;
-    cursor: default;
+    cursor: pointer;
     transition: border-color 0.3s, background 0.3s, transform 0.2s;
     opacity: 0;
     transform: translateX(30px);
@@ -714,6 +714,8 @@ export default function ProfileClient({ user }: { user: any }) {
                                             "--glow": cat.glow,
                                             transitionDelay: `${0.25 + i * 0.08}s`,
                                         } as any}
+                                        onClick={() => router.push(`/events/${ev.id}`)}
+                                        title={`Go to ${ev.name}`}
                                     >
                                         <div className="pr-event-top">
                                             <div className="pr-event-name">{ev.name}</div>
