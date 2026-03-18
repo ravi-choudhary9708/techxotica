@@ -79,7 +79,10 @@ const styles = `
     position: relative; z-index: 1;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 100px 24px 100px;
+    padding: 60px 20px 80px;
+  }
+  @media (min-width: 768px) {
+    .ev-container { padding: 100px 24px 100px; }
   }
 
   /* ── Hero header ── */
@@ -157,8 +160,8 @@ const styles = `
   /* ── Controls bar ── */
   .ev-controls {
     display: flex; align-items: center;
-    justify-content: space-between;
-    gap: 16px; flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 12px; flex-wrap: wrap;
     margin-bottom: 32px;
     opacity: 0; transform: translateY(10px);
     transition: opacity 0.5s 0.2s ease, transform 0.5s 0.2s ease;
@@ -167,6 +170,18 @@ const styles = `
 
   .ev-filter-group {
     display: flex; gap: 6px; flex-wrap: wrap;
+    max-width: 100%;
+  }
+  @media (max-width: 480px) {
+    .ev-filter-group {
+      overflow-x: auto;
+      padding-bottom: 4px;
+      flex-wrap: nowrap;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .ev-filter-group::-webkit-scrollbar { display: none; }
+    .ev-divider-v { display: none; }
   }
   .ev-filter-btn {
     font-family: 'Barlow Condensed', sans-serif;
@@ -501,7 +516,15 @@ export default function EventsClient({ events }: { events: any[] }) {
   const filtered = events.filter(ev => {
     const evCat = (ev.category || "other").toLowerCase();
     if (catFilter !== "all" && evCat !== catFilter) return false;
-    if (typeFilter !== "all" && ev.type !== typeFilter) return false;
+
+    if (typeFilter === "solo") {
+      // Event supports solo participation if minTeamSize is 1
+      if ((ev.teamSize?.min || 1) !== 1) return false;
+    } else if (typeFilter === "team") {
+      // Event supports team participation if maxTeamSize is > 1
+      if ((ev.teamSize?.max || 1) <= 1) return false;
+    }
+
     return true;
   });
 

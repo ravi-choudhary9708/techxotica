@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   },
 };
 
-import Navbar from "@/app/components/Navbar";
+import NavbarWrapper from "@/app/components/NavbarWrapper";
 
 export default function RootLayout({
   children,
@@ -46,7 +46,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={cn(orbitron.variable, inter.variable, rajdhani.variable, "font-sans", geist.variable)} suppressHydrationWarning>
       <body className="antialiased">
-        <Navbar />
+        <NavbarWrapper />
         {children}
       </body>
     </html>

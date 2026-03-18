@@ -519,7 +519,7 @@ export default function RegisterPage() {
 
       if (res.ok) {
         setSubmitted(true);
-        setTimeout(() => router.push("/dashboard"), 3000);
+        setTimeout(() => router.push("/profile"), 3000);
       } else {
         setApiError(data.message || "Registration failed. Try again.");
       }
@@ -617,7 +617,7 @@ export default function RegisterPage() {
             <div className="rg-success-sub">Your account has been created successfully</div>
             {techId && <div className="rg-success-id">{techId}</div>}
             <div className="rg-success-sub" style={{ marginTop: 8 }}>Your Techexotica ID</div>
-            <div className="rg-success-sub" style={{ marginTop: 24, opacity: 0.5 }}>Redirecting to dashboard...</div>
+            <div className="rg-success-sub" style={{ marginTop: 24, opacity: 0.5 }}>Redirecting to profile...</div>
           </div>
 
           {/* ── Form ── */}
@@ -645,7 +645,7 @@ export default function RegisterPage() {
                 field="phone" error={errors.phone}
               />
 
-              <div className="rg-row">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
                 {/* Batch */}
                 <div className="rg-field">
                   <label className="rg-label" htmlFor="rg-batch">Batch</label>

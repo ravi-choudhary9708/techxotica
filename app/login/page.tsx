@@ -560,7 +560,7 @@ export default function LoginPage() {
 
       setSuccess(true);
       setTimeout(() => {
-        router.push("/dashboard");
+        router.push("/profile");
         router.refresh();
       }, 1500);
     } catch (err: any) {
@@ -615,7 +615,7 @@ export default function LoginPage() {
           <div className={cx("lg-success", success && "show")}>
             <div className="lg-success-icon">⬡</div>
             <div className="lg-success-title">Access Granted</div>
-            <div className="lg-success-sub">Redirecting to your dashboard...</div>
+            <div className="lg-success-sub">Redirecting to your profile...</div>
           </div>
 
           {/* ── Form ── */}

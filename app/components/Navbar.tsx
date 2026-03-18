@@ -1,6 +1,6 @@
 "use client";
 
-import { Home, Calendar, Gamepad2, User, LogIn, UserPlus, LogOut, LayoutDashboard } from "lucide-react";
+import { Home, Calendar, Gamepad2, User, LogIn, UserPlus, LogOut } from "lucide-react";
 import { AnimeNavBar } from "@/components/ui/anime-navbar";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -30,7 +30,6 @@ export default function Navbar() {
   const navItems = [
     { name: "Home", url: "/", icon: Home },
     { name: "Events", url: "/events", icon: Calendar },
-    { name: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   ];
 
   if (user) {

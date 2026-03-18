@@ -18,13 +18,13 @@ export const eventItems: EventData[] = [
     {
         id: "web-design",
         title: "Web Design",
-        category: "Software",
+        category: "Technical",
         description: "Craft visually stunning and highly functional web interfaces. Show off your HTML, CSS, and JS prowess.",
         image: "https://images.unsplash.com/photo-1547658719-da2b51169166?q=80&w=1000&auto=format&fit=crop",
         color: "#00f5ff",
-        date: "23 March 2026",
+        date: "23-24 March 2026",
         time: "10:00 AM - 01:00 PM",
-        venue: "Lab 3, CS Block",
+        venue: "GEC Madhubani",
         prizePool: "₹15,000",
         teamSizeText: "1-3 Members",
         rules: [
@@ -36,13 +36,13 @@ export const eventItems: EventData[] = [
     {
         id: "ui-ux-design",
         title: "UI/UX Design",
-        category: "Software",
+        category: "Technical",
         description: "Experience design at its finest. Create user-centric prototypes that solve real-world problems with elegance.",
         image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=1000&auto=format&fit=crop",
         color: "#00f5ff",
-        date: "23 March 2026",
+        date: "23-24 March 2026",
         time: "02:00 PM - 05:00 PM",
-        venue: "Design Studio, CS Block",
+        venue: "GEC Madhubani",
         prizePool: "₹15,000",
         teamSizeText: "1-2 Members",
         rules: [
@@ -53,7 +53,7 @@ export const eventItems: EventData[] = [
     {
         id: "code-debugging",
         title: "Code Debugging",
-        category: "Software",
+        category: "Technical",
         description: "Hunt down the bugs in complex systems. A race against time to fix broken code and optimize performance.",
         image: "https://images.unsplash.com/photo-1516116216624-53e697fedbea?q=80&w=1000&auto=format&fit=crop",
         color: "#00f5ff",
@@ -71,7 +71,7 @@ export const eventItems: EventData[] = [
     {
         id: "blind-coding",
         title: "Blind Coding",
-        category: "Software",
+        category: "Technical",
         description: "Can you code with your monitor off? Test your syntax memory and typing precision in this extreme challenge.",
         image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1000&auto=format&fit=crop",
         color: "#00f5ff",
@@ -89,7 +89,7 @@ export const eventItems: EventData[] = [
     {
         id: "competitive-coding",
         title: "Competitive Coding",
-        category: "Software",
+        category: "Technical",
         description: "The ultimate test of algorithms and data structures. Solve intense problems and climb the local leaderboard.",
         image: "https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=1000&auto=format&fit=crop",
         color: "#00f5ff",
@@ -109,7 +109,7 @@ export const eventItems: EventData[] = [
     {
         id: "robotics",
         title: "Robotics",
-        category: "Hardware",
+        category: "Technical",
         description: "Build, program, and battle robots. From autonomous navigation to heavy-duty mechanical engineering.",
         image: "https://images.unsplash.com/photo-1546776310-eef45dd6d63c?q=80&w=1000&auto=format&fit=crop",
         color: "#ffd700",
@@ -127,7 +127,7 @@ export const eventItems: EventData[] = [
     {
         id: "circuit-design",
         title: "Circuit Design",
-        category: "Hardware",
+        category: "Technical",
         description: "Blueprint the future of electronics. Design efficient and innovative PCB layouts and logic circuits.",
         image: "https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?q=80&w=1000&auto=format&fit=crop",
         color: "#ffd700",
@@ -144,7 +144,7 @@ export const eventItems: EventData[] = [
     {
         id: "cad-challenge",
         title: "CAD Challenge",
-        category: "Hardware",
+        category: "Technical",
         description: "Visualize engineering marvels. Create detailed 3D models and structural designs using industry-standard tools.",
         image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=1000&auto=format&fit=crop",
         color: "#ffd700",
@@ -161,7 +161,7 @@ export const eventItems: EventData[] = [
     {
         id: "bridge-building",
         title: "Bridge Building",
-        category: "Hardware",
+        category: "Technical",
         description: "Architecture meets physics. Construct weight-bearing structures and test their breaking points.",
         image: "https://images.unsplash.com/photo-1545624135-24cf3be8f669?q=80&w=1000&auto=format&fit=crop",
         color: "#ffd700",
@@ -179,7 +179,7 @@ export const eventItems: EventData[] = [
     {
         id: "model-making",
         title: "Model Making",
-        category: "Hardware",
+        category: "Technical",
         description: "Detailed craftsmanship of physical prototypes. From miniature cities to complex mechanical systems.",
         image: "https://images.unsplash.com/photo-1558717738-0b9fbb9b0b21?q=80&w=1000&auto=format&fit=crop",
         color: "#ffd700",
@@ -196,7 +196,7 @@ export const eventItems: EventData[] = [
     {
         id: "model-exhibition",
         title: "Model Exhibition",
-        category: "Hardware",
+        category: "Technical",
         description: "Showcase your engineering creations to the world. A platform for inventors to explain their masterpieces.",
         image: "https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=1000&auto=format&fit=crop",
         color: "#ffd700",
@@ -213,7 +213,7 @@ export const eventItems: EventData[] = [
     {
         id: "model-escape-room",
         title: "Model Escape Room",
-        category: "Hardware",
+        category: "Technical",
         description: "Design an immersive physical puzzle experience. Engineering logic used to create an inescapable maze.",
         image: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1000&auto=format&fit=crop",
         color: "#ffd700",
@@ -232,7 +232,7 @@ export const eventItems: EventData[] = [
     {
         id: "short-film",
         title: "Short Film",
-        category: "Creative",
+        category: "Cultural",
         description: "5 minutes of cinematic brilliance. Tell a compelling story using your camera and editing skills.",
         image: "https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=1000&auto=format&fit=crop",
         color: "#ec4899",
@@ -250,7 +250,7 @@ export const eventItems: EventData[] = [
     {
         id: "photography",
         title: "Photography",
-        category: "Creative",
+        category: "Cultural",
         description: "Capture the essence of Techexotica. A competition for the best lens through which to see the fest.",
         image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=1000&auto=format&fit=crop",
         color: "#ec4899",
@@ -267,7 +267,7 @@ export const eventItems: EventData[] = [
     {
         id: "logo-design",
         title: "Logo Design",
-        category: "Creative",
+        category: "Cultural",
         description: "Create the visual identity of a brand. Minimalist, impactful, and memorable graphic design challenge.",
         image: "https://images.unsplash.com/photo-1626785774573-4b799315345d?q=80&w=1000&auto=format&fit=crop",
         color: "#ec4899",
@@ -284,7 +284,7 @@ export const eventItems: EventData[] = [
     {
         id: "poster-talk",
         title: "Poster Talk",
-        category: "Creative",
+        category: "Cultural",
         description: "Present complex technical info through visual storytelling. One poster, one talk, ultimate impact.",
         image: "https://images.unsplash.com/photo-1544531585-9847b68c8c86?q=80&w=1000&auto=format&fit=crop",
         color: "#ec4899",
@@ -298,12 +298,30 @@ export const eventItems: EventData[] = [
             "Presentations are strictly limited to 5 minutes pe team.",
         ],
     },
+    {
+        id: "mithila-painting",
+        title: "Mithila Painting",
+        category: "Cultural",
+        description: "Celebrate the heritage of Mithila. Create intricate patterns and vibrant stories through traditional painting techniques.",
+        image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=1000&auto=format&fit=crop",
+        color: "#ec4899",
+        date: "24 March 2026",
+        time: "10:00 AM - 01:00 PM",
+        venue: "Arts Gallery, GEC Madhubani",
+        prizePool: "₹12,000",
+        teamSizeText: "1-2 Members",
+        rules: [
+            "Handmade on provided canvas/paper.",
+            "Traditional themes must be followed.",
+            "Participants should bring their own brushes; paints provided.",
+        ],
+    },
 
     // --- SPECIALS ---
     {
         id: "treasure-hunt",
         title: "Treasure Hunt",
-        category: "Specials",
+        category: "Gaming",
         description: "The campus is your playground. Solve cryptic clues and find the hidden glory in this massive scavenge.",
         image: "https://images.unsplash.com/photo-1513267768898-216229555024?q=80&w=1000&auto=format&fit=crop",
         color: "#a855f7",
@@ -320,14 +338,14 @@ export const eventItems: EventData[] = [
     {
         id: "e-sports",
         title: "E-Sports",
-        category: "Specials",
+        category: "Gaming",
         description: "Professional gaming on the big stage. Compete in high-stakes matches and dominate the leaderboard.",
         image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1000&auto=format&fit=crop",
         color: "#a855f7",
         date: "23-24 March 2026",
         time: "10:00 AM - 08:00 PM",
         venue: "Gaming Arena",
-        prizePool: "₹50,000",
+        prizePool: "TBA",
         teamSizeText: "5 Members (Valorant/BGMI)",
         rules: [
             "Players must bring their own peripherals (Mice/Keyboards/Headsets).",
@@ -338,7 +356,7 @@ export const eventItems: EventData[] = [
     {
         id: "expo",
         title: "Expo",
-        category: "Specials",
+        category: "Gaming",
         description: "A showcase of industrial giants and student startups alike. Discover the latest tech trends here.",
         image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=1000&auto=format&fit=crop",
         color: "#a855f7",

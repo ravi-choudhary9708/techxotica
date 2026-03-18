@@ -16,7 +16,31 @@ const ScanLine = () => (
   />
 );
 
-const FloatingParticle = ({ delay = 0 }) => (
+// Pre-seeded particle data — stable across server + client renders (no Math.random in render)
+const PARTICLE_DATA = [
+  { left: 89.6,  top: 50.3,  duration: 8.1 },
+  { left: 4.97,  top: 63.7,  duration: 6.4 },
+  { left: 29.0,  top: 97.9,  duration: 9.2 },
+  { left: 11.9,  top: 22.2,  duration: 7.5 },
+  { left: 73.3,  top: 15.1,  duration: 5.8 },
+  { left: 78.2,  top: 23.8,  duration: 8.7 },
+  { left: 93.5,  top: 34.7,  duration: 6.2 },
+  { left: 38.4,  top: 92.6,  duration: 9.5 },
+  { left: 49.1,  top: 91.8,  duration: 7.1 },
+  { left: 82.1,  top: 61.4,  duration: 5.6 },
+  { left: 56.0,  top: 60.4,  duration: 8.3 },
+  { left: 41.0,  top: 74.8,  duration: 6.9 },
+  { left: 44.2,  top: 3.29,  duration: 9.1 },
+  { left: 47.7,  top: 71.9,  duration: 7.4 },
+  { left: 47.5,  top: 29.3,  duration: 5.3 },
+  { left: 8.05,  top: 88.0,  duration: 8.8 },
+  { left: 60.6,  top: 0.43,  duration: 6.7 },
+  { left: 1.50,  top: 79.7,  duration: 9.4 },
+  { left: 92.8,  top: 34.4,  duration: 7.8 },
+  { left: 8.25,  top: 74.2,  duration: 6.1 },
+];
+
+const FloatingParticle = ({ delay = 0, left = 50, top = 50, duration = 7 }) => (
   <motion.div
     initial={{ y: 0, opacity: 0 }}
     animate={{
@@ -24,12 +48,9 @@ const FloatingParticle = ({ delay = 0 }) => (
       opacity: [0, 0.3, 0],
       scale: [0.8, 1.2, 0.8]
     }}
-    transition={{ duration: 5 + Math.random() * 5, repeat: Infinity, delay }}
+    transition={{ duration, repeat: Infinity, delay }}
     className="absolute w-1 h-1 bg-white rounded-full bg-glow"
-    style={{
-      left: `${Math.random() * 100}%`,
-      top: `${Math.random() * 100}%`,
-    }}
+    style={{ left: `${left}%`, top: `${top}%` }}
   />
 );
 
@@ -66,9 +87,9 @@ const ESports = () => {
       <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-sky-500/10 blur-[120px] rounded-full" />
       <div className="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] bg-white/5 blur-[100px] rounded-full" />
 
-      {/* Floating Particles */}
-      {[...Array(20)].map((_, i) => (
-        <FloatingParticle key={i} delay={i * 0.2} />
+      {/* Floating Particles — stable positions, no Math.random in render */}
+      {PARTICLE_DATA.map((p, i) => (
+        <FloatingParticle key={i} delay={i * 0.2} left={p.left} top={p.top} duration={p.duration} />
       ))}
 
       <ScanLine />
@@ -126,8 +147,6 @@ const ESports = () => {
           <div className="space-y-8 order-2 lg:order-1">
             <div className="grid grid-cols-2 gap-4">
               {[
-                { label: 'PRIZE POOL', value: '₹50,000+', icon: Trophy },
-                { label: 'PARTICIPANTS', value: '500+', icon: Users },
                 { label: 'GAMES', value: 'BGMI / VALO', icon: Gamepad2 },
                 { label: 'STATUS', value: 'LIVE', icon: Zap },
               ].map((stat, i) => (

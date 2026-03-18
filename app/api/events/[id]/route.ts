@@ -1,12 +1,12 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/db";
 import Event from "@/models/Event";
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, context: { params: Promise<{ id: string }> }) {
     try {
         await connectDB();
 
-        const { id } = params;
+        const { id } = await context.params;
         const event = await Event.findById(id);
 
         if (!event) {
