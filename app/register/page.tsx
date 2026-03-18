@@ -6,7 +6,7 @@ import Link from "next/link";
 
 const ANIME_IMG = "/anime.jpg";
 
-const BRANCHES = ["CSE", "ECE", "EE", "ME", "CE", "IT", "CHE", "MCA", "MBA"];
+const BRANCHES = ["CSE", "IOT", "CE", "EE", "MECH"];
 const BATCHES = ["2022", "2023", "2024", "2025"];
 
 const styles = `
