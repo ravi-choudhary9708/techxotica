@@ -69,8 +69,8 @@ export const eventItems: EventData[] = [
         ],
     },
     {
-        id: "blind-coding",
-        title: "Blind Coding",
+        id: "Algorithm design",
+        title: "Algorithm design",
         category: "Technical",
         description: "Can you code with your monitor off? Test your syntax memory and typing precision in this extreme challenge.",
         image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1000&auto=format&fit=crop",
@@ -211,8 +211,8 @@ export const eventItems: EventData[] = [
         ],
     },
     {
-        id: "model-escape-room",
-        title: "Model Escape Room",
+        id: "mech-escape-room",
+        title: "Mech Escape Room",
         category: "Technical",
         description: "Design an immersive physical puzzle experience. Engineering logic used to create an inescapable maze.",
         image: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1000&auto=format&fit=crop",
