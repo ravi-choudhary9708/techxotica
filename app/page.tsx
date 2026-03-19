@@ -54,7 +54,7 @@ export default function Home() {
         <AboutMadhubani />
         <Events />
         <ESports />
-        <AboutDeveloper />
+        
         <Footer />
       </div>
     </main>
