@@ -7,6 +7,7 @@ import AboutMadhubani from "./components/AboutMadhubani";
 import Events from "./components/Events";
 import ESports from "./components/ESports";
 import Footer from "./components/Footer";
+import AboutDeveloper from "./components/AboutDeveloper";
 
 export default function Home() {
   // Intersection Observer for scroll animations
@@ -53,6 +54,7 @@ export default function Home() {
         <AboutMadhubani />
         <Events />
         <ESports />
+        <AboutDeveloper />
         <Footer />
       </div>
     </main>

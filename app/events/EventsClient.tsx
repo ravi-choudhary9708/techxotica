@@ -79,10 +79,10 @@ const styles = `
     position: relative; z-index: 1;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 60px 20px 80px;
+    padding: 60px 20px 160px;
   }
   @media (min-width: 768px) {
-    .ev-container { padding: 100px 24px 100px; }
+    .ev-container { padding: 100px 24px 160px; }
   }
 
   /* ── Hero header ── */
@@ -257,6 +257,11 @@ const styles = `
     transform: translateY(-4px) scale(1.01);
     box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 30px var(--c-glow, rgba(0,200,255,0.08));
   }
+  .ev-card.in-cart {
+    border-color: rgba(0,200,255,0.45) !important;
+    background: rgba(0,200,255,0.04) !important;
+    box-shadow: 0 0 24px rgba(0,200,255,0.12) !important;
+  }
 
   /* Top corner cut */
   .ev-card::before {
@@ -412,7 +417,7 @@ const styles = `
     padding: 14px 22px;
     border-top: 1px solid rgba(255,255,255,0.05);
     display: flex; align-items: center;
-    justify-content: space-between; gap: 12px;
+    justify-content: space-between; gap: 8px;
   }
 
   .ev-team-info {
@@ -435,7 +440,7 @@ const styles = `
     font-family: 'Barlow Condensed', sans-serif;
     font-size: 11px; font-weight: 700;
     letter-spacing: 3px; text-transform: uppercase;
-    padding: 8px 22px;
+    padding: 8px 16px;
     background: transparent;
     border: 1px solid var(--c-border, rgba(0,200,255,0.3));
     color: var(--c-color, #00c8ff);
@@ -443,6 +448,7 @@ const styles = `
     transition: all 0.2s;
     clip-path: polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
     position: relative; overflow: hidden;
+    white-space: nowrap;
   }
   .ev-btn::before {
     content: '';
@@ -458,8 +464,15 @@ const styles = `
   }
   .ev-btn span { position: relative; z-index: 1; text-align: center; display: inline-block; width: 100%;}
   .ev-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Cart button states */
+  .ev-btn-cart-active {
+    background: rgba(0,200,255,0.12) !important;
+    border-color: #00c8ff !important;
+    color: #00c8ff !important;
   }
 
   /* ── Date dividers ── */
@@ -492,13 +505,276 @@ const styles = `
     font-size: 14px; letter-spacing: 2px;
     color: rgba(255,255,255,0.2); text-transform: uppercase;
   }
+
+  /* ═══ CART BAR ═══ */
+  .ev-cart-bar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    z-index: 200;
+    transform: translateY(100%);
+    transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+  }
+  .ev-cart-bar.open { transform: translateY(0); }
+
+  .ev-cart-bar-inner {
+    background: rgba(5,5,10,0.96);
+    border-top: 1px solid rgba(0,200,255,0.25);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 -20px 60px rgba(0,0,0,0.6), 0 -1px 0 rgba(0,200,255,0.15);
+  }
+
+  .ev-cart-top {
+    max-width: 1200px; margin: 0 auto;
+    padding: 12px 20px;
+    display: flex; align-items: center; gap: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .ev-cart-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px; letter-spacing: 3px;
+    color: #00c8ff; text-transform: uppercase;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .ev-cart-badge {
+    background: #00c8ff; color: #050508;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px; font-weight: 700;
+    width: 20px; height: 20px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .ev-cart-items {
+    flex: 1;
+    display: flex; gap: 8px; flex-wrap: wrap;
+    align-items: center;
+    overflow-x: auto;
+    padding: 2px 0;
+    scrollbar-width: none;
+  }
+  .ev-cart-items::-webkit-scrollbar { display: none; }
+
+  .ev-cart-chip {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(0,200,255,0.07);
+    border: 1px solid rgba(0,200,255,0.2);
+    padding: 4px 10px 4px 12px;
+    font-size: 11px; letter-spacing: 1px;
+    color: rgba(255,255,255,0.7);
+    white-space: nowrap;
+    clip-path: polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);
+  }
+  .ev-cart-chip-x {
+    background: none; border: none; cursor: pointer;
+    color: rgba(255,255,255,0.35); font-size: 14px; line-height: 1;
+    padding: 0; transition: color 0.2s;
+  }
+  .ev-cart-chip-x:hover { color: #ff4040; }
+
+  .ev-cart-clear {
+    background: none; border: none;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px; letter-spacing: 2px;
+    color: rgba(255,255,255,0.2);
+    cursor: pointer; text-transform: uppercase;
+    transition: color 0.2s; padding: 0;
+    white-space: nowrap;
+  }
+  .ev-cart-clear:hover { color: #ff4040; }
+
+  .ev-cart-cta {
+    max-width: 1200px; margin: 0 auto;
+    padding: 12px 20px;
+    display: flex; align-items: center; justify-content: flex-end;
+    gap: 12px;
+  }
+
+  .ev-cart-reg-btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px; font-weight: 700;
+    letter-spacing: 4px; text-transform: uppercase;
+    padding: 12px 32px;
+    background: linear-gradient(135deg, #00c8ff, #0066ff);
+    color: #050508;
+    border: none; cursor: pointer;
+    clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+    transition: all 0.2s;
+    position: relative; overflow: hidden;
+  }
+  .ev-cart-reg-btn:hover {
+    box-shadow: 0 0 30px rgba(0,200,255,0.5);
+    transform: translateY(-1px);
+  }
+  .ev-cart-count-txt {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px; color: rgba(255,255,255,0.35); letter-spacing: 1px;
+  }
+
+  /* ═══ MODAL OVERLAY ═══ */
+  .ev-modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 300;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .ev-modal-overlay.open {
+    opacity: 1; pointer-events: all;
+  }
+
+  .ev-modal {
+    background: #07070e;
+    border: 1px solid rgba(0,200,255,0.2);
+    width: 100%; max-width: 560px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.8), 0 0 60px rgba(0,200,255,0.08);
+    transform: translateY(20px) scale(0.97);
+    transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,200,255,0.2) transparent;
+  }
+  .ev-modal-overlay.open .ev-modal {
+    transform: translateY(0) scale(1);
+  }
+
+  .ev-modal-header {
+    padding: 22px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; background: #07070e; z-index: 1;
+  }
+
+  .ev-modal-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 20px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase;
+    color: #f0e8ff;
+  }
+  .ev-modal-close {
+    background: none; border: none; cursor: pointer;
+    color: rgba(255,255,255,0.3); font-size: 22px; line-height: 1;
+    padding: 0; transition: color 0.2s;
+  }
+  .ev-modal-close:hover { color: #fff; }
+
+  .ev-modal-body { padding: 20px 24px; }
+
+  /* Each event entry in modal */
+  .ev-modal-event {
+    margin-bottom: 20px;
+    padding: 16px;
+    border: 1px solid rgba(255,255,255,0.06);
+    background: rgba(255,255,255,0.02);
+    position: relative;
+    overflow: hidden;
+  }
+  .ev-modal-event::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
+    background: var(--c-color, #00c8ff);
+    box-shadow: 0 0 8px var(--c-color, #00c8ff);
+  }
+  .ev-modal-event-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px; font-weight: 700;
+    color: #f0e8ff; margin-bottom: 4px; letter-spacing: 0.5px;
+  }
+  .ev-modal-event-type {
+    font-size: 10px; letter-spacing: 2px;
+    color: var(--c-color, #00c8ff); text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  /* Modal fields */
+  .ev-modal-field { margin-top: 10px; }
+  .ev-modal-label {
+    display: block; font-size: 9px; font-weight: 700;
+    letter-spacing: 3px; text-transform: uppercase;
+    color: rgba(255,255,255,0.3); margin-bottom: 6px;
+  }
+  .ev-modal-input {
+    width: 100%;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: #f0e8ff;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    padding: 10px 12px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .ev-modal-input:focus {
+    border-color: rgba(0,200,255,0.4);
+    box-shadow: 0 0 12px rgba(0,200,255,0.08);
+  }
+  .ev-modal-input::placeholder { color: rgba(255,255,255,0.18); }
+  .ev-modal-hint {
+    font-size: 10px; color: rgba(255,255,255,0.2);
+    margin-top: 4px; letter-spacing: 0.5px;
+  }
+
+  /* Result per event */
+  .ev-result-ok  { color: #00ff88; font-size: 11px; margin-top: 6px; letter-spacing: 1px; }
+  .ev-result-err { color: #ff4040; font-size: 11px; margin-top: 6px; letter-spacing: 1px; }
+  .ev-result-skip { color: rgba(255,255,255,0.3); font-size: 11px; margin-top: 6px; letter-spacing: 1px; }
+
+  .ev-modal-footer {
+    padding: 16px 24px 24px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    display: flex; gap: 10px; flex-direction: column;
+  }
+
+  .ev-modal-submit {
+    width: 100%;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px; font-weight: 700;
+    letter-spacing: 4px; text-transform: uppercase;
+    padding: 14px;
+    background: linear-gradient(135deg, #0066cc, #00c8ff);
+    color: #fff;
+    border: none; cursor: pointer;
+    clip-path: polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);
+    transition: all 0.2s;
+  }
+  .ev-modal-submit:hover {
+    box-shadow: 0 0 30px rgba(0,200,255,0.4);
+    transform: translateY(-1px);
+  }
+  .ev-modal-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  .ev-modal-cancel {
+    background: none; border: 1px solid rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.35);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px; letter-spacing: 3px; text-transform: uppercase;
+    padding: 10px; cursor: pointer;
+    transition: all 0.2s; width: 100%;
+  }
+  .ev-modal-cancel:hover { border-color: rgba(255,255,255,0.25); color: rgba(255,255,255,0.6); }
 `;
+
+interface TeamInput {
+  teamName: string;
+  memberTechIds: string;
+}
 
 export default function EventsClient({ events }: { events: any[] }) {
   const [visible, setVisible] = useState(false);
   const [catFilter, setCatFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
   const [filledBars, setFilledBars] = useState(false);
+  const [cart, setCart] = useState<Set<string>>(new Set());
+  const [modalOpen, setModalOpen] = useState(false);
+  const [teamInputs, setTeamInputs] = useState<Record<string, TeamInput>>({});
+  const [submitting, setSubmitting] = useState(false);
+  const [results, setResults] = useState<Record<string, { ok: boolean; msg: string }>>({});
+  const [done, setDone] = useState(false);
   const gridRef = useRef(null);
   const router = useRouter();
 
@@ -516,23 +792,115 @@ export default function EventsClient({ events }: { events: any[] }) {
   const filtered = events.filter(ev => {
     const evCat = (ev.category || "other").toLowerCase();
     if (catFilter !== "all" && evCat !== catFilter) return false;
-
     if (typeFilter === "solo") {
-      // Event supports solo participation if minTeamSize is 1
       if ((ev.teamSize?.min || 1) !== 1) return false;
     } else if (typeFilter === "team") {
-      // Event supports team participation if maxTeamSize is > 1
       if ((ev.teamSize?.max || 1) <= 1) return false;
     }
-
     return true;
   });
 
   const cx = (...a: any[]) => a.filter(Boolean).join(" ");
 
-  // Derive stats
   const totalRegs = events.reduce((s, e) => s + (e.participantsCount || 0), 0);
   const maxReg = Math.max(1, ...events.map(e => e.participantsCount || 0));
+
+  // Cart helpers
+  const toggleCart = (id: string) => {
+    setCart(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const removeFromCart = (id: string) => {
+    setCart(prev => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
+  };
+
+  const cartEvents = events.filter(ev => cart.has(ev._id));
+
+  // Open modal — init team inputs for team events
+  const openModal = () => {
+    const init: Record<string, TeamInput> = {};
+    cartEvents.forEach(ev => {
+      if (ev.type === "team") {
+        init[ev._id] = teamInputs[ev._id] || { teamName: "", memberTechIds: "" };
+      }
+    });
+    setTeamInputs(init);
+    setResults({});
+    setDone(false);
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    if (submitting) return;
+    setModalOpen(false);
+    setResults({});
+    setDone(false);
+  };
+
+  const handleTeamInput = (evId: string, field: keyof TeamInput, val: string) => {
+    setTeamInputs(prev => ({ ...prev, [evId]: { ...prev[evId], [field]: val } }));
+  };
+
+  const handleRegisterAll = async () => {
+    setSubmitting(true);
+    const newResults: Record<string, { ok: boolean; msg: string }> = {};
+
+    for (const ev of cartEvents) {
+      try {
+        let body: any = { eventId: ev._id };
+        if (ev.type === "team") {
+          const inp = teamInputs[ev._id] || { teamName: "", memberTechIds: "" };
+          const memberArr = inp.memberTechIds
+            .split(/[\n,]+/)
+            .map((s: string) => s.trim())
+            .filter(Boolean);
+          body = { ...body, teamName: inp.teamName.trim(), memberTechIds: memberArr };
+        }
+
+        const res = await fetch("/api/events/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          newResults[ev._id] = { ok: true, msg: "Registered successfully ✓" };
+        } else if (res.status === 401) {
+          newResults[ev._id] = { ok: false, msg: "Not logged in — please sign in first" };
+        } else {
+          newResults[ev._id] = { ok: false, msg: data.message || "Registration failed" };
+        }
+      } catch {
+        newResults[ev._id] = { ok: false, msg: "Network error — try again" };
+      }
+    }
+
+    setResults(newResults);
+    setDone(true);
+    setSubmitting(false);
+
+    // Remove successfully registered from cart
+    const successIds = Object.entries(newResults)
+      .filter(([, r]) => r.ok)
+      .map(([id]) => id);
+    if (successIds.length) {
+      setCart(prev => {
+        const next = new Set(prev);
+        successIds.forEach(id => next.delete(id));
+        return next;
+      });
+    }
+  };
 
   return (
     <div className="ev-root">
@@ -608,11 +976,12 @@ export default function EventsClient({ events }: { events: any[] }) {
               const c = CAT[catString] || CAT.other;
               const fillPct = filledBars ? Math.min(100, Math.round(((ev.participantsCount || 0) / maxReg) * 100)) : 0;
               const date = ev.date ? new Date(ev.date).toLocaleDateString("en-IN", { day: "numeric", month: "short" }) : "TBA";
+              const inCart = cart.has(ev._id);
 
               return (
                 <div
                   key={ev._id}
-                  className={cx("ev-card", visible && "ev-in")}
+                  className={cx("ev-card", visible && "ev-in", inCart && "in-cart")}
                   style={{
                     "--c-color": c.color,
                     "--c-border": c.border,
@@ -627,7 +996,21 @@ export default function EventsClient({ events }: { events: any[] }) {
                   <div className="ev-card-shimmer" />
                   <div className="ev-card-bar" />
 
-                  <div className="ev-card-body">
+                  {/* In-cart indicator */}
+                  {inCart && (
+                    <div style={{
+                      position: "absolute", top: 10, left: 10, zIndex: 5,
+                      background: "rgba(0,200,255,0.15)",
+                      border: "1px solid rgba(0,200,255,0.4)",
+                      color: "#00c8ff",
+                      fontSize: 9, letterSpacing: 2, fontWeight: 700,
+                      padding: "2px 8px", textTransform: "uppercase",
+                    }}>
+                      ✓ In Cart
+                    </div>
+                  )}
+
+                  <div className="ev-card-body" style={{ paddingTop: inCart ? 32 : 22 }}>
                     <div className="ev-card-header">
                       <div className="ev-card-icon">{c.icon}</div>
                       <div className="ev-card-badges">
@@ -683,17 +1066,152 @@ export default function EventsClient({ events }: { events: any[] }) {
                         ? `${ev.teamSize?.min || 1}–${ev.teamSize?.max || 4} members`
                         : "Individual event"}
                     </div>
-                    <button
-                      className="ev-btn"
-                      onClick={() => router.push(`/events/${ev._id}`)}
-                    >
-                      <span>DETAILS →</span>
-                    </button>
+                    <div style={{ display: "flex", gap: 6 }}>
+                      {/* Add / remove cart */}
+                      <button
+                        className={cx("ev-btn", inCart && "ev-btn-cart-active")}
+                        onClick={() => toggleCart(ev._id)}
+                        title={inCart ? "Remove from cart" : "Add to cart"}
+                      >
+                        <span>{inCart ? "✓ Added" : "+ Cart"}</span>
+                      </button>
+                      {/* Details */}
+                      <button
+                        className="ev-btn"
+                        onClick={() => router.push(`/events/${ev._id}`)}
+                        style={{ "--c-color": c.color, "--c-border": c.border, "--c-bg": c.bg, "--c-glow": c.glow } as any}
+                      >
+                        <span>Details →</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               );
             })
           )}
+        </div>
+      </div>
+
+      {/* ═══ STICKY CART BAR ═══ */}
+      <div className={cx("ev-cart-bar", cart.size > 0 && "open")}>
+        <div className="ev-cart-bar-inner">
+          <div className="ev-cart-top">
+            <span className="ev-cart-label">
+              <span>⬡ Cart</span>
+              <span className="ev-cart-badge">{cart.size}</span>
+            </span>
+            <div className="ev-cart-items">
+              {cartEvents.map(ev => (
+                <div key={ev._id} className="ev-cart-chip">
+                  {ev.title || ev.name}
+                  <button className="ev-cart-chip-x" onClick={() => removeFromCart(ev._id)} title="Remove">×</button>
+                </div>
+              ))}
+            </div>
+            <button className="ev-cart-clear" onClick={() => setCart(new Set())}>Clear all</button>
+          </div>
+          <div className="ev-cart-cta">
+            <span className="ev-cart-count-txt">{cart.size} event{cart.size !== 1 ? "s" : ""} selected</span>
+            <button className="ev-cart-reg-btn" onClick={openModal}>
+              Register All →
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* ═══ CHECKOUT MODAL ═══ */}
+      <div className={cx("ev-modal-overlay", modalOpen && "open")} onClick={e => { if (e.target === e.currentTarget) closeModal(); }}>
+        <div className="ev-modal">
+          <div className="ev-modal-header">
+            <span className="ev-modal-title">Register for {cartEvents.length} Event{cartEvents.length !== 1 ? "s" : ""}</span>
+            <button className="ev-modal-close" onClick={closeModal}>×</button>
+          </div>
+
+          <div className="ev-modal-body">
+            {done && (
+              <div style={{
+                padding: "12px 16px", marginBottom: 16,
+                background: "rgba(0,200,255,0.05)",
+                border: "1px solid rgba(0,200,255,0.2)",
+                fontSize: 12, letterSpacing: 1, color: "rgba(255,255,255,0.5)"
+              }}>
+                Registration complete. Check results below.
+              </div>
+            )}
+
+            {cartEvents.map(ev => {
+              const catString = (ev.category || "other").toLowerCase();
+              const c = CAT[catString] || CAT.other;
+              const result = results[ev._id];
+
+              return (
+                <div
+                  key={ev._id}
+                  className="ev-modal-event"
+                  style={{ "--c-color": c.color } as any}
+                >
+                  <div className="ev-modal-event-name">{ev.title || ev.name}</div>
+                  <div className="ev-modal-event-type">
+                    {catString} · {ev.type === "solo" ? "Solo event — no extra info needed" : `Team event · ${ev.teamSize?.min || 1}–${ev.teamSize?.max || 4} members`}
+                  </div>
+
+                  {ev.type === "team" && !done && (
+                    <>
+                      <div className="ev-modal-field">
+                        <label className="ev-modal-label">Team Name</label>
+                        <input
+                          className="ev-modal-input"
+                          placeholder="e.g. Phantom Squad"
+                          value={teamInputs[ev._id]?.teamName || ""}
+                          onChange={e => handleTeamInput(ev._id, "teamName", e.target.value)}
+                        />
+                      </div>
+                      <div className="ev-modal-field">
+                        <label className="ev-modal-label">Member Techexotica IDs</label>
+                        <textarea
+                          className="ev-modal-input"
+                          rows={3}
+                          placeholder={"TX-98765-2024\nTX-11223-2023"}
+                          style={{ resize: "vertical", lineHeight: 1.6 }}
+                          value={teamInputs[ev._id]?.memberTechIds || ""}
+                          onChange={e => handleTeamInput(ev._id, "memberTechIds", e.target.value)}
+                        />
+                        <div className="ev-modal-hint">Enter each member's TX ID — one per line or comma-separated (excluding yourself)</div>
+                      </div>
+                    </>
+                  )}
+
+                  {/* Result indicator */}
+                  {result && (
+                    <div className={result.ok ? "ev-result-ok" : "ev-result-err"}>
+                      {result.msg}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="ev-modal-footer">
+            {!done ? (
+              <>
+                <button
+                  className="ev-modal-submit"
+                  onClick={handleRegisterAll}
+                  disabled={submitting}
+                >
+                  {submitting ? "Registering..." : `Confirm & Register ${cartEvents.length} Event${cartEvents.length !== 1 ? "s" : ""}`}
+                </button>
+                <button className="ev-modal-cancel" onClick={closeModal} disabled={submitting}>
+                  Cancel
+                </button>
+              </>
+            ) : (
+              <button className="ev-modal-submit" onClick={closeModal}>
+                Done
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>
