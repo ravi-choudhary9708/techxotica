@@ -841,6 +841,10 @@ export default function EventsClient({ events }: { events: any[] }) {
 
   const closeModal = () => {
     if (submitting) return;
+    if (done && Object.values(results).some(r => r.ok)) {
+      router.push("/profile");
+      return;
+    }
     setModalOpen(false);
     setResults({});
     setDone(false);
@@ -889,17 +893,9 @@ export default function EventsClient({ events }: { events: any[] }) {
     setDone(true);
     setSubmitting(false);
 
-    // Remove successfully registered from cart
-    const successIds = Object.entries(newResults)
-      .filter(([, r]) => r.ok)
-      .map(([id]) => id);
-    if (successIds.length) {
-      setCart(prev => {
-        const next = new Set(prev);
-        successIds.forEach(id => next.delete(id));
-        return next;
-      });
-    }
+    // Cart is purposefully not cleared immediately here
+    // so the modal UI doesn't visually update to "0 events" prematurely.
+    // closeModal will redirect to /profile on success.
   };
 
   return (
