@@ -273,8 +273,8 @@ export const eventItems: EventData[] = [
     },
     // ✅ NEW
     {
-        id: "edge-avoider",
-        title: "Edge Avoider",
+        id: "robo race",
+        title: "robo race",
         category: "Technical",
         description: "Keep your bot from falling off the edge. A tense test of sensor calibration and real-time obstacle detection.",
         image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=1000&auto=format&fit=crop",
@@ -309,23 +309,7 @@ export const eventItems: EventData[] = [
             "Physical damage to opponent's bot will result in immediate disqualification.",
         ],
     },
-    {
-        id: "model-making",
-        title: "Model Making",
-        category: "Technical",
-        description: "Detailed craftsmanship of physical prototypes. From miniature cities to complex mechanical systems.",
-        image: "https://images.unsplash.com/photo-1558717738-0b9fbb9b0b21?q=80&w=1000&auto=format&fit=crop",
-        color: "#ffd700",
-        date: "24 March 2026",
-        time: "10:00 AM - 04:00 PM",
-        venue: "Exhibition Hall A",
-        prizePool: "₹18,000",
-        teamSizeText: "2-4 Members",
-        rules: [
-            "Models must be working/functional in some capacity.",
-            "Pre-fabricated kits are not allowed.",
-        ],
-    },
+    
     {
         id: "model-exhibition",
         title: "Model Exhibition",
@@ -343,23 +327,7 @@ export const eventItems: EventData[] = [
             "Teams must be ready to explain the working principles to judges and attendees.",
         ],
     },
-    {
-        id: "mech-escape-room",
-        title: "Mech Escape Room",
-        category: "Technical",
-        description: "Design an immersive physical puzzle experience. Engineering logic used to create an inescapable maze.",
-        image: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1000&auto=format&fit=crop",
-        color: "#ffd700",
-        date: "24 March 2026",
-        time: "02:00 PM - 06:00 PM",
-        venue: "Innovation Center",
-        prizePool: "₹25,000",
-        teamSizeText: "4-5 Members",
-        rules: [
-            "Designs must incorporate at least 3 mechanical or electronic puzzles.",
-            "Safety protocols must be strictly adhered to.",
-        ],
-    },
+   
 
     // --- CREATIVE & MEDIA ---
     {
@@ -468,24 +436,7 @@ export const eventItems: EventData[] = [
             "Physical obstruction or sabotage of other teams will result in immediate disqualification.",
         ],
     },
-    {
-        id: "e-sports",
-        title: "E-Sports",
-        category: "Gaming",
-        description: "Professional gaming on the big stage. Compete in high-stakes matches and dominate the leaderboard.",
-        image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1000&auto=format&fit=crop",
-        color: "#a855f7",
-        date: "23-24 March 2026",
-        time: "10:00 AM - 08:00 PM",
-        venue: "Gaming Arena",
-        prizePool: "TBA",
-        teamSizeText: "5 Members (Valorant/BGMI)",
-        rules: [
-            "Players must bring their own peripherals (Mice/Keyboards/Headsets).",
-            "Standard international tournament rules apply.",
-            "Toxicity or verbal abuse will result in team forfeits.",
-        ],
-    },
+   
     // ✅ NEW
     {
         id: "radium-cricket",
@@ -506,21 +457,5 @@ export const eventItems: EventData[] = [
             "Players must wear light-colored or white clothing for visibility.",
         ],
     },
-    {
-        id: "expo",
-        title: "Expo",
-        category: "Gaming",
-        description: "A showcase of industrial giants and student startups alike. Discover the latest tech trends here.",
-        image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?q=80&w=1000&auto=format&fit=crop",
-        color: "#a855f7",
-        date: "23-24 March 2026",
-        time: "09:00 AM - 06:00 PM",
-        venue: "Central Courtyard",
-        prizePool: "Exhibition Only",
-        teamSizeText: "Varies",
-        rules: [
-            "Pre-registration of the stall is mandatory.",
-            "Participants are responsible for their own exhibits.",
-        ],
-    },
+   
 ];
