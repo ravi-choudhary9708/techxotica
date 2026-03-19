@@ -1,61 +1,42 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Link from "next/link";
-import { CardStack, CardStackItem } from "@/components/ui/card-stack";
+import { ExpandCards, ExpandCardItem } from "@/components/ui/expand-cards";
 import { ArrowRight } from "lucide-react";
 
-const majorEvents: CardStackItem[] = [
+const majorEvents: ExpandCardItem[] = [
   {
     id: 1,
     title: "Competitive Coding",
     description: "The ultimate test of algorithms and data structures. Solve intense problems and climb the local leaderboard.",
     imageSrc: "https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=1000&auto=format&fit=crop",
-    href: "/events",
   },
   {
     id: 2,
     title: "Robotics/Robo Wars",
     description: "Build, program, and battle robots. From autonomous navigation to heavy-duty mechanical engineering.",
     imageSrc: "https://images.unsplash.com/photo-1546776310-eef45dd6d63c?q=80&w=1000&auto=format&fit=crop",
-    href: "/events",
   },
   {
     id: 3,
     title: "E-Sports",
     description: "Professional gaming on the big stage. Compete in high-stakes matches and dominate the leaderboard.",
     imageSrc: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1000&auto=format&fit=crop",
-    href: "/events",
   },
   {
     id: 4,
     title: "Short Film",
     description: "5 minutes of cinematic brilliance. Tell a compelling story using your camera and editing skills.",
     imageSrc: "https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=1000&auto=format&fit=crop",
-    href: "/events",
   },
   {
     id: 5,
     title: "Treasure Hunt",
     description: "The campus is your playground. Solve cryptic clues and find the hidden glory in this massive scavenge.",
     imageSrc: "https://images.unsplash.com/photo-1513267768898-216229555024?q=80&w=1000&auto=format&fit=crop",
-    href: "/events",
   },
 ];
 
 export default function Events() {
-  const [windowWidth, setWindowWidth] = useState(1200);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    setWindowWidth(window.innerWidth);
-    const handleResize = () => setWindowWidth(window.innerWidth);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  const isMobile = windowWidth < 768;
-  const isSmallMobile = windowWidth < 400;
-
   return (
     <section id="events" className="story-section pb-48">
       {/* Background glow */}
@@ -63,7 +44,7 @@ export default function Events() {
 
       <div className="story-container">
         {/* Heading */}
-        <div className="text-center mb-16 reveal">
+        <div className="text-center mb-12 reveal">
           <p className="font-rajdhani text-xs tracking-[0.4em] uppercase text-[#00f5ff] mb-2">Competition Hub</p>
           <h2 className="section-title gradient-text">Major Events</h2>
           <div className="section-divider">
@@ -74,24 +55,9 @@ export default function Events() {
           </p>
         </div>
 
-        {/* Card Stack component */}
-        <div className="reveal w-full max-w-5xl mx-auto px-4 mb-20 overflow-visible">
-          {mounted ? (
-            <CardStack
-              items={majorEvents}
-              initialIndex={0}
-              autoAdvance
-              intervalMs={3000}
-              pauseOnHover
-              showDots
-              cardWidth={isMobile ? (isSmallMobile ? 280 : 340) : 520}
-              cardHeight={isMobile ? 420 : 320}
-            />
-          ) : (
-            <div className="w-full flex items-center justify-center min-h-[380px]">
-              <div className="w-8 h-8 border-4 border-[#00f5ff] border-t-transparent rounded-full animate-spin"></div>
-            </div>
-          )}
+        {/* Expand Cards component */}
+        <div className="reveal w-full max-w-6xl mx-auto px-4 mb-20 overflow-visible">
+          <ExpandCards items={majorEvents} />
         </div>
 
         {/* Show all button */}

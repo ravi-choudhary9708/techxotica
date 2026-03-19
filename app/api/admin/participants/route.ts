@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import connectDB from "@/lib/db";
 import Registration from "@/models/Registration";
 import Event from "@/models/Event";
+import User from "@/models/User";
 
 export async function GET(req: Request) {
     try {
@@ -14,6 +15,9 @@ export async function GET(req: Request) {
         }
 
         await connectDB();
+        
+        // Reference User explicitly to prevent Next.js/Webpack from tree-shaking it
+        if (!User) console.warn("User model not loaded");
 
         // Fetch all events
         const events = await Event.find().lean();

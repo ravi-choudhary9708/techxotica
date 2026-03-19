@@ -4,8 +4,13 @@ import Registration from "@/models/Registration";
 import User from "@/models/User";
 import Event from "@/models/Event";
 
-export async function GET() {
+export async function GET(req: Request) {
     try {
+        const { searchParams } = new URL(req.url);
+        if (searchParams.get("secret") !== process.env.ADMIN_SECRET) {
+            return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
+        }
+
         await connectDB();
 
         // Fetch all registrations and populate relations

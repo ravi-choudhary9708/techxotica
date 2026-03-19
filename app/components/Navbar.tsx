@@ -3,11 +3,12 @@
 import { Home, Calendar, Gamepad2, User, LogIn, UserPlus, LogOut } from "lucide-react";
 import { AnimeNavBar } from "@/components/ui/anime-navbar";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 export default function Navbar() {
   const [user, setUser] = useState(null);
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     fetch("/api/user/profile")
@@ -15,10 +16,12 @@ export default function Navbar() {
       .then(data => {
         if (data.success) {
           setUser(data.data);
+        } else {
+          setUser(null);
         }
       })
       .catch(() => { });
-  }, []);
+  }, [pathname]);
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });

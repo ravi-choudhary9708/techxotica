@@ -54,7 +54,6 @@ export default function AdminParticipantsPage() {
     const [error, setError] = useState("");
     const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState("");
-    const [filterStatus, setFilterStatus] = useState<"all" | "confirmed" | "pending">("all");
 
     const fetchData = useCallback(async (sec: string) => {
         setLoading(true);
@@ -98,36 +97,41 @@ export default function AdminParticipantsPage() {
     const selectedEvent = events.find((e) => e.eventId === selectedEventId);
 
     const filteredRegistrations = (selectedEvent?.registrations ?? []).filter((reg) => {
-        const matchesStatus = filterStatus === "all" || reg.status === filterStatus;
-
-        if (!searchQuery) return matchesStatus;
+        if (!searchQuery) return true;
 
         const q = searchQuery.toLowerCase();
         if (reg.type === "solo") {
             const p = reg.participant;
-            return matchesStatus && (
+            return (
                 p.name.toLowerCase().includes(q) ||
                 p.regNo.toLowerCase().includes(q) ||
-                p.techexoticaId?.toLowerCase().includes(q)
+                p.techexoticaId?.toLowerCase().includes(q) ||
+                p.branch?.toLowerCase().includes(q) ||
+                p.batch?.toLowerCase().includes(q)
             );
         } else {
             const inLeader = reg.leader && (
                 reg.leader.name.toLowerCase().includes(q) ||
                 reg.leader.regNo.toLowerCase().includes(q) ||
-                reg.leader.techexoticaId?.toLowerCase().includes(q)
+                reg.leader.techexoticaId?.toLowerCase().includes(q) ||
+                reg.leader.branch?.toLowerCase().includes(q) ||
+                reg.leader.batch?.toLowerCase().includes(q)
             );
             const inMembers = reg.members.some(
                 (m) =>
                     m.name.toLowerCase().includes(q) ||
                     m.regNo.toLowerCase().includes(q) ||
-                    m.techexoticaId?.toLowerCase().includes(q)
+                    m.techexoticaId?.toLowerCase().includes(q) ||
+                    m.branch?.toLowerCase().includes(q) ||
+                    m.batch?.toLowerCase().includes(q)
             );
             const inTeam = reg.teamName.toLowerCase().includes(q);
-            return matchesStatus && (inLeader || inMembers || inTeam);
+            return (inLeader || inMembers || inTeam);
         }
     });
 
     const totalAcrossAll = events.reduce((sum, e) => sum + e.totalParticipants, 0);
+    const totalRegistrationsAll = events.reduce((sum, e) => sum + e.registrations.length, 0);
 
     // ── Auth Screen ──────────────────────────────────────────────────────────
     if (!secret) {
@@ -220,11 +224,12 @@ export default function AdminParticipantsPage() {
                     {/* Global stats */}
                     <div style={{ display: "flex", gap: "1rem" }}>
                         <StatChip label="EVENTS" value={events.length} color="var(--neon-cyan)" />
+                        <StatChip label="TOTAL REG" value={totalRegistrationsAll} color="var(--neon-gold)" />
                         <StatChip label="PARTICIPANTS" value={totalAcrossAll} color="var(--neon-purple)" />
                     </div>
 
                     <a
-                        href={`/api/admin/export-registrations`}
+                        href={`/api/admin/export-registrations?secret=${encodeURIComponent(secret)}`}
                         className="btn-neon"
                         style={{ fontSize: "0.7rem", padding: "8px 18px" }}
                         download
@@ -288,7 +293,7 @@ export default function AdminParticipantsPage() {
                                 key={ev.eventId}
                                 event={ev}
                                 isActive={selectedEventId === ev.eventId}
-                                onClick={() => { setSelectedEventId(ev.eventId); setSearchQuery(""); setFilterStatus("all"); }}
+                                onClick={() => { setSelectedEventId(ev.eventId); setSearchQuery(""); }}
                             />
                         ))}
                         {events.length === 0 && (
@@ -344,24 +349,7 @@ export default function AdminParticipantsPage() {
                                             outline: "none",
                                         }}
                                     />
-                                    <select
-                                        value={filterStatus}
-                                        onChange={(e) => setFilterStatus(e.target.value as "all" | "confirmed" | "pending")}
-                                        style={{
-                                            padding: "0.6rem 1rem",
-                                            background: "rgba(0,245,255,0.05)",
-                                            border: "1px solid rgba(0,245,255,0.2)",
-                                            borderRadius: "8px",
-                                            color: "var(--text-primary)",
-                                            fontSize: "0.85rem",
-                                            outline: "none",
-                                            cursor: "pointer",
-                                        }}
-                                    >
-                                        <option value="all" style={{ background: "#02040d" }}>All Status</option>
-                                        <option value="confirmed" style={{ background: "#02040d" }}>Confirmed</option>
-                                        <option value="pending" style={{ background: "#02040d" }}>Pending</option>
-                                    </select>
+                                    {/* Removed status dropdown */}
                                 </div>
 
                                 {/* Registration Count */}
@@ -380,7 +368,7 @@ export default function AdminParticipantsPage() {
                                         <table style={{ width: "100%", borderCollapse: "collapse" }}>
                                             <thead>
                                                 <tr style={{ borderBottom: "1px solid rgba(0,245,255,0.15)" }}>
-                                                    {["#", "Name", "Reg No", "TX ID", "Branch", "Batch", "Phone", "Status", "Registered"].map((h) => (
+                                                    {["#", "Name", "Reg No", "TX ID", "Branch", "Batch", "Phone", "Registered"].map((h) => (
                                                         <th key={h} style={{
                                                             padding: "0.75rem 1rem",
                                                             textAlign: "left",
@@ -412,7 +400,6 @@ export default function AdminParticipantsPage() {
                                                         <td style={tdStyle}>{reg.participant.branch}</td>
                                                         <td style={tdStyle}>{reg.participant.batch}</td>
                                                         <td style={{ ...tdStyle, fontFamily: "monospace" }}>{reg.participant.phone}</td>
-                                                        <td style={tdStyle}><StatusBadge status={reg.status} /></td>
                                                         <td style={{ ...tdStyle, color: "var(--text-muted)", fontSize: "0.78rem" }}>
                                                             {new Date(reg.registeredAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short" })}
                                                         </td>
@@ -577,7 +564,6 @@ function TeamCard({ reg, idx }: { reg: TeamRegistration; idx: number }) {
                     </span>
                 </div>
                 <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-                    <StatusBadge status={reg.status} />
                     <span style={{ color: "var(--text-muted)", fontSize: "0.72rem" }}>
                         {new Date(reg.registeredAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
                     </span>
