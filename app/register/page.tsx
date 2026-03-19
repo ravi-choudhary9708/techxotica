@@ -648,25 +648,25 @@ export default function RegisterPage() {
 
               <Field
                 id="rg-name" label="Full Name" icon="◈"
-                placeholder="Rahul Kumar"
+                placeholder="Ravi Choudhary"
                 field="name" error={errors.name}
                 value={form.name} onChange={handleChange}
               />
               <Field
                 id="rg-email" label="Email Address" icon="✉"
-                type="email" placeholder="rahul@example.com"
+                type="email" placeholder="quadskill.team@gmail.com"
                 field="email" error={errors.email}
                 value={form.email} onChange={handleChange}
               />
               <Field
                 id="rg-reg" label="Registration Number" icon="⬡"
-                placeholder="22CSE001"
+                placeholder="24155150019"
                 field="regNo" error={errors.regNo}
                 value={form.regNo} onChange={handleChange}
               />
               <Field
                 id="rg-phone" label="Phone Number" icon="◷"
-                type="tel" placeholder="9876543210"
+                type="tel" placeholder="7859097***"
                 field="phone" error={errors.phone}
                 value={form.phone} onChange={handleChange}
               />
