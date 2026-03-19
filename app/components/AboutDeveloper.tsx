@@ -35,14 +35,14 @@ export default function AboutDeveloper() {
             textShadow: "0 0 20px rgba(168,85,247,0.5)",
           }}
         >
-          RAVI{" "}
+          CSE{" "}
           <span
             style={{
               color: "#a855f7",
               textShadow: "0 0 15px #a855f7, 0 0 40px rgba(168,85,247,0.4)",
             }}
           >
-            CHOUDHARY
+            IOT - 2024
           </span>
         </h3>
 
