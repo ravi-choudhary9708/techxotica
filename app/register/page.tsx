@@ -488,7 +488,7 @@ function Field({ id, label, icon, type = "text", placeholder, field, error, valu
 export default function RegisterPage() {
   const router = useRouter();
   const [visible, setVisible] = useState(false);
-  const [form, setForm] = useState({ name: "", regNo: "", phone: "", batch: "", branch: "", password: "" });
+  const [form, setForm] = useState({ name: "", email: "", regNo: "", phone: "", batch: "", branch: "", password: "" });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -522,6 +522,7 @@ export default function RegisterPage() {
   const validate = () => {
     const e: { [key: string]: string } = {};
     if (!form.name.trim()) e.name = "Name is required";
+    if (!form.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = "Valid email is required";
     if (!form.regNo.trim()) e.regNo = "Registration number required";
     if (!/^[0-9]{10}$/.test(form.phone)) e.phone = "Enter valid 10-digit number";
     if (!form.batch) e.batch = "Select your batch";
@@ -650,6 +651,12 @@ export default function RegisterPage() {
                 placeholder="Rahul Kumar"
                 field="name" error={errors.name}
                 value={form.name} onChange={handleChange}
+              />
+              <Field
+                id="rg-email" label="Email Address" icon="✉"
+                type="email" placeholder="rahul@example.com"
+                field="email" error={errors.email}
+                value={form.email} onChange={handleChange}
               />
               <Field
                 id="rg-reg" label="Registration Number" icon="⬡"

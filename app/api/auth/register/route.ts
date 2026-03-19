@@ -10,10 +10,10 @@ export async function POST(req: Request) {
         await connectDB();
 
         const body = await req.json();
-        const { name, regNo, phone, batch, branch, password } = body;
+        const { name, email, regNo, phone, batch, branch, password } = body;
 
         // Validation
-        if (!name || !regNo || !phone || !batch || !branch || !password) {
+        if (!name || !email || !regNo || !phone || !batch || !branch || !password) {
             return NextResponse.json(
                 { success: false, message: "All fields are required" },
                 { status: 400 }
@@ -28,6 +28,14 @@ export async function POST(req: Request) {
         }
 
         // Check existing
+        const existingEmail = await User.findOne({ email });
+        if (existingEmail) {
+            return NextResponse.json(
+                { success: false, message: "Email already registered" },
+                { status: 400 }
+            );
+        }
+
         const existingReg = await User.findOne({ regNo });
         if (existingReg) {
             return NextResponse.json(
@@ -50,6 +58,7 @@ export async function POST(req: Request) {
         // Create user
         const newUser = new User({
             name,
+            email,
             regNo,
             phone,
             batch,

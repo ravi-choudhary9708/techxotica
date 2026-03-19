@@ -693,7 +693,7 @@ export default function LoginPage() {
 
               {/* Forgot */}
               <div className="lg-forgot">
-                <a>Forgot password?</a>
+                <a onClick={() => router.push("/forgot-password")}>Forgot password?</a>
               </div>
 
               {/* Submit */}
