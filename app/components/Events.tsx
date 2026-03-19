@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { CardStack, CardStackItem } from "@/components/ui/card-stack";
 import { ArrowRight } from "lucide-react";
@@ -42,6 +42,20 @@ const majorEvents: CardStackItem[] = [
 ];
 
 export default function Events() {
+  const [windowWidth, setWindowWidth] = useState(1200);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    setWindowWidth(window.innerWidth);
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const isMobile = windowWidth < 768;
+  const isSmallMobile = windowWidth < 400;
+
   return (
     <section id="events" className="story-section pb-48">
       {/* Background glow */}
@@ -62,16 +76,22 @@ export default function Events() {
 
         {/* Card Stack component */}
         <div className="reveal w-full max-w-5xl mx-auto px-4 mb-20 overflow-visible">
-          <CardStack
-            items={majorEvents}
-            initialIndex={0}
-            autoAdvance
-            intervalMs={3000}
-            pauseOnHover
-            showDots
-            cardWidth={520}
-            cardHeight={320}
-          />
+          {mounted ? (
+            <CardStack
+              items={majorEvents}
+              initialIndex={0}
+              autoAdvance
+              intervalMs={3000}
+              pauseOnHover
+              showDots
+              cardWidth={isMobile ? (isSmallMobile ? 280 : 340) : 520}
+              cardHeight={isMobile ? 420 : 320}
+            />
+          ) : (
+            <div className="w-full flex items-center justify-center min-h-[380px]">
+              <div className="w-8 h-8 border-4 border-[#00f5ff] border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          )}
         </div>
 
         {/* Show all button */}

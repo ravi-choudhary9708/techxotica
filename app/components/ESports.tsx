@@ -147,7 +147,7 @@ const ESports = () => {
           <div className="space-y-8 order-2 lg:order-1">
             <div className="grid grid-cols-2 gap-4">
               {[
-                { label: 'GAMES', value: 'BGMI / VALO', icon: Gamepad2 },
+                { label: 'GAMES', value: 'BGMI / Free Fire', icon: Gamepad2 },
                 { label: 'STATUS', value: 'LIVE', icon: Zap },
               ].map((stat, i) => (
                 <motion.div
