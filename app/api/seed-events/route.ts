@@ -7,8 +7,9 @@ export async function GET() {
     try {
         await connectDB();
 
-        // Clear existing events to avoid old/duplicate data
-        await Event.deleteMany({});
+        // Do not clear existing events. updateData with upsert will handle updates
+        // without breaking existing foreign key references in registrations.
+        // await Event.deleteMany({});
 
         const results = [];
 

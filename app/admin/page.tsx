@@ -362,58 +362,67 @@ export default function AdminParticipantsPage() {
                                     <div className="glass-card" style={{ padding: "3rem", textAlign: "center" }}>
                                         <p style={{ color: "var(--text-muted)" }}>No registrations match your filter.</p>
                                     </div>
-                                ) : selectedEvent.type === "solo" ? (
-                                    /* ── Solo Event: Table ── */
-                                    <div className="glass-card" style={{ overflow: "hidden" }}>
-                                        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                                            <thead>
-                                                <tr style={{ borderBottom: "1px solid rgba(0,245,255,0.15)" }}>
-                                                    {["#", "Name", "Reg No", "TX ID", "Branch", "Batch", "Phone", "Registered"].map((h) => (
-                                                        <th key={h} style={{
-                                                            padding: "0.75rem 1rem",
-                                                            textAlign: "left",
-                                                            fontSize: "0.65rem",
-                                                            letterSpacing: "2px",
-                                                            color: "var(--neon-cyan)",
-                                                            fontFamily: "Orbitron, monospace",
-                                                            fontWeight: 600,
-                                                            whiteSpace: "nowrap",
-                                                        }}>
-                                                            {h}
-                                                        </th>
-                                                    ))}
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {(filteredRegistrations as SoloRegistration[]).map((reg, idx) => (
-                                                    <tr key={reg.registrationId} style={{
-                                                        borderBottom: "1px solid rgba(255,255,255,0.04)",
-                                                        transition: "background 0.2s",
-                                                    }}
-                                                        onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(0,245,255,0.04)")}
-                                                        onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-                                                    >
-                                                        <td style={tdStyle}>{idx + 1}</td>
-                                                        <td style={{ ...tdStyle, fontWeight: 600, color: "var(--text-primary)" }}>{reg.participant.name}</td>
-                                                        <td style={{ ...tdStyle, fontFamily: "monospace", color: "var(--neon-cyan)" }}>{reg.participant.regNo}</td>
-                                                        <td style={{ ...tdStyle, fontFamily: "monospace", color: "var(--neon-purple)" }}>{reg.participant.techexoticaId || "—"}</td>
-                                                        <td style={tdStyle}>{reg.participant.branch}</td>
-                                                        <td style={tdStyle}>{reg.participant.batch}</td>
-                                                        <td style={{ ...tdStyle, fontFamily: "monospace" }}>{reg.participant.phone}</td>
-                                                        <td style={{ ...tdStyle, color: "var(--text-muted)", fontSize: "0.78rem" }}>
-                                                            {new Date(reg.registeredAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short" })}
-                                                        </td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
                                 ) : (
-                                    /* ── Team Event: Cards ── */
-                                    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                                        {(filteredRegistrations as TeamRegistration[]).map((reg, idx) => (
-                                            <TeamCard key={reg.registrationId} reg={reg} idx={idx + 1} />
-                                        ))}
+                                    <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+                                        {filteredRegistrations.filter(r => r.type === "solo").length > 0 && (
+                                            <div>
+                                                <h3 className="font-orbitron" style={{ color: "var(--neon-cyan)", marginBottom: "1rem", fontSize: "0.9rem", letterSpacing: "1px" }}>SOLO REGISTRATIONS</h3>
+                                                <div className="glass-card" style={{ overflow: "hidden", overflowX: "auto" }}>
+                                                    <table style={{ width: "100%", borderCollapse: "collapse", minWidth: "600px" }}>
+                                                        <thead>
+                                                            <tr style={{ borderBottom: "1px solid rgba(0,245,255,0.15)" }}>
+                                                                {["#", "Name", "Reg No", "TX ID", "Branch", "Batch", "Phone", "Registered"].map((h) => (
+                                                                    <th key={h} style={{
+                                                                        padding: "0.75rem 1rem",
+                                                                        textAlign: "left",
+                                                                        fontSize: "0.65rem",
+                                                                        letterSpacing: "2px",
+                                                                        color: "var(--neon-cyan)",
+                                                                        fontFamily: "Orbitron, monospace",
+                                                                        fontWeight: 600,
+                                                                        whiteSpace: "nowrap",
+                                                                    }}>
+                                                                        {h}
+                                                                    </th>
+                                                                ))}
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {(filteredRegistrations.filter(r => r.type === "solo") as SoloRegistration[]).map((reg, idx) => (
+                                                                <tr key={reg.registrationId} style={{
+                                                                    borderBottom: "1px solid rgba(255,255,255,0.04)",
+                                                                    transition: "background 0.2s",
+                                                                }}
+                                                                    onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(0,245,255,0.04)")}
+                                                                    onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                                                                >
+                                                                    <td style={tdStyle}>{idx + 1}</td>
+                                                                    <td style={{ ...tdStyle, fontWeight: 600, color: "var(--text-primary)" }}>{reg.participant.name}</td>
+                                                                    <td style={{ ...tdStyle, fontFamily: "monospace", color: "var(--neon-cyan)" }}>{reg.participant.regNo}</td>
+                                                                    <td style={{ ...tdStyle, fontFamily: "monospace", color: "var(--neon-purple)" }}>{reg.participant.techexoticaId || "—"}</td>
+                                                                    <td style={tdStyle}>{reg.participant.branch}</td>
+                                                                    <td style={tdStyle}>{reg.participant.batch}</td>
+                                                                    <td style={{ ...tdStyle, fontFamily: "monospace" }}>{reg.participant.phone}</td>
+                                                                    <td style={{ ...tdStyle, color: "var(--text-muted)", fontSize: "0.78rem" }}>
+                                                                        {new Date(reg.registeredAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short" })}
+                                                                    </td>
+                                                                </tr>
+                                                            ))}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        )}
+                                        {filteredRegistrations.filter(r => r.type === "team").length > 0 && (
+                                            <div>
+                                                <h3 className="font-orbitron" style={{ color: "var(--neon-purple)", marginBottom: "1rem", fontSize: "0.9rem", letterSpacing: "1px" }}>TEAM REGISTRATIONS</h3>
+                                                <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                                                    {(filteredRegistrations.filter(r => r.type === "team") as TeamRegistration[]).map((reg, idx) => (
+                                                        <TeamCard key={reg.registrationId} reg={reg} idx={idx + 1} />
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                             </>

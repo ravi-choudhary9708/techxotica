@@ -1,0 +1,111 @@
+Event Name,Category,Techexotica ID,Student Name,Reg No,Phone,Batch,Branch,Registration Type,Team Name,Role
+"Mechanical Simulation","technical","TX-77598-2025","Sudhanshu Kumar","25102150010","7759898557","2025","MECH",Team,"Mechanical 1",Team Leader
+"Mechanical Simulation","technical","TX-77598-2025","Sudhanshu Kumar","25102150010","7759898557","2025","MECH",Team,"Mechanical 1",Team Member
+"Code Debugging","technical","TX-79036-2024","Nikhil Kumar Singh","24105150045","7903628704","2024","CSE",Solo,N/A,Solo Participant
+"Algorithm design","technical","TX-79036-2024","Nikhil Kumar Singh","24105150045","7903628704","2024","CSE",Solo,N/A,Solo Participant
+"Competitive Coding","technical","TX-79036-2024","Nikhil Kumar Singh","24105150045","7903628704","2024","CSE",Solo,N/A,Solo Participant
+"Web Design","technical","TX-82713-2024","Muskan Kumari","24155150021","8271340714","2024","IOT",Solo,N/A,Solo Participant
+"UI/UX Design","technical","TX-82713-2024","Muskan Kumari","24155150021","8271340714","2024","IOT",Solo,N/A,Solo Participant
+"Web Design","technical","TX-82716-2024","Madhuri Kumari","24105150011","8271635696","2024","CSE",Solo,N/A,Solo Participant
+"Code Debugging","technical","TX-82716-2024","Madhuri Kumari","24105150011","8271635696","2024","CSE",Solo,N/A,Solo Participant
+"Algorithm design","technical","TX-82716-2024","Madhuri Kumari","24105150011","8271635696","2024","CSE",Solo,N/A,Solo Participant
+"Competitive Coding","technical","TX-82716-2024","Madhuri Kumari","24105150011","8271635696","2024","CSE",Solo,N/A,Solo Participant
+"Logo Design","cultural","TX-82716-2024","Madhuri Kumari","24105150011","8271635696","2024","CSE",Solo,N/A,Solo Participant
+"Web Design","technical","TX-98765-2023","Dummy","1234578","9876543210","2023","CSE",Solo,N/A,Solo Participant
+"Code Debugging","technical","TX-98765-2023","Dummy","1234578","9876543210","2023","CSE",Solo,N/A,Solo Participant
+"Algorithm design","technical","TX-98765-2023","Dummy","1234578","9876543210","2023","CSE",Solo,N/A,Solo Participant
+"Web Design","technical","TX-96933-2024","Shivam kumar","24105150033","9693304691","2024","CSE",Solo,N/A,Solo Participant
+"UI/UX Design","technical","TX-96933-2024","Shivam kumar","24105150033","9693304691","2024","CSE",Solo,N/A,Solo Participant
+"Code Debugging","technical","TX-96933-2024","Shivam kumar","24105150033","9693304691","2024","CSE",Solo,N/A,Solo Participant
+"Algorithm design","technical","TX-96933-2024","Shivam kumar","24105150033","9693304691","2024","CSE",Solo,N/A,Solo Participant
+"Competitive Coding","technical","TX-96933-2024","Shivam kumar","24105150033","9693304691","2024","CSE",Solo,N/A,Solo Participant
+"Treasure Hunt","gaming","TX-92965-2025","Alisha","25105150046","9296522640","2025","CSE",Team,"Treasure Titans",Team Leader
+"Treasure Hunt","gaming","TX-92965-2025","Alisha","25105150046","9296522640","2025","CSE",Team,"Treasure Titans",Team Member
+"Treasure Hunt","gaming","TX-91425-2025","Nimisha Raj","25105150030","9142561157","2025","CSE",Team,"Treasure Titans",Team Member
+"Treasure Hunt","gaming","TX-93347-2025","Navya","25101150049","9334721915","2025","CE",Team,"Treasure Titans",Team Member
+"Treasure Hunt","gaming","TX-98016-2025","Mahima Bharti","25105150044","9801665174","2025","CSE",Team,"Treasure Titans",Team Member
+"Web Design","technical","TX-98351-2024","ABHISHEK KUMAR","24105150024","9835195510","2024","CSE",Solo,N/A,Solo Participant
+"Code Debugging","technical","TX-98351-2024","ABHISHEK KUMAR","24105150024","9835195510","2024","CSE",Solo,N/A,Solo Participant
+"Algorithm design","technical","TX-98351-2024","ABHISHEK KUMAR","24105150024","9835195510","2024","CSE",Solo,N/A,Solo Participant
+"Mithila Painting","cultural","TX-98351-2024","ABHISHEK KUMAR","24105150024","9835195510","2024","CSE",Team,"Cosmic crew",Team Leader
+"Mithila Painting","cultural","TX-98351-2024","ABHISHEK KUMAR","24105150024","9835195510","2024","CSE",Team,"Cosmic crew",Team Member
+"Logo Design","cultural","TX-94724-2025","Shivam kumar vishwakarma","25102150018","9472479841","2025","MECH",Solo,N/A,Solo Participant
+"CAD Challenge","technical","TX-93417-2023","MD ZAEEM ATHAR","24101150906","9341772248","2023","CE",Solo,N/A,Solo Participant
+"3D Printing","technical","TX-77598-2025","Sudhanshu Kumar","25102150010","7759898557","2025","MECH",Team,"Mechanical s",Team Leader
+"3D Printing","technical","TX-77598-2025","Sudhanshu Kumar","25102150010","7759898557","2025","MECH",Team,"Mechanical s",Team Member
+"Mechanical Simulation","technical","TX-79799-2024","Shree Ram Sharma","24102150005","7979973414","2024","MECH",Team,"Team 3D",Team Leader
+"Mechanical Simulation","technical","TX-79799-2024","Shree Ram Sharma","24102150005","7979973414","2024","MECH",Team,"Team 3D",Team Member
+"3D Printing","technical","TX-90062-2025","Aryan Kumar Singh","2510215005","9006227123","2025","MECH",Team,"Mechanical s",Team Leader
+"3D Printing","technical","TX-90062-2025","Aryan Kumar Singh","2510215005","9006227123","2025","MECH",Team,"Mechanical s",Team Member
+"CAD Challenge","technical","TX-77391-2023","Aditya sonam","23101150001","7739179811","2023","CE",Solo,N/A,Solo Participant
+"3D Printing","technical","TX-77391-2023","Aditya sonam","23101150001","7739179811","2023","CE",Team,"Aditya Sonam ",Team Leader
+"3D Printing","technical","TX-77391-2023","Aditya sonam","23101150001","7739179811","2023","CE",Team,"Aditya Sonam ",Team Member
+"Bridge Building","technical","TX-93417-2023","MD ZAEEM ATHAR","24101150906","9341772248","2023","CE",Team,"Bridge Camper",Team Leader
+"Bridge Building","technical","TX-93417-2023","MD ZAEEM ATHAR","24101150906","9341772248","2023","CE",Team,"Bridge Camper",Team Member
+"Bridge Building","technical","TX-88733-2023","Raju kumar","23101150066","8873342518","2023","CE",Team,"Bridge Camper",Team Member
+"Bridge Building","technical","TX-92637-2023","Shreyam Raj","24101150912","9263728641","2023","CE",Team,"Bridge Camper",Team Member
+"Bridge Building","technical","TX-99050-2023","Rahish Raj","23101150070","9905038142","2023","CE",Team,"Bridge Camper",Team Member
+"Photography","cultural","TX-85408-2022","Shivam Kumar","22101150062","8540852123","2022","CE",Solo,N/A,Solo Participant
+"Short Film","cultural","TX-85408-2022","Shivam Kumar","22101150062","8540852123","2022","CE",Team,"Editors squad",Team Leader
+"Short Film","cultural","TX-85408-2022","Shivam Kumar","22101150062","8540852123","2022","CE",Team,"Editors squad",Team Member
+"UI/UX Design","technical","TX-62057-2024","sonu kumar","24105150050","6205701934","2024","CSE",Solo,N/A,Solo Participant
+"Competitive Coding","technical","TX-62057-2024","sonu kumar","24105150050","6205701934","2024","CSE",Solo,N/A,Solo Participant
+"Code Debugging","technical","TX-62057-2024","sonu kumar","24105150050","6205701934","2024","CSE",Solo,N/A,Solo Participant
+"CAD Challenge","technical","TX-70508-2024","Jayant Kamar","25102150907","7050804016","2024","MECH",Solo,N/A,Solo Participant
+"Tesla Talk","technical","TX-95724-2023","SONU KUMAR","24103150902","9572471261","2023","EE",Team,"TECH PREDATOR",Team Leader
+"Tesla Talk","technical","TX-95724-2023","SONU KUMAR","24103150902","9572471261","2023","EE",Team,"TECH PREDATOR",Team Member
+"CAD Challenge","technical","TX-95724-2023-14","Gautam Kumar","24101150914","9572428508","2023","CE",Solo,N/A,Solo Participant
+"Circuit Design","technical","TX-89864-2024","Ankit Kumar","24102150009","8986403901","2024","MECH",Team,"xyz",Team Leader
+"Circuit Design","technical","TX-89864-2024","Ankit Kumar","24102150009","8986403901","2024","MECH",Team,"xyz",Team Member
+"Circuit Design","technical","TX-85409-2024","Ankit Kumar","24102150012","8540964990","2024","MECH",Team,"xyz",Team Member
+"Radium Cricket","gaming","TX-89864-2024","Ankit Kumar","24102150009","8986403901","2024","MECH",Team,"Cosmic crew",Team Leader
+"Radium Cricket","gaming","TX-89864-2024","Ankit Kumar","24102150009","8986403901","2024","MECH",Team,"Cosmic crew",Team Member
+"Radium Cricket","gaming","TX-79799-2024","Shree Ram Sharma","24102150005","7979973414","2024","MECH",Team,"Cosmic crew",Team Member
+"Radium Cricket","gaming","TX-85409-2024","Ankit Kumar","24102150012","8540964990","2024","MECH",Team,"Cosmic crew",Team Member
+"Radium Cricket","gaming","TX-86517-2024","Devraj","24101150021","8651732080","2024","CE",Team,"Cosmic crew",Team Member
+"Radium Cricket","gaming","TX-88629-2024","Ritesh Kumar","24102150011","8862947761","2024","MECH",Team,"Cosmic crew",Team Member
+"Radium Cricket","gaming","TX-96933-2024","Shivam kumar","24105150033","9693304691","2024","CSE",Team,"Cosmic crew",Team Member
+"Radium Cricket","gaming","TX-98351-2024","ABHISHEK KUMAR","24105150024","9835195510","2024","CSE",Team,"Cosmic crew",Team Member
+"Radium Cricket","gaming","TX-98356-2024","Nitin kumar","24101150023","9835615740","2024","CE",Team,"Cosmic crew",Team Member
+"Mechanical Simulation","technical","TX-72578-2024","Sonu kumar","25102150901","7257803268","2024","MECH",Team,"Sonu kumar ",Team Leader
+"Mechanical Simulation","technical","TX-72578-2024","Sonu kumar","25102150901","7257803268","2024","MECH",Team,"Sonu kumar ",Team Member
+"Mechanical Simulation","technical","TX-76448-2024","RAM RAJ","25102150905","7644819460","2024","MECH",Team,"Ram raj",Team Leader
+"Mechanical Simulation","technical","TX-76448-2024","RAM RAJ","25102150905","7644819460","2024","MECH",Team,"Ram raj",Team Member
+"Circuit Design","technical","TX-72828-2024","Mannu Kumar","25103150019","7282837594","2024","EE",Team,"Crazy ",Team Leader
+"Circuit Design","technical","TX-72828-2024","Mannu Kumar","25103150019","7282837594","2024","EE",Team,"Crazy ",Team Member
+"CAD Challenge","technical","TX-90601-2024","Akash Mishra","24101150070","9060177209","2024","CE",Solo,N/A,Solo Participant
+"CAD-CAM","technical","TX-90601-2024","Akash Mishra","24101150070","9060177209","2024","CE",Team,"Misra",Team Leader
+"CAD-CAM","technical","TX-90601-2024","Akash Mishra","24101150070","9060177209","2024","CE",Team,"Misra",Team Member
+"CAD Challenge","technical","TX-86770-2024","Ashutosh Kumar","24101150060","8677063977","2024","CE",Solo,N/A,Solo Participant
+"Bridge Building","technical","TX-92630-2024","Badal Raj","24101150055","9263099625","2024","CE",Team,"Truss Titans",Team Leader
+"Bridge Building","technical","TX-92630-2024","Badal Raj","24101150055","9263099625","2024","CE",Team,"Truss Titans",Team Member
+"Bridge Building","technical","TX-72095-2024","ABHIJEET KUMAR JHA","24101150022","7209568500","2024","CE",Team,"Truss Titans",Team Member
+"Bridge Building","technical","TX-86770-2024","Ashutosh Kumar","24101150060","8677063977","2024","CE",Team,"Truss Titans",Team Member
+"Bridge Building","technical","TX-90601-2024","Akash Mishra","24101150070","9060177209","2024","CE",Team,"Truss Titans",Team Member
+"Short Film","cultural","TX-75649-2023","Abhiyan Kumar Singh","24101150920","7564957673","2023","CE",Team,"Creative duo",Team Leader
+"Short Film","cultural","TX-75649-2023","Abhiyan Kumar Singh","24101150920","7564957673","2023","CE",Team,"Creative duo",Team Member
+"Photography","cultural","TX-77390-2024","YASH KUMAR JHA","24103150014","7739039468","2024","EE",Solo,N/A,Solo Participant
+"Logo Design","cultural","TX-77390-2024","YASH KUMAR JHA","24103150014","7739039468","2024","EE",Solo,N/A,Solo Participant
+"CAD Challenge","technical","TX-94314-2024","Diwakar Kumar Mahto","24102150010","9431475108","2024","MECH",Solo,N/A,Solo Participant
+"Bridge Building","technical","TX-88099-2024","Komal Kumari","24101150044","8809960326","2024","CE",Team,"Beam Beauties",Team Leader
+"Bridge Building","technical","TX-88099-2024","Komal Kumari","24101150044","8809960326","2024","CE",Team,"Beam Beauties",Team Member
+"Bridge Building","technical","TX-63500-2024","NISHPA KUMARI","24101150081","6350083399","2024","CE",Team,"Beam Beauties",Team Member
+"Bridge Building","technical","TX-70615-2024","Anshu Kumari","24101150003","7061568830","2024","CE",Team,"Beam Beauties",Team Member
+"Bridge Building","technical","TX-91222-2024","Savitri Kumari","24101150040","9122204670","2024","CE",Team,"Beam Beauties",Team Member
+"Treasure Hunt","gaming","TX-88099-2024","Komal Kumari","24101150044","8809960326","2024","CE",Team,"Team titans ",Team Leader
+"Treasure Hunt","gaming","TX-88099-2024","Komal Kumari","24101150044","8809960326","2024","CE",Team,"Team titans ",Team Member
+"Treasure Hunt","gaming","TX-63500-2024","NISHPA KUMARI","24101150081","6350083399","2024","CE",Team,"Team titans ",Team Member
+"Treasure Hunt","gaming","TX-70615-2024","Anshu Kumari","24101150003","7061568830","2024","CE",Team,"Team titans ",Team Member
+"Treasure Hunt","gaming","TX-91222-2024","Savitri Kumari","24101150040","9122204670","2024","CE",Team,"Team titans ",Team Member
+"3D Printing","technical","TX-79709-2024-01","NIRAJ KUMAR","24102150001","7970940145","2024","MECH",Team,"Team fire",Team Leader
+"3D Printing","technical","TX-79709-2024-01","NIRAJ KUMAR","24102150001","7970940145","2024","MECH",Team,"Team fire",Team Member
+"3D Printing","technical","TX-76328-2024","Ujjawal Raj","24102150026","7632802814","2024","MECH",Team,"Team fire",Team Member
+"3D Printing","technical","TX-79709-2024","Sudhanshu Shekhar","24101150056","7970902172","2024","CE",Team,"Team fire",Team Member
+"Photography","cultural","TX-95767-2024","Hansika Kumari","24103150031","9576748085","2024","EE",Solo,N/A,Solo Participant
+"Tesla Talk","technical","TX-91422-2023","ANSHU KUMAR","23103150009","9142214623","2023","EE",Team,"TEDX",Team Leader
+"Tesla Talk","technical","TX-91422-2023","ANSHU KUMAR","23103150009","9142214623","2023","EE",Team,"TEDX",Team Member
+"Web Design","technical","TX-78590-2024","Ravi Choudhary","24155150019","7859097347","2024","IOT",Solo,N/A,Solo Participant
+"UI/UX Design","technical","TX-78590-2024","Ravi Choudhary","24155150019","7859097347","2024","IOT",Solo,N/A,Solo Participant
+"Code Debugging","technical","TX-78590-2024","Ravi Choudhary","24155150019","7859097347","2024","IOT",Solo,N/A,Solo Participant
+"Algorithm design","technical","TX-78590-2024","Ravi Choudhary","24155150019","7859097347","2024","IOT",Solo,N/A,Solo Participant
+"Competitive Coding","technical","TX-78590-2024","Ravi Choudhary","24155150019","7859097347","2024","IOT",Solo,N/A,Solo Participant

@@ -135,7 +135,7 @@ export const eventItems: EventData[] = [
         time: "10:00 AM - 01:00 PM",
         venue: "Electronics Lab",
         prizePool: "₹15,000",
-        teamSizeText: "1-3 Members",
+        teamSizeText: "1-2 Members",
         rules: [
             "Components will be provided on-site.",
             "Judging will be based on circuit efficiency and compactness.",
@@ -188,7 +188,7 @@ export const eventItems: EventData[] = [
         time: "10:00 AM - 01:00 PM",
         venue: "Mechanical Lab",
         prizePool: "₹12,000",
-        teamSizeText: "1-2 Members",
+        teamSizeText: "individual",
         rules: [
             "Allowed software: Fusion 360, Mastercam, or SolidCAM.",
             "Participants must submit both design files and toolpath simulations.",
@@ -207,7 +207,7 @@ export const eventItems: EventData[] = [
         time: "09:00 AM - 05:00 PM",
         venue: "Fabrication Lab",
         prizePool: "₹15,000",
-        teamSizeText: "1-3 Members",
+        teamSizeText: "individual",
         rules: [
             "Design files must be submitted in .STL or .OBJ format.",
             "Print time per team is limited to 90 minutes on provided printers.",
@@ -245,7 +245,7 @@ export const eventItems: EventData[] = [
         time: "02:00 PM - 05:00 PM",
         venue: "Seminar Hall, EE Block",
         prizePool: "₹10,000",
-        teamSizeText: "1-2 Members",
+        teamSizeText: "individual",
         rules: [
             "Presentation duration: 7 minutes + 3 minutes Q&A.",
             "Topics must relate to electrical engineering, power systems, EVs, or smart grids.",
@@ -264,7 +264,7 @@ export const eventItems: EventData[] = [
         time: "10:00 AM - 02:00 PM",
         venue: "Robotics Arena",
         prizePool: "₹12,000",
-        teamSizeText: "2-4 Members",
+        teamSizeText: "2-5 Members",
         rules: [
             "Bot dimensions must not exceed 30cm x 30cm.",
             "Infrared or optical sensors only; camera-based vision systems are not allowed.",
@@ -283,7 +283,7 @@ export const eventItems: EventData[] = [
         time: "02:00 PM - 05:00 PM",
         venue: "Robotics Arena",
         prizePool: "₹10,000",
-        teamSizeText: "2-3 Members",
+        teamSizeText: "2-5 Members",
         rules: [
             "The arena will have an elevated platform with marked boundaries.",
             "Bot must operate autonomously — no remote control allowed.",
@@ -302,7 +302,7 @@ export const eventItems: EventData[] = [
         time: "10:00 AM - 04:00 PM",
         venue: "Open Ground / Robotics Arena",
         prizePool: "₹20,000",
-        teamSizeText: "2-4 Members",
+        teamSizeText: "2-5 Members",
         rules: [
             "Each match is 5 minutes long with 2 halves.",
             "Robots must be manually controlled via RC; autonomous mode earns bonus points.",
@@ -321,7 +321,7 @@ export const eventItems: EventData[] = [
         time: "10:00 AM - 04:00 PM",
         venue: "Exhibition Hall A",
         prizePool: "₹15,000",
-        teamSizeText: "1-4 Members",
+        teamSizeText: "1-3 Members",
         rules: [
             "Open to all branches.",
             "Teams must be ready to explain the working principles to judges and attendees.",
@@ -341,7 +341,7 @@ export const eventItems: EventData[] = [
         time: "05:00 PM - 08:00 PM",
         venue: "Main Auditorium",
         prizePool: "₹20,000",
-        teamSizeText: "1-8 Members",
+        teamSizeText: "1-5 Members",
         rules: [
             "Time limit: 5 minutes max, including credits.",
             "Original background scores are highly encouraged.",
@@ -393,7 +393,7 @@ export const eventItems: EventData[] = [
         time: "11:00 AM - 02:00 PM",
         venue: "Library Seminar Hall",
         prizePool: "₹10,000",
-        teamSizeText: "1-2 Members",
+        teamSizeText: "individual",
         rules: [
             "Format: Standard A2 size printed poster.",
             "Presentations are strictly limited to 5 minutes pe team.",
@@ -410,7 +410,7 @@ export const eventItems: EventData[] = [
         time: "10:00 AM - 01:00 PM",
         venue: "Arts Gallery, GEC Madhubani",
         prizePool: "₹12,000",
-        teamSizeText: "1-2 Members",
+        teamSizeText: "individual",
         rules: [
             "Handmade on provided canvas/paper.",
             "Traditional themes must be followed.",
