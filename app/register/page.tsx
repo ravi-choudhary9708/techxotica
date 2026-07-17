@@ -488,12 +488,13 @@ function Field({ id, label, icon, type = "text", placeholder, field, error, valu
 export default function RegisterPage() {
   const router = useRouter();
   const [visible, setVisible] = useState(false);
-  const [form, setForm] = useState({ name: "", email: "", regNo: "", phone: "", batch: "", branch: "", password: "" });
+  const [form, setForm] = useState({ name: "", email: "", regNo: "", phone: "", batch: "", branch: "", password: "", profilePhoto: "" });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState("");
   const [splatters, setSplatters] = useState<Splatter[]>([]);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
 
   useEffect(() => {
     if (!document.getElementById("rg-styles")) {
@@ -535,6 +536,23 @@ export default function RegisterPage() {
     setForm(f => ({ ...f, [field]: val }));
     if (errors[field]) setErrors(e => { const n = { ...e }; delete n[field]; return n; });
     if (apiError) setApiError("");
+  };
+
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        setApiError("Image size must be less than 5MB");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64 = reader.result as string;
+        setPhotoPreview(base64);
+        setForm(f => ({ ...f, profilePhoto: base64 }));
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -645,6 +663,21 @@ export default function RegisterPage() {
                   {apiError}
                 </div>
               )}
+
+              <div className="flex flex-col items-center mb-6">
+                <div className="relative group cursor-pointer w-24 h-24 rounded-full overflow-hidden border-2 border-[rgba(255,40,40,0.5)] flex items-center justify-center bg-[rgba(255,20,20,0.04)] hover:border-[#ff4040] transition-colors">
+                  {photoPreview ? (
+                    <img src={photoPreview} alt="Profile Preview" className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-[rgba(255,255,255,0.3)] text-3xl group-hover:text-[#ff4040] transition-colors">📷</span>
+                  )}
+                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span className="text-white text-[10px] uppercase tracking-widest font-bold">Upload</span>
+                  </div>
+                  <input type="file" accept="image/*" onChange={handlePhotoChange} className="absolute inset-0 opacity-0 cursor-pointer w-full h-full" />
+                </div>
+                <div className="text-[10px] text-[rgba(255,255,255,0.4)] mt-2 uppercase tracking-[2px]">Profile Photo (Optional)</div>
+              </div>
 
               <Field
                 id="rg-name" label="Full Name" icon="◈"

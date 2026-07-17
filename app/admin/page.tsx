@@ -68,9 +68,11 @@ interface AdminUser {
     batch: string;
     branch: string;
     techexoticaId: string | null;
+    profilePhoto?: string;
     registeredEventsCount: number;
     createdAt: string;
     eventsDetail: { eventName: string; category: string; type: string; registeredAt: string }[];
+    achievements?: { _id: string; title: string; awardedAt: string }[];
 }
 
 type ActiveTab = "participants" | "manage-events" | "users";
@@ -124,11 +126,14 @@ export default function AdminPage() {
     const [usersError, setUsersError] = useState("");
     const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
     const [userSearch, setUserSearch] = useState("");
+    const [achievementInput, setAchievementInput] = useState("");
+    const [achievementLoading, setAchievementLoading] = useState(false);
 
     const [form, setForm] = useState({
         name: "", description: "", type: "solo" as "solo" | "team",
         minTeamSize: 2, maxTeamSize: 4, date: "", venue: "",
         prize: "", category: "technical", isActive: true,
+        allowedRoles: ["Participant"],
     });
 
     // ── Fetch functions ───────────────────────────────────────────────────────
@@ -201,7 +206,7 @@ export default function AdminPage() {
             if (!json.success) { setAddError(json.message || "Failed to add event."); }
             else {
                 setAddSuccess(`"${json.data.name}" added!`);
-                setForm({ name: "", description: "", type: "solo", minTeamSize: 2, maxTeamSize: 4, date: "", venue: "", prize: "", category: "technical", isActive: true });
+                setForm({ name: "", description: "", type: "solo", minTeamSize: 2, maxTeamSize: 4, date: "", venue: "", prize: "", category: "technical", isActive: true, allowedRoles: ["Participant"] });
                 setShowAddForm(false); fetchAdminEvents(secret);
                 showNotification(`Event "${json.data.name}" added!`, "success");
             }
@@ -236,6 +241,44 @@ export default function AdminPage() {
             } else showNotification(json.message || "Delete failed.", "error");
         } catch { showNotification("Network error.", "error"); }
         finally { setDeleteLoading(false); setDeleteConfirmId(null); }
+    };
+
+    // ── Add Achievement ───────────────────────────────────────────────────────
+    const handleAddAchievement = async () => {
+        if (!achievementInput.trim() || !selectedUser) return;
+        setAchievementLoading(true);
+        try {
+            const res = await fetch(`/api/admin/users/${selectedUser._id}/achievements?secret=${encodeURIComponent(secret)}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ title: achievementInput.trim() }),
+            });
+            const json = await res.json();
+            if (json.success) {
+                setSelectedUser(prev => prev ? { ...prev, achievements: json.achievements } : prev);
+                setUsers(prev => prev.map(u => u._id === selectedUser._id ? { ...u, achievements: json.achievements } : u));
+                setAchievementInput("");
+                showNotification("Achievement added!", "success");
+            } else showNotification(json.message || "Failed.", "error");
+        } catch { showNotification("Network error.", "error"); }
+        finally { setAchievementLoading(false); }
+    };
+
+    const handleRemoveAchievement = async (achievementId: string) => {
+        if (!selectedUser) return;
+        try {
+            const res = await fetch(`/api/admin/users/${selectedUser._id}/achievements?secret=${encodeURIComponent(secret)}`, {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ achievementId }),
+            });
+            const json = await res.json();
+            if (json.success) {
+                setSelectedUser(prev => prev ? { ...prev, achievements: json.achievements } : prev);
+                setUsers(prev => prev.map(u => u._id === selectedUser._id ? { ...u, achievements: json.achievements } : u));
+                showNotification("Achievement removed.", "success");
+            } else showNotification(json.message || "Failed.", "error");
+        } catch { showNotification("Network error.", "error"); }
     };
 
     const selectedEvent = events.find((e) => e.eventId === selectedEventId);
@@ -325,8 +368,13 @@ export default function AdminPage() {
                                 display: "flex", alignItems: "center", justifyContent: "center",
                                 fontSize: "1.6rem", fontWeight: 700, color: getAvatarColor(selectedUser.name),
                                 fontFamily: "Orbitron, monospace", boxShadow: `0 0 20px ${getAvatarColor(selectedUser.name)}40`,
+                                overflow: "hidden",
                             }}>
-                                {getInitials(selectedUser.name)}
+                                {selectedUser.profilePhoto ? (
+                                    <img src={selectedUser.profilePhoto} alt="Profile" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                                ) : (
+                                    getInitials(selectedUser.name)
+                                )}
                             </div>
                             <div>
                                 <h2 className="font-orbitron" style={{ color: "var(--text-primary)", fontSize: "1.15rem", marginBottom: "0.2rem" }}>{selectedUser.name}</h2>
@@ -356,7 +404,7 @@ export default function AdminPage() {
                         </div>
 
                         {/* Registered Events */}
-                        <div>
+                        <div style={{ marginBottom: "1.5rem" }}>
                             <h3 className="font-orbitron" style={{ color: "var(--neon-cyan)", fontSize: "0.78rem", letterSpacing: "2px", marginBottom: "0.85rem" }}>
                                 REGISTERED EVENTS ({selectedUser.eventsDetail.length})
                             </h3>
@@ -377,6 +425,39 @@ export default function AdminPage() {
                                     ))}
                                 </div>
                             )}
+                        </div>
+
+                        {/* Achievements */}
+                        <div>
+                            <h3 className="font-orbitron" style={{ color: "var(--neon-gold)", fontSize: "0.78rem", letterSpacing: "2px", marginBottom: "0.85rem" }}>
+                                ✦ ACHIEVEMENTS
+                            </h3>
+                            {(selectedUser.achievements || []).length > 0 && (
+                                <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginBottom: "1rem" }}>
+                                    {(selectedUser.achievements || []).map((ach: any) => (
+                                        <div key={ach._id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(255,215,0,0.06)", border: "1px solid rgba(255,215,0,0.2)", borderRadius: "8px", padding: "0.65rem 1rem" }}>
+                                            <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+                                                <span style={{ color: "var(--neon-gold)", fontSize: "0.9rem" }}>✔</span>
+                                                <span style={{ fontSize: "0.87rem", color: "var(--text-primary)" }}>{ach.title}</span>
+                                            </div>
+                                            <button onClick={() => handleRemoveAchievement(ach._id)} style={{ background: "none", border: "none", color: "rgba(255,80,80,0.6)", cursor: "pointer", fontSize: "0.9rem", padding: "2px 6px" }} title="Remove">✕</button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                            <div style={{ display: "flex", gap: "0.5rem" }}>
+                                <input
+                                    type="text"
+                                    placeholder="e.g. Winner — Campus Clash 2026"
+                                    value={achievementInput}
+                                    onChange={e => setAchievementInput(e.target.value)}
+                                    onKeyDown={e => { if (e.key === "Enter") handleAddAchievement(); }}
+                                    style={{ flex: 1, padding: "0.6rem 0.9rem", background: "rgba(255,215,0,0.05)", border: "1px solid rgba(255,215,0,0.25)", borderRadius: "8px", color: "var(--text-primary)", fontSize: "0.85rem", outline: "none", fontFamily: "Inter, sans-serif" }}
+                                />
+                                <button onClick={handleAddAchievement} disabled={achievementLoading || !achievementInput.trim()} style={{ padding: "0.6rem 1.2rem", background: "rgba(255,215,0,0.12)", border: "1px solid rgba(255,215,0,0.4)", borderRadius: "8px", color: "var(--neon-gold)", fontSize: "0.8rem", cursor: "pointer", fontFamily: "Orbitron, monospace", letterSpacing: "1px", transition: "all 0.2s" }}>
+                                    {achievementLoading ? "..." : "+ Add"}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -459,7 +540,7 @@ export default function AdminPage() {
                                                     <div className="glass-card" style={{ overflow: "hidden", overflowX: "auto" }}>
                                                         <table style={{ width: "100%", borderCollapse: "collapse", minWidth: "600px" }}>
                                                             <thead><tr style={{ borderBottom: "1px solid rgba(0,245,255,0.15)" }}>
-                                                                {["#", "Name", "Reg No", "TX ID", "Branch", "Batch", "Phone", "Registered"].map(h => (
+                                                                {["#", "Role", "Name", "Reg No", "TX ID", "Branch", "Batch", "Phone", "Registered"].map(h => (
                                                                     <th key={h} style={{ padding: "0.75rem 1rem", textAlign: "left", fontSize: "0.65rem", letterSpacing: "2px", color: "var(--neon-cyan)", fontFamily: "Orbitron, monospace", fontWeight: 600, whiteSpace: "nowrap" }}>{h}</th>
                                                                 ))}
                                                             </tr></thead>
@@ -469,6 +550,7 @@ export default function AdminPage() {
                                                                         onMouseEnter={e => (e.currentTarget.style.background = "rgba(0,245,255,0.04)")}
                                                                         onMouseLeave={e => (e.currentTarget.style.background = "transparent")}>
                                                                         <td style={tdStyle}>{idx + 1}</td>
+                                                                        <td style={{ ...tdStyle, color: "var(--neon-gold)", fontSize: "0.75rem", textTransform: "uppercase", fontWeight: 700 }}>{reg.role}</td>
                                                                         <td style={{ ...tdStyle, fontWeight: 600 }}>{reg.participant.name}</td>
                                                                         <td style={{ ...tdStyle, fontFamily: "monospace", color: "var(--neon-cyan)" }}>{reg.participant.regNo}</td>
                                                                         <td style={{ ...tdStyle, fontFamily: "monospace", color: "var(--neon-purple)" }}>{reg.participant.techexoticaId || "—"}</td>
@@ -546,6 +628,23 @@ export default function AdminPage() {
                                         <select value={form.isActive ? "active" : "inactive"} onChange={e => setForm(f => ({ ...f, isActive: e.target.value === "active" }))} style={inputStyle}>
                                             <option value="active">Active</option><option value="inactive">Inactive</option>
                                         </select>
+                                    </FormField>
+                                    <FormField label="Allowed Roles *">
+                                        <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginTop: "8px" }}>
+                                            {["Participant", "Attendee", "Volunteer"].map(role => (
+                                                <label key={role} style={{ display: "flex", alignItems: "center", gap: "6px", cursor: "pointer", fontSize: "0.85rem", color: "var(--text-muted)" }}>
+                                                    <input 
+                                                        type="checkbox" 
+                                                        checked={form.allowedRoles.includes(role)} 
+                                                        onChange={e => {
+                                                            const newRoles = e.target.checked ? [...form.allowedRoles, role] : form.allowedRoles.filter(r => r !== role);
+                                                            setForm(f => ({ ...f, allowedRoles: newRoles }));
+                                                        }} 
+                                                    />
+                                                    {role}
+                                                </label>
+                                            ))}
+                                        </div>
                                     </FormField>
                                 </div>
                                 <FormField label="Description" style={{ marginTop: "1.25rem" }}>
@@ -671,8 +770,13 @@ export default function AdminPage() {
                                                 fontSize: "1.3rem", fontWeight: 700, color,
                                                 fontFamily: "Orbitron, monospace",
                                                 boxShadow: `0 0 16px ${color}30`,
+                                                overflow: "hidden",
                                             }}>
-                                                {getInitials(user.name)}
+                                                {user.profilePhoto ? (
+                                                    <img src={user.profilePhoto} alt="Profile" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                                                ) : (
+                                                    getInitials(user.name)
+                                                )}
                                             </div>
                                             {/* Name */}
                                             <div style={{ fontSize: "0.9rem", fontWeight: 600, color: "var(--text-primary)", marginBottom: "0.3rem", lineHeight: 1.3, fontFamily: "Inter, sans-serif" }}>
@@ -787,6 +891,7 @@ function TeamCard({ reg, idx }: { reg: TeamRegistration; idx: number }) {
                 <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
                     <span className="font-orbitron" style={{ color: "var(--text-muted)", fontSize: "0.75rem" }}>#{idx}</span>
                     <span className="font-orbitron" style={{ color: "var(--neon-gold)", fontSize: "0.95rem" }}>{reg.teamName}</span>
+                    <span style={{ color: "var(--neon-gold)", fontSize: "0.75rem", border: "1px solid var(--neon-gold)", padding: "2px 6px", borderRadius: "4px" }}>{reg.role}</span>
                     <span style={{ color: "var(--text-muted)", fontSize: "0.75rem" }}>({allMembers.length} members)</span>
                 </div>
                 <span style={{ color: "var(--text-muted)", fontSize: "0.72rem" }}>{new Date(reg.registeredAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</span>

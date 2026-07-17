@@ -563,6 +563,9 @@ export default function ProfileClient({ user }: { user: any }) {
     const [visible, setVisible] = useState(false);
     const [copied, setCopied] = useState(false);
     const [filter, setFilter] = useState("all");
+    const [isUploading, setIsUploading] = useState(false);
+    const [invites, setInvites] = useState<any[]>([]);
+    const [inviteActioning, setInviteActioning] = useState<string | null>(null);
     const router = useRouter();
 
     useEffect(() => {
@@ -576,6 +579,31 @@ export default function ProfileClient({ user }: { user: any }) {
         return () => clearTimeout(t);
     }, []);
 
+    // Fetch pending invites
+    useEffect(() => {
+        fetch("/api/invites")
+            .then(r => r.json())
+            .then(d => { if (d.success) setInvites(d.data); })
+            .catch(() => {});
+    }, []);
+
+    const handleInviteAction = async (inviteId: string, action: "accept" | "decline") => {
+        setInviteActioning(inviteId);
+        try {
+            const res = await fetch(`/api/invites/${inviteId}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ action }),
+            });
+            const data = await res.json();
+            if (data.success) {
+                setInvites(prev => prev.filter(i => i._id !== inviteId));
+                if (action === "accept") router.refresh();
+            }
+        } catch {}
+        finally { setInviteActioning(null); }
+    };
+
     const handleCopy = () => {
         navigator.clipboard.writeText(user.techexoticaId);
         setCopied(true);
@@ -586,6 +614,39 @@ export default function ProfileClient({ user }: { user: any }) {
         await fetch("/api/auth/logout", { method: "POST" });
         router.push("/");
         router.refresh();
+    };
+
+    const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        
+        if (file.size > 5 * 1024 * 1024) {
+            alert("Image size must be less than 5MB");
+            return;
+        }
+
+        setIsUploading(true);
+        const reader = new FileReader();
+        reader.onloadend = async () => {
+            const base64 = reader.result as string;
+            try {
+                const res = await fetch("/api/user/photo", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ imageBase64: base64 })
+                });
+                if (res.ok) {
+                    router.refresh(); // Refresh to get new photo
+                } else {
+                    alert("Failed to upload photo");
+                }
+            } catch (err) {
+                alert("Upload failed. Please try again.");
+            } finally {
+                setIsUploading(false);
+            }
+        };
+        reader.readAsDataURL(file);
     };
 
     const initials = user.name.split(" ").map((n: string) => n[0]).join("").slice(0, 2);
@@ -617,7 +678,23 @@ export default function ProfileClient({ user }: { user: any }) {
                     {/* ── LEFT: Identity card ── */}
                     <div className={cx("pr-card pr-identity", visible && "pr-in")} style={{ transitionDelay: "0.1s" }}>
                         <div className="pr-id-top">
-                            <div className="pr-avatar">{initials}</div>
+                            <div className="pr-avatar group cursor-pointer overflow-hidden relative">
+                                {user.profilePhoto ? (
+                                    <img src={user.profilePhoto} alt="Profile" className="w-full h-full object-cover" />
+                                ) : (
+                                    initials
+                                )}
+                                <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                                    <span className="text-[10px] uppercase text-white tracking-widest">{isUploading ? "..." : "Upload"}</span>
+                                </div>
+                                <input 
+                                    type="file" 
+                                    accept="image/*" 
+                                    onChange={handlePhotoUpload} 
+                                    disabled={isUploading}
+                                    className="absolute inset-0 opacity-0 cursor-pointer w-full h-full" 
+                                />
+                            </div>
                             <div className="pr-name">{user.name}</div>
                             <div className="pr-branch-badge">{user.branch} · Batch {user.batch}</div>
                         </div>
@@ -668,10 +745,83 @@ export default function ProfileClient({ user }: { user: any }) {
                         <div style={{ padding: "0 20px 20px" }}>
                             <button className="pr-logout" onClick={handleLogout}>⎋ Logout</button>
                         </div>
+
+                        {/* Achievements */}
+                        {(user.achievements || []).length > 0 && (
+                            <div style={{ padding: "0 20px 20px", borderTop: "1px solid rgba(255,215,0,0.1)", paddingTop: "16px" }}>
+                                <div style={{ fontSize: "9px", letterSpacing: "3px", color: "rgba(255,215,0,0.5)", fontFamily: "'Share Tech Mono',monospace", marginBottom: "12px" }}>✦ ACHIEVEMENTS</div>
+                                <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                                    {(user.achievements || []).map((ach: any) => (
+                                        <div key={ach._id} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 12px", background: "rgba(255,215,0,0.06)", border: "1px solid rgba(255,215,0,0.2)", borderRadius: "6px" }}>
+                                            <span style={{ color: "#ffd700", fontSize: "13px" }}>✔</span>
+                                            <div>
+                                                <div style={{ fontSize: "12px", color: "#ffe066", fontWeight: 600, letterSpacing: "0.5px" }}>{ach.title}</div>
+                                                <div style={{ fontSize: "10px", color: "rgba(255,215,0,0.4)", marginTop: "2px" }}>
+                                                    {new Date(ach.awardedAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
+                                                </div>
+                                            </div>
+                                            <span style={{ marginLeft: "auto", fontSize: "9px", letterSpacing: "1px", color: "rgba(255,215,0,0.5)", border: "1px solid rgba(255,215,0,0.3)", padding: "2px 6px", borderRadius: "3px" }}>VERIFIED</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
 
-                    {/* ── RIGHT: Events ── */}
+                    {/* ── RIGHT: Invites + Events ── */}
                     <div className="pr-events-col">
+
+                        {/* Pending Invites */}
+                        {invites.length > 0 && (
+                            <div style={{ marginBottom: "28px" }}>
+                                <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "14px" }}>
+                                    <span style={{ fontSize: "10px", letterSpacing: "3px", color: "#d28c3c", fontFamily: "'Share Tech Mono',monospace" }}>⧡ TEAM INVITATIONS</span>
+                                    <span style={{ background: "rgba(210,140,60,0.2)", border: "1px solid rgba(210,140,60,0.4)", color: "#d28c3c", fontSize: "10px", padding: "1px 8px", borderRadius: "4px" }}>{invites.length}</span>
+                                </div>
+                                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                                    {invites.map(inv => (
+                                        <div key={inv._id} style={{ background: "rgba(210,140,60,0.05)", border: "1px solid rgba(210,140,60,0.2)", borderRadius: "8px", padding: "14px 16px" }}>
+                                            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
+                                                <div style={{ width: "36px", height: "36px", borderRadius: "50%", overflow: "hidden", border: "1px solid rgba(210,140,60,0.3)", flexShrink: 0, background: "rgba(210,140,60,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                                    {inv.from.profilePhoto
+                                                        ? <img src={inv.from.profilePhoto} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="" />
+                                                        : <span style={{ fontSize: "13px", color: "#d28c3c" }}>{inv.from.name?.[0]?.toUpperCase()}</span>
+                                                    }
+                                                </div>
+                                                <div style={{ flex: 1 }}>
+                                                    <div style={{ fontSize: "14px", fontWeight: 600, color: "#ffe0b2" }}>{inv.from.name}</div>
+                                                    <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.4)", fontFamily: "monospace" }}>{inv.from.techexoticaId}</div>
+                                                </div>
+                                                <span style={{ fontSize: "9px", letterSpacing: "1px", color: inv.type === "join-team" ? "#d28c3c" : "#00c8ff", border: `1px solid ${inv.type === "join-team" ? "rgba(210,140,60,0.4)" : "rgba(0,200,255,0.3)"}`, padding: "2px 8px", borderRadius: "3px" }}>
+                                                    {inv.type === "join-team" ? "TEAM REQUEST" : "EVENT INVITE"}
+                                                </span>
+                                            </div>
+                                            <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)", marginBottom: "10px" }}>
+                                                <span style={{ color: "rgba(255,255,255,0.7)" }}>{inv.event.name}</span>
+                                                {inv.team.teamName && <span style={{ color: "rgba(255,255,255,0.35)" }}> · Team: <span style={{ color: "#d28c3c" }}>{inv.team.teamName}</span></span>}
+                                            </div>
+                                            <div style={{ display: "flex", gap: "8px" }}>
+                                                <button
+                                                    onClick={() => handleInviteAction(inv._id, "accept")}
+                                                    disabled={inviteActioning === inv._id}
+                                                    style={{ flex: 1, padding: "8px", background: "rgba(0,200,255,0.12)", border: "1px solid rgba(0,200,255,0.3)", color: "#00c8ff", fontSize: "11px", letterSpacing: "2px", cursor: "pointer", fontFamily: "'Share Tech Mono',monospace", borderRadius: "4px", transition: "all 0.2s" }}
+                                                >
+                                                    {inviteActioning === inv._id ? "..." : "✓ ACCEPT"}
+                                                </button>
+                                                <button
+                                                    onClick={() => handleInviteAction(inv._id, "decline")}
+                                                    disabled={inviteActioning === inv._id}
+                                                    style={{ flex: 1, padding: "8px", background: "rgba(255,80,80,0.06)", border: "1px solid rgba(255,80,80,0.2)", color: "rgba(255,80,80,0.7)", fontSize: "11px", letterSpacing: "2px", cursor: "pointer", fontFamily: "'Share Tech Mono',monospace", borderRadius: "4px", transition: "all 0.2s" }}
+                                                >
+                                                    ✕ DECLINE
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
                         <div className={cx("pr-events-header", visible && "pr-in")}>
                             <span className="pr-events-title">Registered Events</span>
                             <span className="pr-events-count">{String(filteredEvents.length).padStart(2, "0")} / {String(user.registeredEvents.length).padStart(2, "0")}</span>

@@ -65,6 +65,7 @@ export default async function ProfilePage() {
         batch: user.batch,
         branch: user.branch,
         techexoticaId: user.techexoticaId,
+        profilePhoto: user.profilePhoto,
         registeredEvents
     };
 

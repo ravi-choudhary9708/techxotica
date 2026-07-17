@@ -3,10 +3,14 @@ import connectDB from "@/lib/db";
 import User from "@/models/User";
 import Registration from "@/models/Registration";
 
+export const dynamic = "force-dynamic";
+
+const getAdminSecret = () => process.env.ADMIN_SECRET || "techxotica-admin-2025";
+
 export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const secret = searchParams.get("secret");
-    const adminSecret = process.env.ADMIN_SECRET || "techxotica-admin-2025";
+    const adminSecret = getAdminSecret();
 
     if (secret !== adminSecret) {
         return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
@@ -58,9 +62,15 @@ export async function GET(req: Request) {
             batch: u.batch,
             branch: u.branch,
             techexoticaId: u.techexoticaId || null,
+            profilePhoto: u.profilePhoto || null,
             registeredEventsCount: (u.registeredEvents || []).length,
             createdAt: u.createdAt,
             eventsDetail: userRegMap[u._id.toString()] || [],
+            achievements: (u.achievements || []).map((a: any) => ({
+                _id: a._id.toString(),
+                title: a.title,
+                awardedAt: a.awardedAt,
+            })),
         }));
 
         return NextResponse.json({ success: true, data: result, total: result.length });

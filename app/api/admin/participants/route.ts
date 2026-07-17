@@ -4,6 +4,8 @@ import Registration from "@/models/Registration";
 import Event from "@/models/Event";
 import User from "@/models/User";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(req: Request) {
     try {
         const { searchParams } = new URL(req.url);
@@ -68,6 +70,7 @@ export async function GET(req: Request) {
             soloUser?: { name: string; regNo: string; techexoticaId: string; branch: string; batch: string; phone: string } | null;
             leader?: { name: string; regNo: string; techexoticaId: string; branch: string; batch: string; phone: string } | null;
             members?: Array<{ name: string; regNo: string; techexoticaId: string; branch: string; batch: string; phone: string }>;
+            role?: string;
         }>) {
             if (!reg.eventId) continue;
             const eventId = reg.eventId._id.toString();
@@ -93,6 +96,7 @@ export async function GET(req: Request) {
                     registrationId: reg._id.toString(),
                     type: "solo",
                     status: reg.status,
+                    role: reg.role || "Participant",
                     registeredAt: reg.registeredAt,
                     participant: {
                         name: reg.soloUser.name,
@@ -119,6 +123,7 @@ export async function GET(req: Request) {
                     type: "team",
                     teamName: reg.teamName || "Unnamed Team",
                     status: reg.status,
+                    role: reg.role || "Participant",
                     registeredAt: reg.registeredAt,
                     leader: reg.leader
                         ? {

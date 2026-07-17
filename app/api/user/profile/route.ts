@@ -48,7 +48,13 @@ export async function GET() {
                     batch: user.batch,
                     branch: user.branch,
                     techexoticaId: user.techexoticaId,
+                    profilePhoto: user.profilePhoto,
                     registeredEvents: user.registeredEvents,
+                    achievements: (user.achievements as any[] || []).map((a: any) => ({
+                        _id: a._id.toString(),
+                        title: a.title,
+                        awardedAt: a.awardedAt,
+                    })),
                 },
             },
             { status: 200 }

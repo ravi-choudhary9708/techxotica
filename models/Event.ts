@@ -10,6 +10,7 @@ const EventSchema = new mongoose.Schema({
     venue: { type: String },
     prize: { type: String },
     category: { type: String },
+    allowedRoles: { type: [String], default: ["Participant"] },
     isActive: { type: Boolean, default: true },
     createdAt: { type: Date, default: Date.now },
 });

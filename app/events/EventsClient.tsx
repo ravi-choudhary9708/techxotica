@@ -793,9 +793,9 @@ export default function EventsClient({ events }: { events: any[] }) {
     const evCat = (ev.category || "other").toLowerCase();
     if (catFilter !== "all" && evCat !== catFilter) return false;
     if (typeFilter === "solo") {
-      if ((ev.teamSize?.min || 1) !== 1) return false;
+      if ((ev.minTeamSize || 1) !== 1) return false;
     } else if (typeFilter === "team") {
-      if ((ev.teamSize?.max || 1) <= 1) return false;
+      if ((ev.maxTeamSize || 1) <= 1) return false;
     }
     return true;
   });
@@ -1038,7 +1038,7 @@ export default function EventsClient({ events }: { events: any[] }) {
                       <div className="ev-meta-item" style={{ gridColumn: "1/-1" }}>
                         <span className="ev-meta-key">Team Size</span>
                         <span className="ev-meta-val">
-                          {ev.type === "solo" ? "Solo" : `${ev.teamSize?.min || 1}–${ev.teamSize?.max || 4} Members`}
+                          {ev.type === "solo" ? "Solo" : `${ev.minTeamSize || 1}–${ev.maxTeamSize || 4} Members`}
                         </span>
                       </div>
                     </div>
@@ -1059,7 +1059,7 @@ export default function EventsClient({ events }: { events: any[] }) {
                     <div className="ev-team-info">
                       <div className="ev-team-dot" />
                       {ev.type === "team"
-                        ? `${ev.teamSize?.min || 1}–${ev.teamSize?.max || 4} members`
+                        ? `${ev.minTeamSize || 1}–${ev.maxTeamSize || 4} members`
                         : "Individual event"}
                     </div>
                     <div style={{ display: "flex", gap: 6 }}>
@@ -1148,7 +1148,7 @@ export default function EventsClient({ events }: { events: any[] }) {
                 >
                   <div className="ev-modal-event-name">{ev.title || ev.name}</div>
                   <div className="ev-modal-event-type">
-                    {catString} · {ev.type === "solo" ? "Solo event — no extra info needed" : `Team event · ${ev.teamSize?.min || 1}–${ev.teamSize?.max || 4} members`}
+                    {catString} · {ev.type === "solo" ? "Solo event — no extra info needed" : `Team event · ${ev.minTeamSize || 1}–${ev.maxTeamSize || 4} members`}
                   </div>
 
                   {ev.type === "team" && !done && (

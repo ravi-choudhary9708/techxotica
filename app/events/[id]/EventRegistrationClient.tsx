@@ -433,7 +433,21 @@ export default function EventRegistrationClient({ event, user, isRegistered, reg
     const isLeader = registration?.leader?.techexoticaId === user.techexoticaId;
 
     const ev = event;
+    const allowedRoles = Array.isArray(ev.allowedRoles) && ev.allowedRoles.length > 0 ? ev.allowedRoles : ["Participant"];
+    const [selectedRole, setSelectedRole] = useState(allowedRoles[0]);
     const c = CAT[ev.category] || CAT.technical;
+
+    // ── Player Search state ──
+    const [searchQuery, setSearchQuery] = useState("");
+    const [searchResults, setSearchResults] = useState<any[]>([]);
+    const [searchLoading, setSearchLoading] = useState(false);
+    const [viewedPlayer, setViewedPlayer] = useState<any | null>(null);
+    const [inviteSending, setInviteSending] = useState<string | null>(null);
+    const [inviteMsg, setInviteMsg] = useState<{ txId: string; ok: boolean; msg: string } | null>(null);
+
+    // ── Team Logo state ──
+    const [teamLogo, setTeamLogo] = useState(registration?.teamLogo || "");
+    const [logoUploading, setLogoUploading] = useState(false);
 
     useEffect(() => {
         if (!document.getElementById("ed-styles")) {
@@ -548,6 +562,61 @@ export default function EventRegistrationClient({ event, user, isRegistered, reg
         finally { setEditSaving(false); }
     };
 
+    // ── Player search handler ──
+    const handleSearch = async (q: string) => {
+        setSearchQuery(q);
+        if (q.length < 2) { setSearchResults([]); return; }
+        setSearchLoading(true);
+        try {
+            const res = await fetch(`/api/user/search?q=${encodeURIComponent(q)}`);
+            const data = await res.json();
+            if (data.success) setSearchResults(data.data);
+        } catch {}
+        finally { setSearchLoading(false); }
+    };
+
+    const handleViewPlayer = async (txId: string) => {
+        const res = await fetch(`/api/user/${encodeURIComponent(txId)}`);
+        const data = await res.json();
+        if (data.success) setViewedPlayer(data.data);
+    };
+
+    const handleSendInvite = async (toTxId: string) => {
+        if (!registration?._id) return;
+        setInviteSending(toTxId); setInviteMsg(null);
+        try {
+            const res = await fetch("/api/invites", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ toTxId, eventId: ev._id, registrationId: registration._id }),
+            });
+            const data = await res.json();
+            setInviteMsg({ txId: toTxId, ok: data.success, msg: data.message });
+        } catch { setInviteMsg({ txId: toTxId, ok: false, msg: "Network error" }); }
+        finally { setInviteSending(null); }
+    };
+
+    // ── Team logo upload handler ──
+    const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file || !registration?._id) return;
+        setLogoUploading(true);
+        const reader = new FileReader();
+        reader.onloadend = async () => {
+            try {
+                const res = await fetch(`/api/registration/${registration._id}/logo`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ imageBase64: reader.result }),
+                });
+                const data = await res.json();
+                if (data.success) setTeamLogo(data.teamLogo);
+            } catch {}
+            finally { setLogoUploading(false); }
+        };
+        reader.readAsDataURL(file);
+    };
+
     const handleRegister = async () => {
         setLoading(true);
         setError("");
@@ -555,10 +624,13 @@ export default function EventRegistrationClient({ event, user, isRegistered, reg
 
         try {
             const body: any = {
-                eventId: ev._id
+                eventId: ev._id,
+                role: selectedRole
             };
 
-            if (ev.type === "team") {
+            const isSoloRole = selectedRole === "Attendee" || selectedRole === "Volunteer";
+
+            if (ev.type === "team" && !isSoloRole) {
                 if (!teamName) {
                     setError("Team name is required.");
                     setLoading(false);
@@ -781,8 +853,36 @@ export default function EventRegistrationClient({ event, user, isRegistered, reg
                         </div>
                     )}
 
-                    {!isRegistered && ev.type === "team" && (
-                        <div className="ed-card" style={{ transitionDelay: ".1s" }}>
+                    {!isRegistered && allowedRoles.length > 1 && (
+                        <div className="ed-card ed-in" style={{ transitionDelay: ".05s", marginBottom: "20px" }}>
+                            <div className="ed-card-top-bar" />
+                            <div className="ed-card-pad">
+                                <div className="ed-sec-title">Select Your Role</div>
+                                <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+                                    {allowedRoles.map((r: string) => (
+                                        <button 
+                                            key={r} 
+                                            onClick={() => setSelectedRole(r)}
+                                            style={{
+                                                padding: "10px 20px", 
+                                                background: selectedRole === r ? "rgba(0,200,255,0.15)" : "rgba(255,255,255,0.05)",
+                                                border: `1px solid ${selectedRole === r ? "#00c8ff" : "rgba(255,255,255,0.1)"}`,
+                                                color: selectedRole === r ? "#00c8ff" : "#fff",
+                                                fontFamily: "Rajdhani, sans-serif",
+                                                fontSize: "14px", fontWeight: 600, letterSpacing: "1px", textTransform: "uppercase",
+                                                cursor: "pointer", borderRadius: "4px", transition: "all 0.2s"
+                                            }}
+                                        >
+                                            {r}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {!isRegistered && ev.type === "team" && selectedRole === "Participant" && (
+                        <div className="ed-card ed-in" style={{ transitionDelay: ".1s" }}>
                             <div className="ed-card-top-bar" />
                             <div className="ed-card-pad">
                                 <div className="ed-sec-title">Team Configuration</div>
@@ -839,6 +939,102 @@ export default function EventRegistrationClient({ event, user, isRegistered, reg
                                         </div>
                                     )}
                                 </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Team Logo Upload */}
+                    {isRegistered && isLeader && (
+                        <div className="ed-card ed-in" style={{ transitionDelay: ".15s" }}>
+                            <div className="ed-card-top-bar" />
+                            <div className="ed-card-pad">
+                                <div className="ed-sec-title">Team Logo</div>
+                                <div style={{ display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap" }}>
+                                    {teamLogo && <img src={teamLogo} alt="Team Logo" style={{ width: "64px", height: "64px", objectFit: "cover", borderRadius: "8px", border: "1px solid rgba(0,200,255,0.3)" }} />}
+                                    <label style={{ cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "8px", padding: "10px 18px", background: "rgba(0,200,255,0.08)", border: "1px solid rgba(0,200,255,0.25)", borderRadius: "6px", color: "#00c8ff", fontSize: "12px", letterSpacing: "1px", fontFamily: "'Share Tech Mono',monospace" }}>
+                                        {logoUploading ? "Uploading..." : teamLogo ? "Change Logo" : "+ Upload Logo"}
+                                        <input type="file" accept="image/*" onChange={handleLogoUpload} disabled={logoUploading} style={{ display: "none" }} />
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Player Search */}
+                    {isRegistered && isLeader && ev.type === "team" && (
+                        <div className="ed-card ed-in" style={{ transitionDelay: ".2s" }}>
+                            <div className="ed-card-top-bar" />
+                            <div className="ed-card-pad">
+                                <div className="ed-sec-title">Find Players</div>
+                                <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.35)", marginBottom: "14px", fontFamily: "'Share Tech Mono',monospace" }}>Search by name, reg no, or TX ID to invite players.</p>
+                                <input className="ed-input" placeholder="Search players..." value={searchQuery} onChange={e => handleSearch(e.target.value)} style={{ marginBottom: "12px" }} />
+                                {searchLoading && <div style={{ fontSize: "12px", color: "rgba(0,200,255,0.5)" }}>Searching...</div>}
+                                {searchResults.map(p => (
+                                    <div key={p._id} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "8px", padding: "10px 12px", display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px" }}>
+                                        <div style={{ width: "34px", height: "34px", borderRadius: "50%", flexShrink: 0, overflow: "hidden", background: "rgba(0,200,255,0.1)", border: "1px solid rgba(0,200,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                            {p.profilePhoto ? <img src={p.profilePhoto} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="" /> : <span style={{ fontSize: "13px", color: "#00c8ff" }}>{p.name?.[0]?.toUpperCase()}</span>}
+                                        </div>
+                                        <div style={{ flex: 1, minWidth: 0 }}>
+                                            <div style={{ fontSize: "13px", fontWeight: 600, color: "#e0e0e0", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.name}</div>
+                                            <div style={{ fontSize: "10px", color: "rgba(255,255,255,0.35)", fontFamily: "monospace" }}>{p.techexoticaId} · {p.branch} · {p.batch}</div>
+                                        </div>
+                                        <div style={{ display: "flex", gap: "6px" }}>
+                                            <button onClick={() => handleViewPlayer(p.techexoticaId)} style={{ padding: "5px 10px", background: "transparent", border: "1px solid rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.5)", fontSize: "10px", cursor: "pointer", borderRadius: "4px" }}>View</button>
+                                            <button onClick={() => handleSendInvite(p.techexoticaId)} disabled={inviteSending === p.techexoticaId} style={{ padding: "5px 10px", background: "rgba(0,200,255,0.1)", border: "1px solid rgba(0,200,255,0.3)", color: "#00c8ff", fontSize: "10px", cursor: "pointer", borderRadius: "4px" }}>
+                                                {inviteSending === p.techexoticaId ? "..." : "Invite"}
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                                {inviteMsg && <div style={{ marginTop: "8px", fontSize: "12px", color: inviteMsg.ok ? "#00ffc8" : "#ff6060", fontFamily: "'Share Tech Mono',monospace" }}>{inviteMsg.ok ? "✓ " : "✕ "}{inviteMsg.msg}</div>}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Player Profile Modal */}
+                    {viewedPlayer && (
+                        <div style={{ position: "fixed", inset: 0, zIndex: 999, background: "rgba(0,0,0,0.75)", backdropFilter: "blur(8px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}
+                            onClick={e => { if (e.target === e.currentTarget) setViewedPlayer(null); }}>
+                            <div style={{ background: "#0d1117", border: "1px solid rgba(0,200,255,0.2)", borderRadius: "12px", padding: "24px", maxWidth: "400px", width: "100%", position: "relative" }}>
+                                <button onClick={() => setViewedPlayer(null)} style={{ position: "absolute", top: "12px", right: "12px", background: "none", border: "none", color: "rgba(255,255,255,0.4)", fontSize: "18px", cursor: "pointer" }}>✕</button>
+                                <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "20px" }}>
+                                    <div style={{ width: "56px", height: "56px", borderRadius: "50%", overflow: "hidden", border: "2px solid rgba(0,200,255,0.3)", flexShrink: 0, background: "rgba(0,200,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                        {viewedPlayer.profilePhoto ? <img src={viewedPlayer.profilePhoto} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="" /> : <span style={{ fontSize: "20px", color: "#00c8ff" }}>{viewedPlayer.name?.[0]?.toUpperCase()}</span>}
+                                    </div>
+                                    <div>
+                                        <div style={{ fontSize: "16px", fontWeight: 700, color: "#e0e0e0" }}>{viewedPlayer.name}</div>
+                                        <div style={{ fontSize: "11px", color: "rgba(0,200,255,0.7)", fontFamily: "monospace" }}>{viewedPlayer.techexoticaId}</div>
+                                    </div>
+                                </div>
+                                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "16px" }}>
+                                    {[{ k: "Reg No", v: viewedPlayer.regNo }, { k: "Branch", v: viewedPlayer.branch }, { k: "Batch", v: viewedPlayer.batch }].map(({ k, v }) => (
+                                        <div key={k} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "6px", padding: "8px 10px" }}>
+                                            <div style={{ fontSize: "9px", letterSpacing: "2px", color: "rgba(0,200,255,0.4)", fontFamily: "monospace", marginBottom: "4px" }}>{k}</div>
+                                            <div style={{ fontSize: "13px", color: "#e0e0e0" }}>{v}</div>
+                                        </div>
+                                    ))}
+                                </div>
+                                {(viewedPlayer.achievements || []).length > 0 && (
+                                    <div style={{ borderTop: "1px solid rgba(255,215,0,0.1)", paddingTop: "12px", marginBottom: "16px" }}>
+                                        <div style={{ fontSize: "9px", letterSpacing: "2px", color: "rgba(255,215,0,0.4)", fontFamily: "monospace", marginBottom: "8px" }}>✦ ACHIEVEMENTS</div>
+                                        {viewedPlayer.achievements.map((a: any) => (
+                                            <div key={a._id} style={{ display: "flex", alignItems: "center", gap: "6px", padding: "5px 8px", background: "rgba(255,215,0,0.05)", borderRadius: "4px", marginBottom: "4px" }}>
+                                                <span style={{ color: "#ffd700" }}>✔</span>
+                                                <span style={{ fontSize: "12px", color: "#ffe066" }}>{a.title}</span>
+                                                <span style={{ marginLeft: "auto", fontSize: "9px", color: "rgba(255,215,0,0.4)", border: "1px solid rgba(255,215,0,0.2)", padding: "1px 5px", borderRadius: "3px" }}>VERIFIED</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                                <button onClick={() => handleSendInvite(viewedPlayer.techexoticaId)} disabled={inviteSending === viewedPlayer.techexoticaId}
+                                    style={{ width: "100%", padding: "10px", background: "rgba(0,200,255,0.12)", border: "1px solid rgba(0,200,255,0.3)", color: "#00c8ff", fontSize: "12px", letterSpacing: "2px", cursor: "pointer", fontFamily: "'Share Tech Mono',monospace", borderRadius: "6px" }}>
+                                    {inviteSending === viewedPlayer.techexoticaId ? "Sending..." : "⬡ Send Invite"}
+                                </button>
+                                {inviteMsg?.txId === viewedPlayer.techexoticaId && (
+                                    <div style={{ marginTop: "10px", textAlign: "center", fontSize: "12px", color: inviteMsg.ok ? "#00ffc8" : "#ff6060", fontFamily: "'Share Tech Mono',monospace" }}>
+                                        {inviteMsg.ok ? "✓ " : "✕ "}{inviteMsg.msg}
+                                    </div>
+                                )}
                             </div>
                         </div>
                     )}

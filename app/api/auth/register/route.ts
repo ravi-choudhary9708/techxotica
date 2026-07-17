@@ -10,7 +10,7 @@ export async function POST(req: Request) {
         await connectDB();
 
         const body = await req.json();
-        const { name, email, regNo, phone, batch, branch, password } = body;
+        const { name, email, regNo, phone, batch, branch, password, profilePhoto } = body;
 
         // Validation
         if (!name || !email || !regNo || !phone || !batch || !branch || !password) {
@@ -55,6 +55,16 @@ export async function POST(req: Request) {
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 12);
 
+        let photoUrl = "";
+        if (profilePhoto) {
+            try {
+                const { uploadToCloudinary } = await import("@/utils/cloudinary");
+                photoUrl = await uploadToCloudinary(profilePhoto);
+            } catch (err) {
+                console.error("Failed to upload profile photo:", err);
+            }
+        }
+
         // Create user
         const newUser = new User({
             name,
@@ -64,6 +74,7 @@ export async function POST(req: Request) {
             batch,
             branch,
             password: hashedPassword,
+            profilePhoto: photoUrl,
         });
 
         await newUser.save();

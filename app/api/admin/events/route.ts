@@ -3,6 +3,8 @@ import connectDB from "@/lib/db";
 import Event from "@/models/Event";
 import Registration from "@/models/Registration";
 
+export const dynamic = "force-dynamic";
+
 const getAdminSecret = () => process.env.ADMIN_SECRET || "techxotica-admin-2025";
 
 function checkAuth(req: Request): boolean {
@@ -54,7 +56,7 @@ export async function POST(req: Request) {
 
         const {
             name, description, type, minTeamSize, maxTeamSize,
-            date, venue, prize, category, isActive
+            date, venue, prize, category, isActive, allowedRoles
         } = body;
 
         if (!name || !type) {
@@ -83,6 +85,7 @@ export async function POST(req: Request) {
             venue: venue?.trim() || "",
             prize: prize?.trim() || "",
             category: category?.trim().toLowerCase() || "general",
+            allowedRoles: Array.isArray(allowedRoles) && allowedRoles.length > 0 ? allowedRoles : ["Participant"],
             isActive: isActive !== false,
         });
 

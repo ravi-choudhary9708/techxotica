@@ -9,12 +9,19 @@ const UserSchema = new mongoose.Schema({
     branch: { type: String, required: true },
     password: { type: String, required: true },
     techexoticaId: { type: String, unique: true },
+    profilePhoto: { type: String, default: "" },
     resetPasswordToken: { type: String },
     resetPasswordExpires: { type: Date },
     registeredEvents: [
         {
             eventId: { type: mongoose.Schema.Types.ObjectId, ref: "Event" },
             registeredAt: { type: Date, default: Date.now },
+        },
+    ],
+    achievements: [
+        {
+            title: { type: String, required: true },
+            awardedAt: { type: Date, default: Date.now },
         },
     ],
     createdAt: { type: Date, default: Date.now },

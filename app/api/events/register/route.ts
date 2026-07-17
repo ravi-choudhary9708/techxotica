@@ -14,7 +14,7 @@ export async function POST(req: Request) {
 
         await connectDB();
         const body = await req.json();
-        const { eventId, teamName, memberTechIds } = body;
+        const { eventId, teamName, memberTechIds, role = "Participant" } = body;
 
         // Validate request
         if (!eventId) {
@@ -31,10 +31,18 @@ export async function POST(req: Request) {
 
         const leaderId = session.userId;
 
+        const allowedRoles = Array.isArray(event.allowedRoles) && event.allowedRoles.length > 0 ? event.allowedRoles : ["Participant"];
+        if (!allowedRoles.includes(role)) {
+            return NextResponse.json({ success: false, message: `Role '${role}' is not allowed for this event.` }, { status: 400 });
+        }
+
+        const isSoloRole = role === "Attendee" || role === "Volunteer";
+        const effectiveType = isSoloRole ? "solo" : event.type;
+
         // ==============================================
         // SOLO REGISTRATION
         // ==============================================
-        if (event.type === "solo") {
+        if (effectiveType === "solo") {
             const existingReg = await Registration.findOne({ eventId, soloUser: leaderId });
 
             if (existingReg) {
@@ -44,6 +52,7 @@ export async function POST(req: Request) {
             const registration = new Registration({
                 eventId,
                 type: "solo",
+                role,
                 soloUser: leaderId,
             });
 
@@ -63,7 +72,7 @@ export async function POST(req: Request) {
         // ==============================================
         // TEAM REGISTRATION
         // ==============================================
-        if (event.type === "team") {
+        if (effectiveType === "team") {
             if (!teamName || !memberTechIds || !Array.isArray(memberTechIds)) {
                 return NextResponse.json({ success: false, message: "teamName and memberTechIds (array) are required for team events" }, { status: 400 });
             }
@@ -133,6 +142,7 @@ export async function POST(req: Request) {
                 eventId,
                 type: "team",
                 teamName,
+                role,
                 leader: leaderId,
                 members: allTeamUserIds, // Save the full array directly
             });
