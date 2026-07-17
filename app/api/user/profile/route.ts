@@ -67,3 +67,49 @@ export async function GET() {
         );
     }
 }
+
+export async function PATCH(req: Request) {
+    try {
+        const session = await getUser();
+
+        if (!session || !session.userId) {
+            return NextResponse.json(
+                { success: false, message: "Unauthorized" },
+                { status: 401 }
+            );
+        }
+
+        const body = await req.json();
+        const { name, phone, branch, batch } = body;
+
+        await connectDB();
+
+        const updateData: any = {};
+        if (name) updateData.name = name;
+        if (phone) updateData.phone = phone;
+        if (branch) updateData.branch = branch;
+        if (batch) updateData.batch = batch;
+
+        const updatedUser = await User.findByIdAndUpdate(
+            session.userId,
+            { $set: updateData },
+            { new: true, runValidators: true }
+        ).select("-password").lean();
+
+        if (!updatedUser) {
+            return NextResponse.json(
+                { success: false, message: "User not found" },
+                { status: 404 }
+            );
+        }
+
+        return NextResponse.json({ success: true, message: "Profile updated successfully", data: updatedUser }, { status: 200 });
+
+    } catch (error: any) {
+        console.error("Profile Update Error", error);
+        return NextResponse.json(
+            { success: false, message: error.message || "Internal server error" },
+            { status: 500 }
+        );
+    }
+}

@@ -70,12 +70,20 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="relative min-h-screen w-full flex items-center justify-start overflow-hidden pt-36"
+      className="relative min-h-screen w-full flex items-center justify-center overflow-hidden pt-36"
     >
+      <style>{`
+        @keyframes slowZoom {
+          0% { transform: scale(1); }
+          50% { transform: scale(1.08); }
+          100% { transform: scale(1); }
+        }
+      `}</style>
+
       {/* Background Image with Overlay */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(https://i.ibb.co/3K3j0PR/unnamed-3.png)` }}
+        style={{ backgroundImage: `url(/esport.png)`, animation: 'slowZoom 15s ease-in-out infinite' }}
       >
         <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]" />
       </div>
@@ -94,41 +102,18 @@ export default function Hero() {
       <main className="relative container mx-auto h-full flex flex-col items-center justify-center px-6 md:px-8 lg:px-12 z-10 w-full mt-10 md:mt-0 text-center">
         <div className="w-full md:w-4/5 lg:w-3/5 flex flex-col items-center pt-12 md:pt-0">
           
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 border border-[rgba(255,255,255,0.4)] rounded-full px-4 py-1.5 mb-6 text-xs md:text-sm font-rajdhani tracking-widest uppercase text-white shadow-[0_0_15px_rgba(255,255,255,0.2)] bg-black/40 backdrop-blur-sm">
-            <span className="w-2 h-2 rounded-full bg-[#fbbf24] animate-pulse" />
-            GEC Madhubani Presents · March 23–24, 2026
-          </div>
-
           {/* Main title */}
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-orbitron font-black leading-[1.1] mb-6 uppercase tracking-tighter text-white drop-shadow-[0_0_20px_rgba(0,0,0,0.8)] mx-auto"
               style={{ letterSpacing: "0.05em", textShadow: "0 0 40px rgba(0,0,0,0.8)" }}>
-            TECH
+            <span className="text-[#00f5ff] drop-shadow-[0_0_20px_rgba(0,245,255,0.8)]">E-SPORTS</span>
             <br />
-            <span className="text-[#fbbf24] drop-shadow-[0_0_20px_rgba(251,191,36,0.8)]">EXOTICA 2.0</span>
+            ARENA
           </h1>
           
           {/* Subtitle */}
           <div className="text-lg md:text-xl lg:text-3xl font-rajdhani font-semibold text-gray-300 max-w-xl mx-auto mb-16 leading-relaxed drop-shadow-md h-10 flex items-center justify-center mt-6">
             <span>{typedText}</span>
-            <span className="inline-block w-[3px] h-[1em] bg-[#fbbf24] ml-1 shadow-[0_0_10px_#fbbf24] animate-pulse" />
-          </div>
-
-          {/* Countdown */}
-          <div className="flex items-center justify-center gap-3 md:gap-4 mb-10 overflow-x-auto pb-2 w-full max-w-full">
-            {[
-              { value: countdown.days, label: "Days" },
-              { value: countdown.hours, label: "Hours" },
-              { value: countdown.minutes, label: "Mins" },
-              { value: countdown.seconds, label: "Secs" },
-            ].map(({ value, label }) => (
-              <div key={label} className="flex flex-col items-center justify-center bg-black/50 border border-[#fbbf24]/30 rounded-lg p-3 md:p-4 min-w-[70px] md:min-w-[90px] shadow-[0_0_15px_rgba(251,191,36,0.1)] backdrop-blur-md">
-                <span className="text-2xl md:text-4xl font-orbitron font-bold text-[#fbbf24] drop-shadow-[0_0_10px_rgba(251,191,36,0.5)]">
-                  {mounted ? String(value).padStart(2, "0") : "00"}
-                </span>
-                <span className="text-[10px] md:text-xs font-rajdhani tracking-widest uppercase text-white/80 mt-1">{label}</span>
-              </div>
-            ))}
+            <span className="inline-block w-[3px] h-[1em] bg-[#00f5ff] ml-1 shadow-[0_0_10px_#00f5ff] animate-pulse" />
           </div>
 
           {/* CTAs */}

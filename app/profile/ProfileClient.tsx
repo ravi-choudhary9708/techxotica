@@ -566,6 +566,9 @@ export default function ProfileClient({ user }: { user: any }) {
     const [isUploading, setIsUploading] = useState(false);
     const [invites, setInvites] = useState<any[]>([]);
     const [inviteActioning, setInviteActioning] = useState<string | null>(null);
+    const [isEditing, setIsEditing] = useState(false);
+    const [editForm, setEditForm] = useState({ name: user.name, phone: user.fullPhone || user.phone, branch: user.branch, batch: user.batch });
+    const [updateLoading, setUpdateLoading] = useState(false);
     const router = useRouter();
 
     useEffect(() => {
@@ -608,6 +611,29 @@ export default function ProfileClient({ user }: { user: any }) {
         navigator.clipboard.writeText(user.techexoticaId);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
+    };
+
+    const handleProfileUpdate = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setUpdateLoading(true);
+        try {
+            const res = await fetch("/api/user/profile", {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(editForm),
+            });
+            const data = await res.json();
+            if (data.success) {
+                setIsEditing(false);
+                router.refresh();
+            } else {
+                alert(data.message || "Failed to update profile");
+            }
+        } catch (error) {
+            alert("Network error");
+        } finally {
+            setUpdateLoading(false);
+        }
     };
 
     const handleLogout = async () => {
@@ -678,21 +704,28 @@ export default function ProfileClient({ user }: { user: any }) {
                     {/* ── LEFT: Identity card ── */}
                     <div className={cx("pr-card pr-identity", visible && "pr-in")} style={{ transitionDelay: "0.1s" }}>
                         <div className="pr-id-top">
-                            <div className="pr-avatar group cursor-pointer overflow-hidden relative">
-                                {user.profilePhoto ? (
-                                    <img src={user.profilePhoto} alt="Profile" className="w-full h-full object-cover" />
-                                ) : (
-                                    initials
-                                )}
-                                <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-                                    <span className="text-[10px] uppercase text-white tracking-widest">{isUploading ? "..." : "Upload"}</span>
+                            <div style={{ position: "relative", width: "64px", height: "64px", marginBottom: "16px" }}>
+                                <div className="pr-avatar" style={{ margin: 0, width: "100%", height: "100%", overflow: "hidden" }}>
+                                    {user.profilePhoto ? (
+                                        <img src={user.profilePhoto} alt="Profile" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                                    ) : (
+                                        initials
+                                    )}
                                 </div>
+                                <div style={{ position: "absolute", bottom: -2, right: -2, width: 22, height: 22, background: "#00c8ff", border: "2px solid #0d1117", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", zIndex: 10, boxShadow: "0 0 8px rgba(0,200,255,0.4)" }}>
+                                    <span style={{ fontSize: "12px", color: "#000", fontWeight: "bold" }}>✎</span>
+                                </div>
+                                {isUploading && (
+                                    <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 15, borderRadius: "0", clipPath: "polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px))" }}>
+                                        <span style={{ fontSize: "9px", color: "#00c8ff", fontFamily: "monospace" }}>...</span>
+                                    </div>
+                                )}
                                 <input 
                                     type="file" 
                                     accept="image/*" 
                                     onChange={handlePhotoUpload} 
                                     disabled={isUploading}
-                                    className="absolute inset-0 opacity-0 cursor-pointer w-full h-full" 
+                                    style={{ position: "absolute", inset: 0, opacity: 0, cursor: "pointer", zIndex: 20 }}
                                 />
                             </div>
                             <div className="pr-name">{user.name}</div>
@@ -742,8 +775,9 @@ export default function ProfileClient({ user }: { user: any }) {
                             </div>
                         </div>
 
-                        <div style={{ padding: "0 20px 20px" }}>
-                            <button className="pr-logout" onClick={handleLogout}>⎋ Logout</button>
+                        <div style={{ padding: "0 20px 20px", display: "flex", gap: "10px" }}>
+                            <button className="pr-logout" style={{ flex: 1, borderColor: "rgba(0,200,255,0.3)", color: "rgba(0,200,255,0.8)" }} onClick={() => setIsEditing(true)}>✎ Edit Profile</button>
+                            <button className="pr-logout" style={{ flex: 1 }} onClick={handleLogout}>⎋ Logout</button>
                         </div>
 
                         {/* Achievements */}
@@ -911,6 +945,40 @@ export default function ProfileClient({ user }: { user: any }) {
                     </div>
                 </div>
             </div>
+
+            {/* Edit Profile Modal */}
+            {isEditing && (
+                <div style={{ position: "fixed", inset: 0, zIndex: 999, background: "rgba(0,0,0,0.8)", backdropFilter: "blur(8px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}
+                    onClick={e => { if (e.target === e.currentTarget) setIsEditing(false); }}>
+                    <div style={{ background: "#0d1117", border: "1px solid rgba(0,200,255,0.2)", borderRadius: "12px", padding: "24px", maxWidth: "400px", width: "100%", position: "relative" }}>
+                        <button onClick={() => setIsEditing(false)} style={{ position: "absolute", top: "12px", right: "12px", background: "none", border: "none", color: "rgba(255,255,255,0.4)", fontSize: "18px", cursor: "pointer" }}>✕</button>
+                        <div style={{ fontSize: "16px", fontWeight: 700, color: "#e0e0e0", marginBottom: "20px", fontFamily: "'Share Tech Mono',monospace" }}>✎ EDIT PROFILE</div>
+                        <form onSubmit={handleProfileUpdate} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                            <div>
+                                <div style={{ fontSize: "10px", color: "rgba(0,200,255,0.6)", marginBottom: "4px", fontFamily: "monospace" }}>Name</div>
+                                <input required value={editForm.name} onChange={e => setEditForm({...editForm, name: e.target.value})} style={{ width: "100%", padding: "10px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "6px", color: "#fff", fontSize: "14px" }} />
+                            </div>
+                            <div>
+                                <div style={{ fontSize: "10px", color: "rgba(0,200,255,0.6)", marginBottom: "4px", fontFamily: "monospace" }}>Phone</div>
+                                <input required value={editForm.phone} onChange={e => setEditForm({...editForm, phone: e.target.value})} style={{ width: "100%", padding: "10px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "6px", color: "#fff", fontSize: "14px" }} />
+                            </div>
+                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                                <div>
+                                    <div style={{ fontSize: "10px", color: "rgba(0,200,255,0.6)", marginBottom: "4px", fontFamily: "monospace" }}>Branch</div>
+                                    <input required value={editForm.branch} onChange={e => setEditForm({...editForm, branch: e.target.value})} style={{ width: "100%", padding: "10px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "6px", color: "#fff", fontSize: "14px" }} />
+                                </div>
+                                <div>
+                                    <div style={{ fontSize: "10px", color: "rgba(0,200,255,0.6)", marginBottom: "4px", fontFamily: "monospace" }}>Batch</div>
+                                    <input required value={editForm.batch} onChange={e => setEditForm({...editForm, batch: e.target.value})} style={{ width: "100%", padding: "10px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "6px", color: "#fff", fontSize: "14px" }} />
+                                </div>
+                            </div>
+                            <button disabled={updateLoading} type="submit" style={{ width: "100%", padding: "12px", background: "rgba(0,200,255,0.1)", border: "1px solid rgba(0,200,255,0.3)", borderRadius: "6px", color: "#00c8ff", fontSize: "14px", fontWeight: 600, letterSpacing: "1px", cursor: "pointer", marginTop: "8px" }}>
+                                {updateLoading ? "Saving..." : "Save Changes"}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

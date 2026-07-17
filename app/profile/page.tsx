@@ -30,6 +30,7 @@ export default async function ProfilePage() {
     const registrations = await Registration.find({
         $or: [
             { soloUser: user._id },
+            { leader: user._id },
             { members: user._id }
         ]
     }).populate("eventId").lean();
@@ -59,14 +60,22 @@ export default async function ProfilePage() {
     }).filter(Boolean);
 
     const userData = {
+        _id: (user._id as any).toString(),
         name: user.name,
+        email: (user as any).email,
         regNo: user.regNo,
         phone: maskedPhone,
+        fullPhone: user.phone, // unmasked, only sent to own profile
         batch: user.batch,
         branch: user.branch,
         techexoticaId: user.techexoticaId,
         profilePhoto: user.profilePhoto,
-        registeredEvents
+        registeredEvents,
+        achievements: ((user as any).achievements || []).map((a: any) => ({
+            _id: a._id.toString(),
+            title: a.title,
+            awardedAt: a.awardedAt,
+        })),
     };
 
     return <ProfileClient user={userData} />;

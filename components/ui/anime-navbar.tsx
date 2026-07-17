@@ -54,10 +54,10 @@ export function AnimeNavBar({ items, className, defaultActive = "Home" }: NavBar
   if (!mounted) return null
 
   return (
-    <div className={cn("fixed top-16 left-0 right-0 z-[9999]", className)}>
-      <div className="flex justify-center pt-6">
+    <div className={cn("fixed top-12 md:top-16 left-0 right-0 z-[9999]", className)}>
+      <div className="flex justify-center pt-2 px-4">
         <motion.div
-          className="flex items-center gap-10 md:gap-16 bg-black/60 border border-white/20 backdrop-blur-3xl py-5 md:py-8 px-10 md:px-20 rounded-full shadow-[0_0_60px_rgba(0,0,0,0.7)] relative"
+          className="flex items-center gap-6 md:gap-12 bg-black/60 border border-white/20 backdrop-blur-3xl py-4 md:py-6 px-8 md:px-16 rounded-full shadow-[0_0_30px_rgba(0,0,0,0.5)] relative"
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{
@@ -79,7 +79,7 @@ export function AnimeNavBar({ items, className, defaultActive = "Home" }: NavBar
                 onMouseEnter={() => setHoveredTab(item.name)}
                 onMouseLeave={() => setHoveredTab(null)}
                 className={cn(
-                  "relative cursor-pointer text-sm font-orbitron font-semibold px-6 md:px-24 py-5 md:py-9 rounded-full transition-all duration-300",
+                  "relative cursor-pointer text-xs md:text-sm font-orbitron font-semibold px-5 md:px-8 py-3 md:py-4 rounded-full transition-all duration-300",
                   "text-white/60 hover:text-white",
                   isActive && "bg-white/10 text-white"
                 )}
