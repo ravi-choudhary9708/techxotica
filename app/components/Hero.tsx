@@ -1,138 +1,142 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import InteractiveStarfieldShader from "@/components/ui/light-up-shader";
-
-// Fest date: March 23-24, 2026
-const FEST_DATE = new Date("2026-03-23T09:00:00");
-
-const taglines = [
-  "Ignite Innovation",
-  "Engineer the Future",
-  "Code. Create. Conquer.",
-  "Beyond Boundaries",
-];
-
-function getCountdown() {
-  const now = new Date();
-  const diff = FEST_DATE.getTime() - now.getTime();
-  if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-  return { days, hours, minutes, seconds };
-}
+import { useEffect, useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Hero() {
   const [mounted, setMounted] = useState(false);
-  const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-  const [taglineIdx, setTaglineIdx] = useState(0);
-  const [typedText, setTypedText] = useState("");
-  const [isDeleting, setIsDeleting] = useState(false);
-  const typingRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [hovered, setHovered] = useState(false);
+  const router = useRouter();
 
-  // Typing effect
-  useEffect(() => {
-    const current = taglines[taglineIdx];
-    const speed = isDeleting ? 40 : 80;
-    typingRef.current = setTimeout(() => {
-      if (!isDeleting) {
-        setTypedText((prev) => {
-          if (prev.length < current.length) return current.slice(0, prev.length + 1);
-          setTimeout(() => setIsDeleting(true), 1500);
-          return prev;
-        });
-      } else {
-        setTypedText((prev) => {
-          if (prev.length > 0) return prev.slice(0, prev.length - 1);
-          setIsDeleting(false);
-          setTaglineIdx((i) => (i + 1) % taglines.length);
-          return "";
-        });
-      }
-    }, speed);
-    return () => { if (typingRef.current) clearTimeout(typingRef.current); };
-  }, [typedText, isDeleting, taglineIdx]);
-
-  // Countdown & Hydration
-  useEffect(() => {
-    setMounted(true);
-    setCountdown(getCountdown());
-    const id = setInterval(() => setCountdown(getCountdown()), 1000);
-    return () => clearInterval(id);
-  }, []);
-
-  const scrollToEvents = () => {
-    document.querySelector("#events")?.scrollIntoView({ behavior: "smooth" });
-  };
+  useEffect(() => { setMounted(true); }, []);
 
   return (
     <section
       id="hero"
-      className="relative min-h-screen w-full flex items-center justify-center overflow-hidden pt-36"
+      className="relative min-h-screen w-full flex items-center justify-center overflow-hidden"
     >
       <style>{`
-        @keyframes slowZoom {
-          0% { transform: scale(1); }
-          50% { transform: scale(1.08); }
-          100% { transform: scale(1); }
+        @keyframes heroZoom {
+          0%,100% { transform: scale(1.02); }
+          50%      { transform: scale(1.06); }
+        }
+        @keyframes heroPulse {
+          0%,100% { box-shadow: 0 0 30px rgba(251,191,36,0.45), 0 0 70px rgba(251,191,36,0.15); }
+          50%      { box-shadow: 0 0 50px rgba(251,191,36,0.8),  0 0 100px rgba(251,191,36,0.3); }
+        }
+        @keyframes heroRing {
+          0%   { transform:translate(-50%,-50%) scale(1);   opacity:0.55; }
+          100% { transform:translate(-50%,-50%) scale(2.4); opacity:0; }
+        }
+        @keyframes heroShimmer {
+          0%   { transform:translateX(-160%) skewX(-18deg); }
+          100% { transform:translateX(250%)  skewX(-18deg); }
+        }
+        @keyframes heroFadeUp {
+          from { opacity:0; transform:translateY(24px); }
+          to   { opacity:1; transform:translateY(0); }
+        }
+
+        .hero-bg   { animation: heroZoom 18s ease-in-out infinite; will-change: transform; }
+        .hero-ring { animation: heroRing 2.4s ease-out infinite; }
+        .ring-d1   { animation-delay: 0s; }
+        .ring-d2   { animation-delay: 0.8s; }
+        .ring-d3   { animation-delay: 1.6s; }
+        .hero-btn  { animation: heroPulse 2.8s ease-in-out infinite; }
+        .hero-btn:hover { animation: none; }
+        .hero-enter { animation: heroFadeUp 1s cubic-bezier(.16,1,.3,1) 0.3s both; }
+
+        .hero-shimmer {
+          position: absolute; inset: 0; border-radius: inherit;
+          background: linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.4) 50%, transparent 65%);
+          transform: translateX(-160%) skewX(-18deg);
+        }
+        .hero-btn:hover .hero-shimmer {
+          animation: heroShimmer 0.7s ease forwards;
         }
       `}</style>
 
-      {/* Background Image with Overlay */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(/esport.png)`, animation: 'slowZoom 15s ease-in-out infinite' }}
-      >
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]" />
+      {/* ── Background image — full bleed slow zoom ── */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div
+          className="hero-bg absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('/campus%20clash.png')" }}
+        />
+        {/* Clean layered overlays */}
+        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(2,4,13,0.25) 0%, rgba(2,4,13,0.55) 60%, #02040d 100%)" }} />
+        <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at center, transparent 35%, rgba(2,4,13,0.65) 100%)" }} />
       </div>
 
-      {/* Grid lines */}
+      {/* Subtle grid — low opacity, one layer only */}
       <div
-        className="absolute inset-0 pointer-events-none z-[1]"
+        className="absolute inset-0 pointer-events-none"
         style={{
-          backgroundImage:
-            "linear-gradient(rgba(251,191,36,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(251,191,36,0.06) 1px, transparent 1px)",
-          backgroundSize: "60px 60px",
+          backgroundImage: "linear-gradient(rgba(251,191,36,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(251,191,36,0.04) 1px, transparent 1px)",
+          backgroundSize: "80px 80px",
         }}
       />
 
-      {/* Content */}
-      <main className="relative container mx-auto h-full flex flex-col items-center justify-center px-6 md:px-8 lg:px-12 z-10 w-full mt-10 md:mt-0 text-center">
-        <div className="w-full md:w-4/5 lg:w-3/5 flex flex-col items-center pt-12 md:pt-0">
-          
-          {/* Main title */}
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-orbitron font-black leading-[1.1] mb-6 uppercase tracking-tighter text-white drop-shadow-[0_0_20px_rgba(0,0,0,0.8)] mx-auto"
-              style={{ letterSpacing: "0.05em", textShadow: "0 0 40px rgba(0,0,0,0.8)" }}>
-            <span className="text-[#00f5ff] drop-shadow-[0_0_20px_rgba(0,245,255,0.8)]">E-SPORTS</span>
-            <br />
-            ARENA
-          </h1>
-          
-          {/* Subtitle */}
-          <div className="text-lg md:text-xl lg:text-3xl font-rajdhani font-semibold text-gray-300 max-w-xl mx-auto mb-16 leading-relaxed drop-shadow-md h-10 flex items-center justify-center mt-6">
-            <span>{typedText}</span>
-            <span className="inline-block w-[3px] h-[1em] bg-[#00f5ff] ml-1 shadow-[0_0_10px_#00f5ff] animate-pulse" />
+      {/* ── Register button centrepiece ── */}
+      {mounted && (
+        <div className="hero-enter relative z-10 flex flex-col items-center gap-5">
+
+          {/* Ripple rings */}
+          <div className="relative flex items-center justify-center" style={{ width: 220, height: 220 }}>
+            {["ring-d1", "ring-d2", "ring-d3"].map((d, i) => (
+              <div
+                key={i}
+                className={`hero-ring absolute rounded-full`}
+                style={{
+                  width: 170, height: 170,
+                  top: "50%", left: "50%",
+                  border: "1px solid rgba(251,191,36,0.4)",
+                  animationDelay: `${i * 0.8}s`,
+                }}
+              />
+            ))}
+
+            {/* The button */}
+            <button
+              id="hero-register-btn"
+              className="hero-btn relative overflow-hidden rounded-full font-orbitron font-black uppercase text-[#02040d] cursor-pointer"
+              style={{
+                width: 152, height: 152,
+                fontSize: "0.9rem",
+                letterSpacing: "0.16em",
+                background: hovered
+                  ? "linear-gradient(135deg,#ffe566,#fbbf24,#f59e0b)"
+                  : "linear-gradient(135deg,#ffd700,#fbbf24,#f59e0b)",
+                border: "2px solid rgba(251,191,36,0.5)",
+                transform: hovered ? "scale(1.07)" : "scale(1)",
+                transition: "transform 0.25s cubic-bezier(.34,1.56,.64,1), background 0.2s ease",
+              }}
+              onClick={() => router.push("/register")}
+              onMouseEnter={() => setHovered(true)}
+              onMouseLeave={() => setHovered(false)}
+            >
+              <div className="hero-shimmer" />
+              <span className="relative z-10 flex flex-col items-center gap-1.5">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                </svg>
+                Register
+              </span>
+            </button>
           </div>
 
-          {/* CTAs */}
-          <div className="flex flex-wrap gap-8 justify-center w-full mt-[120px]">
-            <button onClick={() => window.location.href = '/register'} className="bg-[#fbbf24] text-black border border-[#fbbf24] font-orbitron font-bold px-12 py-6 rounded-md hover:bg-[#f59e0b] transition-all duration-300 hover:scale-105 shadow-[0_0_30px_rgba(251,191,36,0.5)] text-lg md:text-xl ml-2 mr-2">
-              Register Now
-            </button>
-            <button onClick={scrollToEvents} className="bg-transparent border-4 border-white/50 text-white font-orbitron font-bold px-12 py-6 rounded-md hover:bg-white/10 transition-all duration-300 hover:scale-105 shadow-xl backdrop-blur-sm text-lg md:text-xl ml-2 mr-2">
-              Explore Events
-            </button>
-          </div>
+          {/* Subtle label */}
+          <p className="font-rajdhani text-yellow-300/50 uppercase tracking-[0.4em] text-xs">
+            Click to join
+          </p>
         </div>
-      </main>
+      )}
 
-      {/* Scroll hint */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/50 z-10 hidden md:flex">
-        <span className="font-rajdhani text-xs tracking-widest uppercase">Scroll</span>
-        <div className="w-px h-10 bg-gradient-to-b from-[#fbbf24] to-transparent animate-bounce" />
-      </div>
+      {/* Scroll indicator */}
+      {mounted && (
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-10 hidden md:flex">
+          <div className="w-px h-10 bg-gradient-to-b from-yellow-400/60 to-transparent animate-bounce" />
+        </div>
+      )}
     </section>
   );
 }

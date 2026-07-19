@@ -5,7 +5,12 @@ import { useRouter } from "next/navigation";
 import { Trash2 } from "lucide-react";
 import Link from "next/link";
 
-const NEON_IMG = "/download.jpg";
+const getDefaultEventImage = (name: string) => {
+    const lowerName = (name || "").toLowerCase();
+    if (lowerName.includes("bgmi")) return "/bgmi.png";
+    if (lowerName.includes("free fire") || lowerName.includes("freefire")) return "/freefire.png";
+    return "/event.png";
+};
 
 const CAT: any = {
     technical: { color: "#00c8ff", border: "rgba(0,200,255,0.35)", bg: "rgba(0,200,255,0.07)", glow: "rgba(0,200,255,0.45)", icon: "⬡" },
@@ -248,6 +253,7 @@ const styles = `
     clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));
   }
   .ed-btn-secondary:hover{background:rgba(0,200,255,.08);border-color:#00c8ff;color:#00c8ff;box-shadow:0 0 16px rgba(0,200,255,.2);}
+  .ed-btn-secondary:disabled{opacity:.5;pointer-events:none;}
 
   /* ═══════════════════════════════════════
      BODY SECTIONS
@@ -400,15 +406,22 @@ const styles = `
   }
 `;
 
-const PARTICLES = Array.from({ length: 14 }, (_, i) => ({
-    id: i,
-    left: `${Math.random() * 94}%`,
-    bottom: `${Math.random() * 80}%`,
-    size: `${2 + Math.random() * 3}px`,
-    color: i % 3 === 0 ? "rgba(0,200,255,.55)" : i % 3 === 1 ? "rgba(0,255,160,.4)" : "rgba(0,200,255,.3)",
-    dur: `${5 + Math.random() * 8}s`,
-    del: `${Math.random() * 6}s`,
-}));
+const PARTICLES = [
+    { id: 0, left: '20%', bottom: '15%', size: '3.5px', color: 'rgba(0,200,255,.55)', dur: '8.2s', del: '1.4s' },
+    { id: 1, left: '85%', bottom: '40%', size: '2.1px', color: 'rgba(0,255,160,.4)', dur: '5.6s', del: '3.2s' },
+    { id: 2, left: '45%', bottom: '75%', size: '4.8px', color: 'rgba(0,200,255,.3)', dur: '12.1s', del: '0.5s' },
+    { id: 3, left: '10%', bottom: '60%', size: '2.9px', color: 'rgba(0,200,255,.55)', dur: '9.4s', del: '2.8s' },
+    { id: 4, left: '75%', bottom: '25%', size: '4.2px', color: 'rgba(0,255,160,.4)', dur: '6.8s', del: '4.1s' },
+    { id: 5, left: '35%', bottom: '10%', size: '3.1px', color: 'rgba(0,200,255,.3)', dur: '10.3s', del: '1.9s' },
+    { id: 6, left: '60%', bottom: '55%', size: '2.5px', color: 'rgba(0,200,255,.55)', dur: '7.5s', del: '5.6s' },
+    { id: 7, left: '90%', bottom: '80%', size: '4.5px', color: 'rgba(0,255,160,.4)', dur: '11.8s', del: '0.9s' },
+    { id: 8, left: '15%', bottom: '35%', size: '3.8px', color: 'rgba(0,200,255,.3)', dur: '8.9s', del: '3.7s' },
+    { id: 9, left: '50%', bottom: '90%', size: '2.4px', color: 'rgba(0,200,255,.55)', dur: '6.2s', del: '2.2s' },
+    { id: 10, left: '80%', bottom: '10%', size: '4.9px', color: 'rgba(0,255,160,.4)', dur: '12.7s', del: '4.8s' },
+    { id: 11, left: '25%', bottom: '65%', size: '3.3px', color: 'rgba(0,200,255,.3)', dur: '9.8s', del: '1.1s' },
+    { id: 12, left: '70%', bottom: '45%', size: '2.7px', color: 'rgba(0,200,255,.55)', dur: '7.1s', del: '5.3s' },
+    { id: 13, left: '5%', bottom: '85%', size: '4.1px', color: 'rgba(0,255,160,.4)', dur: '11.2s', del: '2.5s' }
+];
 
 export default function EventRegistrationClient({ event, user, isRegistered, registration }: any) {
     const router = useRouter();
@@ -416,16 +429,12 @@ export default function EventRegistrationClient({ event, user, isRegistered, reg
     const [bodyIn, setBodyIn] = useState(false);
     const [loading, setLoading] = useState(false);
     const [teamName, setTeamName] = useState("");
-    const [memberTechId, setMemberTechId] = useState("");
     const [members, setMembers] = useState<any[]>([]);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
-    const [lookingUp, setLookingUp] = useState(false);
     // Edit mode state
     const [editMode, setEditMode] = useState(false);
     const [editMembers, setEditMembers] = useState<any[]>(registration?.members || []);
-    const [editTechId, setEditTechId] = useState("");
-    const [editLookingUp, setEditLookingUp] = useState(false);
     const [editSaving, setEditSaving] = useState(false);
     const [editError, setEditError] = useState("");
     const [editSuccess, setEditSuccess] = useState("");
@@ -470,16 +479,18 @@ export default function EventRegistrationClient({ event, user, isRegistered, reg
         return () => obs.disconnect();
     }, [bodyIn]);
 
-    const handleAddMember = async () => {
-        if (!memberTechId) return;
+    const handleAddMember = async (playerObj?: any) => {
+        // Fallback for exact match if needed, but primary use is with playerObj
+        const targetId = playerObj ? playerObj.techexoticaId : searchQuery.toUpperCase();
+        if (!targetId) return;
         setError("");
 
-        if (memberTechId === user.techexoticaId) {
+        if (targetId === user.techexoticaId) {
             setError("You are already the team leader.");
             return;
         }
 
-        if (members.some(m => m.techexoticaId === memberTechId)) {
+        if (members.some(m => m.techexoticaId === targetId)) {
             setError("Member already added.");
             return;
         }
@@ -489,21 +500,29 @@ export default function EventRegistrationClient({ event, user, isRegistered, reg
             return;
         }
 
+        if (playerObj) {
+            setMembers([...members, playerObj]);
+            setSearchQuery("");
+            setSearchResults([]);
+            return;
+        }
+
         try {
-            setLookingUp(true);
-            const res = await fetch(`/api/user/find-by-txid?txId=${memberTechId}`);
+            setSearchLoading(true);
+            const res = await fetch(`/api/user/find-by-txid?txId=${targetId}`);
             const data = await res.json();
 
             if (data.success) {
                 setMembers([...members, data.user]);
-                setMemberTechId("");
+                setSearchQuery("");
+                setSearchResults([]);
             } else {
                 setError(data.message || "User not found.");
             }
         } catch (err) {
             setError("Failed to lookup user.");
         } finally {
-            setLookingUp(false);
+            setSearchLoading(false);
         }
     };
 
@@ -512,22 +531,34 @@ export default function EventRegistrationClient({ event, user, isRegistered, reg
     };
 
     // ── Edit-mode handlers ──
-    const handleAddMemberEdit = async () => {
-        if (!editTechId) return;
+    const handleAddMemberEdit = async (playerObj?: any) => {
+        const targetId = playerObj ? playerObj.techexoticaId : searchQuery.toUpperCase();
+        if (!targetId) return;
         setEditError("");
 
-        if (editTechId === user.techexoticaId) { setEditError("You are the leader."); return; }
-        if (editMembers.some(m => m.techexoticaId === editTechId)) { setEditError("Already in team."); return; }
+        if (targetId === user.techexoticaId) { setEditError("You are the leader."); return; }
+        if (editMembers.some(m => m.techexoticaId === targetId)) { setEditError("Already in team."); return; }
         if (editMembers.length + 1 >= ev.maxTeamSize) { setEditError(`Max team size is ${ev.maxTeamSize}.`); return; }
 
+        if (playerObj) {
+            setEditMembers([...editMembers, playerObj]);
+            setSearchQuery("");
+            setSearchResults([]);
+            return;
+        }
+
         try {
-            setEditLookingUp(true);
-            const res = await fetch(`/api/user/find-by-txid?txId=${editTechId}`);
+            setSearchLoading(true);
+            const res = await fetch(`/api/user/find-by-txid?txId=${targetId}`);
             const data = await res.json();
-            if (data.success) { setEditMembers([...editMembers, data.user]); setEditTechId(""); }
+            if (data.success) { 
+                setEditMembers([...editMembers, data.user]); 
+                setSearchQuery("");
+                setSearchResults([]);
+            }
             else setEditError(data.message || "User not found.");
         } catch { setEditError("Lookup failed."); }
-        finally { setEditLookingUp(false); }
+        finally { setSearchLoading(false); }
     };
 
     const handleRemoveMemberEdit = (txId: string) => {
@@ -691,7 +722,7 @@ export default function EventRegistrationClient({ event, user, isRegistered, reg
             {/* ═══ HERO ═══ */}
             <div className="ed-hero">
                 <div className="ed-hero-img-col">
-                    <img src={NEON_IMG} alt="event hero" className={cx("ed-hero-img", visible && "ed-in")} draggable={false} />
+                    <img src={getDefaultEventImage(ev.name)} alt="event hero" className={cx("ed-hero-img", visible && "ed-in")} draggable={false} />
                     <div className="ed-img-lines" />
                     <div className="ed-hero-img-fade" />
                     <div className="ed-hero-img-fade-b" />
@@ -818,24 +849,32 @@ export default function EventRegistrationClient({ event, user, isRegistered, reg
 
                                     {/* Add member input */}
                                     {editMembers.length + 1 < ev.maxTeamSize && (
-                                        <div className="ed-input-group">
-                                            <div style={{ display: "flex", gap: 8 }}>
-                                                <input
-                                                    className="ed-input"
-                                                    style={{ flex: 1 }}
-                                                    placeholder="Enter Member TechID (e.g. TX-XXXXX-2022)"
-                                                    value={editTechId}
-                                                    onChange={e => setEditTechId(e.target.value.toUpperCase())}
-                                                />
-                                                <button
-                                                    className="ed-btn-secondary"
-                                                    style={{ padding: "0 20px" }}
-                                                    onClick={handleAddMemberEdit}
-                                                    disabled={editLookingUp || !editTechId}
-                                                >
-                                                    {editLookingUp ? "..." : "Add"}
+                                        <div className="ed-input-group" style={{ marginTop: 8 }}>
+                                            <label className="ed-label">Add Members (Search by name, reg no, or TX ID)</label>
+                                            <div style={{ display: "flex", gap: "8px", marginBottom: "8px" }}>
+                                                <input className="ed-input" style={{ flex: 1 }} placeholder="Search players..." value={searchQuery} onChange={e => handleSearch(e.target.value)} />
+                                                <button className="ed-btn-secondary" style={{ padding: "0 20px" }} onClick={() => handleSearch(searchQuery)}>
+                                                    Search
                                                 </button>
                                             </div>
+                                            {searchLoading && <div style={{ fontSize: "12px", color: "rgba(0,200,255,0.5)" }}>Searching...</div>}
+                                            {searchResults.map(p => (
+                                                <div key={p._id} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "8px", padding: "10px 12px", display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px" }}>
+                                                    <div style={{ width: "34px", height: "34px", borderRadius: "50%", flexShrink: 0, overflow: "hidden", background: "rgba(0,200,255,0.1)", border: "1px solid rgba(0,200,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                                        {p.profilePhoto ? <img src={p.profilePhoto} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="" /> : <span style={{ fontSize: "13px", color: "#00c8ff" }}>{p.name?.[0]?.toUpperCase()}</span>}
+                                                    </div>
+                                                    <div style={{ flex: 1, minWidth: 0 }}>
+                                                        <div style={{ fontSize: "13px", fontWeight: 600, color: "#e0e0e0", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.name}</div>
+                                                        <div style={{ fontSize: "10px", color: "rgba(255,255,255,0.35)", fontFamily: "monospace" }}>{p.techexoticaId} · {p.branch} · {p.batch}</div>
+                                                    </div>
+                                                    <div style={{ display: "flex", gap: "6px" }}>
+                                                        <button onClick={() => handleViewPlayer(p.techexoticaId)} style={{ padding: "5px 10px", background: "transparent", border: "1px solid rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.5)", fontSize: "10px", cursor: "pointer", borderRadius: "4px" }}>View</button>
+                                                        <button onClick={() => handleAddMemberEdit(p)} style={{ padding: "5px 10px", background: "rgba(0,200,255,0.1)", border: "1px solid rgba(0,200,255,0.3)", color: "#00c8ff", fontSize: "10px", cursor: "pointer", borderRadius: "4px" }}>
+                                                            Add
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
                                     )}
 
@@ -919,23 +958,31 @@ export default function EventRegistrationClient({ event, user, isRegistered, reg
                                     </div>
                                     {members.length + 1 < ev.maxTeamSize && (
                                         <div className="ed-input-group" style={{ marginTop: 8 }}>
-                                            <div style={{ display: 'flex', gap: 8 }}>
-                                                <input
-                                                    className="ed-input"
-                                                    style={{ flex: 1 }}
-                                                    placeholder="Enter Member TechID (e.g. TX-XXXXX-2022)"
-                                                    value={memberTechId}
-                                                    onChange={(e) => setMemberTechId(e.target.value.toUpperCase())}
-                                                />
-                                                <button
-                                                    className="ed-btn-secondary"
-                                                    style={{ padding: '0 20px' }}
-                                                    onClick={handleAddMember}
-                                                    disabled={lookingUp || !memberTechId}
-                                                >
-                                                    {lookingUp ? "..." : "Add"}
+                                            <label className="ed-label">Add Members (Search by name, reg no, or TX ID)</label>
+                                            <div style={{ display: "flex", gap: "8px", marginBottom: "8px" }}>
+                                                <input className="ed-input" style={{ flex: 1 }} placeholder="Search players..." value={searchQuery} onChange={e => handleSearch(e.target.value)} />
+                                                <button className="ed-btn-secondary" style={{ padding: "0 20px" }} onClick={() => handleSearch(searchQuery)}>
+                                                    Search
                                                 </button>
                                             </div>
+                                            {searchLoading && <div style={{ fontSize: "12px", color: "rgba(0,200,255,0.5)" }}>Searching...</div>}
+                                            {searchResults.map(p => (
+                                                <div key={p._id} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "8px", padding: "10px 12px", display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px" }}>
+                                                    <div style={{ width: "34px", height: "34px", borderRadius: "50%", flexShrink: 0, overflow: "hidden", background: "rgba(0,200,255,0.1)", border: "1px solid rgba(0,200,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                                        {p.profilePhoto ? <img src={p.profilePhoto} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="" /> : <span style={{ fontSize: "13px", color: "#00c8ff" }}>{p.name?.[0]?.toUpperCase()}</span>}
+                                                    </div>
+                                                    <div style={{ flex: 1, minWidth: 0 }}>
+                                                        <div style={{ fontSize: "13px", fontWeight: 600, color: "#e0e0e0", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.name}</div>
+                                                        <div style={{ fontSize: "10px", color: "rgba(255,255,255,0.35)", fontFamily: "monospace" }}>{p.techexoticaId} · {p.branch} · {p.batch}</div>
+                                                    </div>
+                                                    <div style={{ display: "flex", gap: "6px" }}>
+                                                        <button onClick={() => handleViewPlayer(p.techexoticaId)} style={{ padding: "5px 10px", background: "transparent", border: "1px solid rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.5)", fontSize: "10px", cursor: "pointer", borderRadius: "4px" }}>View</button>
+                                                        <button onClick={() => handleAddMember(p)} style={{ padding: "5px 10px", background: "rgba(0,200,255,0.1)", border: "1px solid rgba(0,200,255,0.3)", color: "#00c8ff", fontSize: "10px", cursor: "pointer", borderRadius: "4px" }}>
+                                                            Add
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
                                     )}
                                 </div>
@@ -967,7 +1014,12 @@ export default function EventRegistrationClient({ event, user, isRegistered, reg
                             <div className="ed-card-pad">
                                 <div className="ed-sec-title">Find Players</div>
                                 <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.35)", marginBottom: "14px", fontFamily: "'Share Tech Mono',monospace" }}>Search by name, reg no, or TX ID to invite players.</p>
-                                <input className="ed-input" placeholder="Search players..." value={searchQuery} onChange={e => handleSearch(e.target.value)} style={{ marginBottom: "12px" }} />
+                                <div style={{ display: "flex", gap: "8px", marginBottom: "12px" }}>
+                                    <input className="ed-input" style={{ flex: 1 }} placeholder="Search players..." value={searchQuery} onChange={e => handleSearch(e.target.value)} />
+                                    <button className="ed-btn-secondary" style={{ padding: "0 20px" }} onClick={() => handleSearch(searchQuery)}>
+                                        Search
+                                    </button>
+                                </div>
                                 {searchLoading && <div style={{ fontSize: "12px", color: "rgba(0,200,255,0.5)" }}>Searching...</div>}
                                 {searchResults.map(p => (
                                     <div key={p._id} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "8px", padding: "10px 12px", display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px" }}>
