@@ -58,9 +58,15 @@ export default function Hero() {
 
       {/* ── Background image — full bleed slow zoom ── */}
       <div className="absolute inset-0 overflow-hidden">
+        {/* Desktop image */}
         <div
-          className="hero-bg absolute inset-0 bg-cover bg-center bg-no-repeat"
+          className="hero-bg absolute inset-0 bg-cover bg-center bg-no-repeat hidden md:block"
           style={{ backgroundImage: "url('/campus%20clash.png')" }}
+        />
+        {/* Mobile image */}
+        <div
+          className="hero-bg absolute inset-0 bg-cover bg-center bg-no-repeat block md:hidden"
+          style={{ backgroundImage: "url('/mobile.png')" }}
         />
         {/* Clean layered overlays */}
         <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(2,4,13,0.25) 0%, rgba(2,4,13,0.55) 60%, #02040d 100%)" }} />
