@@ -924,7 +924,7 @@ export default function ProfileClient({ user }: { user: any }) {
                                         </div>
 
                                         <div className="pr-event-meta">
-                                            <span className="pr-meta-item">
+                                            <span className="pr-meta-item" suppressHydrationWarning>
                                                 <span className="pr-meta-icon">◷</span> {date}
                                             </span>
                                             <span className="pr-meta-item">

@@ -1031,7 +1031,7 @@ export default function EventsClient({ events }: { events: any[] }) {
                     <div className="ev-card-meta">
                       <div className="ev-meta-item">
                         <span className="ev-meta-key">Date</span>
-                        <span className="ev-meta-val">◷ {date}</span>
+                        <span className="ev-meta-val" suppressHydrationWarning>◷ {date}</span>
                       </div>
                       <div className="ev-meta-item">
                         <span className="ev-meta-key">Venue</span>

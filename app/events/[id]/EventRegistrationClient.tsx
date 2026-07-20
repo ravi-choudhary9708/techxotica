@@ -460,7 +460,9 @@ export default function EventRegistrationClient({ event, user, isRegistered, reg
     const [teamLogo, setTeamLogo] = useState(registration?.teamLogo || "");
     const [logoUploading, setLogoUploading] = useState(false);
 
+    const [dateStr, setDateStr] = useState("");
     useEffect(() => {
+        setDateStr(ev.date ? new Date(ev.date).toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric" }) : "TBA");
         if (!document.getElementById("ed-styles")) {
             const el = document.createElement("style");
             el.id = "ed-styles"; el.textContent = styles;
@@ -468,7 +470,7 @@ export default function EventRegistrationClient({ event, user, isRegistered, reg
         }
         setTimeout(() => setVisible(true), 80);
         setTimeout(() => setBodyIn(true), 400);
-    }, []);
+    }, [ev.date]);
 
     // Staggered reveal using IntersectionObserver
     useEffect(() => {
@@ -700,7 +702,6 @@ export default function EventRegistrationClient({ event, user, isRegistered, reg
     };
 
     const cx = (...a: any[]) => a.filter(Boolean).join(" ");
-    const dateStr = ev.date ? new Date(ev.date).toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric" }) : "TBA";
 
     return (
         <div className="ed-root">
