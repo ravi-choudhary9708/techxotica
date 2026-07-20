@@ -116,7 +116,7 @@ export default function Hero() {
                 transform: hovered ? "scale(1.07)" : "scale(1)",
                 transition: "transform 0.25s cubic-bezier(.34,1.56,.64,1), background 0.2s ease",
               }}
-              onClick={() => router.push("/register")}
+              onClick={() => router.push("/events")}
               onMouseEnter={() => setHovered(true)}
               onMouseLeave={() => setHovered(false)}
             >

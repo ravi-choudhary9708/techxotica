@@ -21,6 +21,7 @@ type GameSectionProps = {
   stats: Stat[];
   description: string;
   ctaLabel: string;
+  ctaUrl?: string;
   scanTag: string;
   flip?: boolean;
 };
@@ -28,7 +29,7 @@ type GameSectionProps = {
 function GameSection({
   id, imageSrc, imageAlt, eyebrow,
   title, subtitle, accent, accent2,
-  stats, description, ctaLabel, scanTag, flip = false,
+  stats, description, ctaLabel, ctaUrl = "/events", scanTag, flip = false,
 }: GameSectionProps) {
   const [vis, setVis] = useState(false);
   const ref = useRef<HTMLElement>(null);
@@ -224,7 +225,7 @@ function GameSection({
             {/* CTA */}
             <button
               className="gs-btn self-start px-10 py-5 font-orbitron font-bold uppercase rounded-lg text-[#02040d] cursor-pointer shadow-lg"
-              onClick={() => (window.location.href = "/events")}
+              onClick={() => (window.location.href = ctaUrl)}
               style={{
                 fontSize: "1rem",
                 letterSpacing: "0.2em",
@@ -261,6 +262,7 @@ export function BGMISection() {
       ]}
       description="Drop in. Survive. Dominate. High-stakes squad combat on the college stage — where only the sharpest team takes the Chicken Dinner. Form your squad, land smart, and fight to be the last one standing."
       ctaLabel="Register Squad"
+      ctaUrl="/events/bgmi"
       scanTag="Zone Active"
       flip={false}
     />
@@ -287,6 +289,7 @@ export function FreeFireSection() {
       ]}
       description="Load up. Gear up. Wipe them out. Free Fire Showdown is the ultimate mobile battle arena — 50 players drop in, only one squad survives. Strategy, speed, and raw firepower decide who walks away with the crown."
       ctaLabel="Register Now"
+      ctaUrl="/events/free-fire"
       scanTag="Combat Zone"
       flip={true}
     />

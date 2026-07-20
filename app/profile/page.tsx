@@ -55,6 +55,7 @@ export default async function ProfilePage() {
                 category: (event.category || "other").toLowerCase()
             },
             teamName: reg.teamName,
+            teamLogo: reg.teamLogo || "",
             role: role
         };
     }).filter(Boolean);

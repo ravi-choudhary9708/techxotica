@@ -2,6 +2,7 @@ import connectDB from "@/lib/db";
 import Event from "@/models/Event";
 import Registration from "@/models/Registration";
 import { getUser } from "@/lib/getUser";
+import User from "@/models/User";
 import { notFound, redirect } from "next/navigation";
 import EventRegistrationClient from "./EventRegistrationClient";
 
@@ -72,16 +73,23 @@ export default async function EventDetailPage({ params }: PageProps) {
         category: (event as any).category,
     };
 
+    const dbUser = await User.findById(session.userId).lean();
+
     const serializedUser = {
         id: session.userId,
         name: session.name,
-        techexoticaId: session.techexoticaId
+        techexoticaId: session.techexoticaId,
+        branch: dbUser ? (dbUser as any).branch : "N/A",
+        batch: dbUser ? (dbUser as any).batch : "N/A",
+        phone: dbUser ? (dbUser as any).phone : "N/A",
     };
 
     const serializedRegistration = existingRegistration ? {
         _id: (existingRegistration as any)._id.toString(),
         type: (existingRegistration as any).type,
+        role: (existingRegistration as any).role,
         teamName: (existingRegistration as any).teamName || "",
+        teamLogo: (existingRegistration as any).teamLogo || "",
         leader: (existingRegistration as any).leader
             ? { name: (existingRegistration as any).leader.name, techexoticaId: (existingRegistration as any).leader.techexoticaId }
             : null,

@@ -3,6 +3,7 @@ import connectDB from "@/lib/db";
 import Event from "@/models/Event";
 import Registration from "@/models/Registration";
 import User from "@/models/User";
+import TeamInvite from "@/models/TeamInvite";
 import { getUser } from "@/lib/getUser";
 
 export async function POST(req: Request) {
@@ -137,30 +138,44 @@ export async function POST(req: Request) {
                 );
             }
 
-            // Create Registration
+            // Create Registration with ONLY the leader
             const registration = new Registration({
                 eventId,
                 type: "team",
                 teamName,
                 role,
                 leader: leaderId,
-                members: allTeamUserIds, // Save the full array directly
+                members: [leaderId], 
+                status: "pending" // Registration is pending until minTeamSize members accept
             });
 
             await registration.save();
 
-            // Update all users registeredEvents arrays collectively via updateMany
-            await User.updateMany(
-                { _id: { $in: allTeamUserIds } },
-                { $push: { registeredEvents: { eventId } } }
-            );
+            // Update ONLY the leader's registeredEvents
+            await User.findByIdAndUpdate(leaderId, {
+                $push: { registeredEvents: { eventId } }
+            });
+
+            // Create TeamInvites for all invited members
+            const invites = foundMemberIds.map(memberId => ({
+                fromUser: leaderId,
+                toUser: memberId,
+                eventId: eventId,
+                registrationId: registration._id,
+                type: "event-invite",
+                status: "pending"
+            }));
+
+            if (invites.length > 0) {
+                await TeamInvite.insertMany(invites);
+            }
 
             return NextResponse.json(
                 {
                     success: true,
                     teamName: registration.teamName,
-                    memberCount: allTeamUserIds.length,
-                    techexoticaIds: [session.techexoticaId, ...memberTechIds]
+                    memberCount: 1, // Only leader is confirmed initially
+                    techexoticaIds: [session.techexoticaId]
                 },
                 { status: 201 }
             );

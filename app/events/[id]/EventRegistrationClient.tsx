@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Trash2 } from "lucide-react";
 import Link from "next/link";
+import AttendeePass from "./AttendeePass";
 
 const getDefaultEventImage = (name: string) => {
     const lowerName = (name || "").toLowerCase();
@@ -438,11 +439,12 @@ export default function EventRegistrationClient({ event, user, isRegistered, reg
     const [editSaving, setEditSaving] = useState(false);
     const [editError, setEditError] = useState("");
     const [editSuccess, setEditSuccess] = useState("");
+    const [showPassModal, setShowPassModal] = useState(false);
 
     const isLeader = registration?.leader?.techexoticaId === user.techexoticaId;
 
     const ev = event;
-    const allowedRoles = Array.isArray(ev.allowedRoles) && ev.allowedRoles.length > 0 ? ev.allowedRoles : ["Participant"];
+    const allowedRoles = Array.isArray(ev.allowedRoles) && ev.allowedRoles.length > 0 ? ev.allowedRoles : ["Participant", "Attendee"];
     const [selectedRole, setSelectedRole] = useState(allowedRoles[0]);
     const c = CAT[ev.category] || CAT.technical;
 
@@ -757,29 +759,19 @@ export default function EventRegistrationClient({ event, user, isRegistered, reg
                             ].map(({ icon, label, val }) => (
                                 <div className="ed-meta-chip" key={label}>
                                     <span className="ed-meta-chip-icon">{icon}</span>
-                                    <span>{label}: <strong>{val}</strong></span>
+                                    <span>{label}: <strong suppressHydrationWarning>{val}</strong></span>
                                 </div>
                             ))}
                         </div>
 
                         {isRegistered ? (
                             <div className="ed-cta-row">
-                                {ev.type === "team" && isLeader ? (
-                                    <>
-                                        <button
-                                            className="ed-btn-primary"
-                                            onClick={() => { setEditMode(m => !m); setEditError(""); setEditSuccess(""); }}
-                                        >
-                                            {editMode ? "✕ Cancel Edit" : "✎ Edit Team"}
-                                        </button>
-                                        <button className="ed-btn-secondary" onClick={() => router.push("/profile")}>◈ View Profile</button>
-                                    </>
+                                {registration?.type === "team" ? (
+                                    <button className="ed-btn-primary" onClick={() => router.push(`/team/${registration._id}`)}>⬡ Team Dashboard</button>
                                 ) : (
-                                    <>
-                                        <button className="ed-btn-primary" disabled>⬡ Already Registered</button>
-                                        <button className="ed-btn-secondary" onClick={() => router.push("/profile")}>◈ View Profile</button>
-                                    </>
+                                    <button className="ed-btn-primary" onClick={() => setShowPassModal(true)}>⬡ View E-Pass</button>
                                 )}
+                                <button className="ed-btn-secondary" onClick={() => router.push("/profile")}>◈ View Profile</button>
                             </div>
                         ) : (
                             <div className="ed-cta-row">
@@ -950,7 +942,7 @@ export default function EventRegistrationClient({ event, user, isRegistered, reg
                                                     <span className="ed-member-name">{m.name}</span>
                                                     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                                                         <span className="ed-member-id">{m.techexoticaId}</span>
-                                                        <Trash2 size={14} className="cursor-pointer text-red-500" onClick={() => removeMember(m.techexoticaId)} />
+                                                        <Trash2 size={14} style={{ cursor: 'pointer', color: '#ff4040' }} onClick={() => removeMember(m.techexoticaId)} />
                                                     </div>
                                                 </div>
                                             ))}
@@ -987,6 +979,18 @@ export default function EventRegistrationClient({ event, user, isRegistered, reg
                                     )}
                                 </div>
                             </div>
+                        </div>
+                    )}
+
+                    {/* Bottom Registration CTA for convenience */}
+                    {!isRegistered && (
+                        <div style={{ marginTop: "24px", display: "flex", flexDirection: "column", gap: "12px", background: "rgba(0,200,255,0.02)", border: "1px dashed rgba(0,200,255,0.15)", padding: "24px", borderRadius: "8px", alignItems: "center", textAlign: "center" }}>
+                            <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "2px", marginBottom: "8px" }}>
+                                Ready to join as {selectedRole}?
+                            </div>
+                            <button className="ed-btn-primary" onClick={handleRegister} disabled={loading} style={{ width: "100%", maxWidth: "400px", justifyContent: "center" }}>
+                                {loading ? "Processing..." : "⬡ Confirm Registration"}
+                            </button>
                         </div>
                     )}
 
@@ -1083,8 +1087,8 @@ export default function EventRegistrationClient({ event, user, isRegistered, reg
                                     {inviteSending === viewedPlayer.techexoticaId ? "Sending..." : "⬡ Send Invite"}
                                 </button>
                                 {inviteMsg?.txId === viewedPlayer.techexoticaId && (
-                                    <div style={{ marginTop: "10px", textAlign: "center", fontSize: "12px", color: inviteMsg.ok ? "#00ffc8" : "#ff6060", fontFamily: "'Share Tech Mono',monospace" }}>
-                                        {inviteMsg.ok ? "✓ " : "✕ "}{inviteMsg.msg}
+                                    <div style={{ marginTop: "10px", textAlign: "center", fontSize: "12px", color: inviteMsg?.ok ? "#00ffc8" : "#ff6060", fontFamily: "'Share Tech Mono',monospace" }}>
+                                        {inviteMsg?.ok ? "✓ " : "✕ "}{inviteMsg?.msg}
                                     </div>
                                 )}
                             </div>
@@ -1115,6 +1119,17 @@ export default function EventRegistrationClient({ event, user, isRegistered, reg
                     </div>
                 </div>
             </div>
+
+            {/* Attendee Pass Modal */}
+            {showPassModal && (
+                <div style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(0,0,0,0.8)", backdropFilter: "blur(10px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}
+                    onClick={e => { if (e.target === e.currentTarget) setShowPassModal(false); }}>
+                    <div style={{ position: "relative" }}>
+                        <button onClick={() => setShowPassModal(false)} style={{ position: "absolute", top: "-40px", right: "0", background: "none", border: "none", color: "rgba(255,255,255,0.6)", fontSize: "24px", cursor: "pointer", zIndex: 10 }}>✕</button>
+                        <AttendeePass user={user} event={ev} role={registration?.role || (ev.type === "solo" ? "Participant" : "Attendee")} />
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

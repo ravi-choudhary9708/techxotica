@@ -76,6 +76,12 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
         const membersArray = reg.members.map((m: any) => m.toString());
         if (!membersArray.includes(session.userId)) {
             reg.members = [...reg.members, session.userId] as any;
+            
+            // Check if minimum team size is met
+            if (reg.members.length >= event.minTeamSize) {
+                reg.status = "confirmed";
+            }
+            
             await reg.save();
         }
 

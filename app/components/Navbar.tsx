@@ -43,6 +43,8 @@ export default function Navbar() {
     navItems.push({ name: "Register", url: "/register", icon: UserPlus });
   }
 
+  const activeItem = navItems.find(item => item.url === pathname)?.name || "Home";
+
   return (
     <div onClick={(e) => {
       const target = e.target as HTMLElement;
@@ -51,7 +53,7 @@ export default function Navbar() {
         handleLogout();
       }
     }}>
-      <AnimeNavBar items={navItems} defaultActive="Home" />
+      <AnimeNavBar items={navItems} defaultActive={activeItem} />
     </div>
   );
 }

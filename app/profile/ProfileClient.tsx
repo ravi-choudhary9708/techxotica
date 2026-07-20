@@ -898,7 +898,13 @@ export default function ProfileClient({ user }: { user: any }) {
                                             "--glow": cat.glow,
                                             transitionDelay: `${0.25 + i * 0.08}s`,
                                         } as any}
-                                        onClick={() => router.push(`/events/${ev.id}`)}
+                                        onClick={() => {
+                                            if (reg.role !== "solo") {
+                                                router.push(`/team/${reg._id}`);
+                                            } else {
+                                                router.push(`/events/${ev.id || ev._id}`);
+                                            }
+                                        }}
                                         title={`Go to ${ev.name}`}
                                     >
                                         <div className="pr-event-top">
@@ -926,9 +932,12 @@ export default function ProfileClient({ user }: { user: any }) {
                                             </span>
                                         </div>
 
-                                        {ev.type === "team" && (
+                                        {reg.role !== "solo" && (
                                             <div className="pr-event-team">
                                                 <span>Team</span>
+                                                {reg.teamLogo && (
+                                                    <img src={reg.teamLogo} alt="Logo" style={{ width: 18, height: 18, borderRadius: "50%", objectFit: "cover", marginLeft: 4 }} />
+                                                )}
                                                 <span className="pr-team-name">{reg.teamName || "Nameless"}</span>
                                                 <span className="pr-role-pill" style={{
                                                     color: reg.role === "leader" ? "#00c8ff" : "rgba(255,255,255,0.4)",
@@ -936,6 +945,24 @@ export default function ProfileClient({ user }: { user: any }) {
                                                 }}>
                                                     {reg.role}
                                                 </span>
+                                                <button 
+                                                    onClick={(e) => { e.stopPropagation(); router.push(`/team/${reg._id}`); }}
+                                                    style={{
+                                                        marginLeft: "12px",
+                                                        padding: "4px 10px",
+                                                        background: "rgba(0,200,255,0.1)",
+                                                        border: "1px solid rgba(0,200,255,0.3)",
+                                                        color: "#00c8ff",
+                                                        fontSize: "10px",
+                                                        fontWeight: 700,
+                                                        letterSpacing: "2px",
+                                                        textTransform: "uppercase",
+                                                        cursor: "pointer",
+                                                        borderRadius: "4px"
+                                                    }}
+                                                >
+                                                    Dashboard →
+                                                </button>
                                             </div>
                                         )}
                                     </div>

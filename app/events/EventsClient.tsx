@@ -985,7 +985,9 @@ export default function EventsClient({ events }: { events: any[] }) {
                     "--c-bg-h": c.bg.replace("0.06", "0.12"),
                     "--c-glow": c.glow,
                     transitionDelay: `${0.1 + i * 0.07}s`,
+                    cursor: "pointer",
                   } as any}
+                  onClick={() => router.push(`/events/${ev._id}`)}
                 >
                   <div className="ev-card-corner" />
                   <div className="ev-card-bl" />
@@ -1066,7 +1068,10 @@ export default function EventsClient({ events }: { events: any[] }) {
                       {/* Add / remove cart */}
                       <button
                         className={cx("ev-btn", inCart && "ev-btn-cart-active")}
-                        onClick={() => toggleCart(ev._id)}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            toggleCart(ev._id);
+                        }}
                         title={inCart ? "Remove from cart" : "Add to cart"}
                       >
                         <span>{inCart ? "✓ Added" : "+ Cart"}</span>
@@ -1074,7 +1079,10 @@ export default function EventsClient({ events }: { events: any[] }) {
                       {/* Details */}
                       <button
                         className="ev-btn"
-                        onClick={() => router.push(`/events/${ev._id}`)}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            router.push(`/events/${ev._id}`);
+                        }}
                         style={{ "--c-color": c.color, "--c-border": c.border, "--c-bg": c.bg, "--c-glow": c.glow } as any}
                       >
                         <span>Details →</span>
