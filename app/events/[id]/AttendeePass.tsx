@@ -14,6 +14,8 @@ export default function AttendeePass({ user, event, role }: { user: any, event: 
         try {
             const dataUrl = await htmlToImage.toPng(passRef.current, {
                 pixelRatio: 3, // High res
+                width: 320,
+                height: 500,
                 style: { margin: "0" } // ensure no weird offsets
             });
             const link = document.createElement("a");
@@ -51,6 +53,7 @@ ROLE: ${role}`;
                     boxShadow: "0 10px 30px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1)",
                     display: "flex",
                     flexDirection: "column",
+                    flexShrink: 0,
                     color: "#fff"
                 }}
             >

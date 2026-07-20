@@ -1123,9 +1123,9 @@ export default function EventRegistrationClient({ event, user, isRegistered, reg
 
             {/* Attendee Pass Modal */}
             {showPassModal && (
-                <div style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(0,0,0,0.8)", backdropFilter: "blur(10px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}
+                <div style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(0,0,0,0.8)", backdropFilter: "blur(10px)", display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "4rem 1rem", overflowY: "auto" }}
                     onClick={e => { if (e.target === e.currentTarget) setShowPassModal(false); }}>
-                    <div style={{ position: "relative" }}>
+                    <div style={{ position: "relative", margin: "auto" }}>
                         <button onClick={() => setShowPassModal(false)} style={{ position: "absolute", top: "-40px", right: "0", background: "none", border: "none", color: "rgba(255,255,255,0.6)", fontSize: "24px", cursor: "pointer", zIndex: 10 }}>✕</button>
                         <AttendeePass user={user} event={ev} role={registration?.role || (ev.type === "solo" ? "Participant" : "Attendee")} />
                     </div>
