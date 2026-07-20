@@ -1107,7 +1107,7 @@ export default function EventRegistrationClient({ event, user, isRegistered, reg
                                     { k: "Category", v: ev.category },
                                     { k: "Type", v: ev.type },
                                     { k: "Team Size", v: ev.type === "solo" ? "Solo" : ev.minTeamSize + "–" + ev.maxTeamSize },
-                                    { k: "Date", v: ev.date ? new Date(ev.date).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "TBA" },
+                                    { k: "Date", v: dateStr },
                                     { k: "Venue", v: ev.venue || "TBA" },
                                 ].map(({ k, v }) => (
                                     <div className="ed-quick-row" key={k}>

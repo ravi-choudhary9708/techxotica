@@ -790,7 +790,7 @@ export default function ProfileClient({ user }: { user: any }) {
                                             <span style={{ color: "#ffd700", fontSize: "13px" }}>✔</span>
                                             <div>
                                                 <div style={{ fontSize: "12px", color: "#ffe066", fontWeight: 600, letterSpacing: "0.5px" }}>{ach.title}</div>
-                                                <div style={{ fontSize: "10px", color: "rgba(255,215,0,0.4)", marginTop: "2px" }}>
+                                                <div style={{ fontSize: "10px", color: "rgba(255,215,0,0.4)", marginTop: "2px" }} suppressHydrationWarning>
                                                     {new Date(ach.awardedAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
                                                 </div>
                                             </div>
