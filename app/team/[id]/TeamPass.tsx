@@ -14,8 +14,6 @@ export default function TeamPass({ team }: { team: any }) {
         try {
             const dataUrl = await htmlToImage.toPng(passRef.current, {
                 pixelRatio: 3, // High res
-                width: 320,
-                height: 500,
                 style: { margin: "0" } // ensure no weird offsets
             });
             const link = document.createElement("a");
@@ -42,7 +40,7 @@ ${team.members.map((m: any) => `- ${m.name} | ${m.techexoticaId} | ${m.branch} '
                 ref={passRef}
                 style={{
                     width: "320px",
-                    height: "500px",
+                    minHeight: "520px",
                     background: "#111",
                     borderRadius: "16px",
                     overflow: "hidden",
